@@ -319,24 +319,13 @@ d_allocation &lt;- function(weight,title){
     labs(title=title)
 }
 
-d_allocation(CCC$weight,&quot;CCC&quot;)
-d_allocation(DCC$weight,&quot;DCC&quot;)
-d_allocation(DECO$weight,&quot;DECO&quot;)</code></pre>
-<pre><code>## Warning: パッケージ &#39;tidyverse&#39; はバージョン 3.5.2 の R の下で造られました</code></pre>
-<pre><code>## -- Attaching packages ------------------------------------------------------------------------------- tidyverse 1.2.1 --</code></pre>
-<pre><code>## √ ggplot2 3.0.0     √ purrr   0.2.5
-## √ tibble  1.4.2     √ dplyr   0.7.6
-## √ tidyr   0.8.1     √ stringr 1.3.1
-## √ readr   1.1.1     √ forcats 0.3.0</code></pre>
-<pre><code>## Warning: パッケージ &#39;forcats&#39; はバージョン 3.5.2 の R の下で造られました</code></pre>
-<pre><code>## -- Conflicts ---------------------------------------------------------------------------------- tidyverse_conflicts() --
-## x dplyr::filter() masks stats::filter()
-## x dplyr::first()  masks xts::first()
-## x dplyr::lag()    masks stats::lag()
-## x dplyr::last()   masks xts::last()</code></pre>
-<p><img src="/my_blog/post/post2_files/figure-html/unnamed-chunk-11-1.png" width="672" /><img src="/my_blog/post/post2_files/figure-html/unnamed-chunk-11-2.png" width="672" /><img src="/my_blog/post/post2_files/figure-html/unnamed-chunk-11-3.png" width="672" /></p>
-<p>リーマンの際にTLT、つまり米国債への比率を増やしているようです。CCCとDCCはそれ以外の部分でも米国債への比率が高く、よく挙げられる最小分散ポートフォリオの問題点がここでも発生しているようです。一方、DECOがやはり個性的な組入比率の推移をしており、ここらを考えてももう一度論文を読み返してみる必要がありそうです。
-今日はここまで。</p>
+d_allocation(CCC$weight,&quot;CCC&quot;)</code></pre>
+<p><img src="/my_blog/post/post2_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code>d_allocation(DCC$weight,&quot;DCC&quot;)</code></pre>
+<p><img src="/my_blog/post/post2_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+<pre class="r"><code>d_allocation(DECO$weight,&quot;DECO&quot;)</code></pre>
+<p><img src="/my_blog/post/post2_files/figure-html/unnamed-chunk-11-3.png" width="672" /></p>
+<p>リーマンの際にTLT、つまり米国債への比率を増やしているようです。CCCとDCCはそれ以外の部分でも米国債への比率が高く、よく挙げられる最小分散ポートフォリオの問題点がここでも発生しているようです。一方、DECOがやはり個性的な組入比率の推移をしており、ここらを考えてももう一度論文を読み返してみる必要がありそうです。</p>
 <p>追記（2019/3/3）
 これまでは、最小分散ポートフォリオで分析をしていましたが、リスクパリティの結果も見たいなと言うことで、そのコードも書いてみました。</p>
 <pre class="r"><code>risk_parity &lt;- function(r_dat,r_cov){

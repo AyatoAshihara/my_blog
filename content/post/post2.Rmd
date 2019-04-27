@@ -279,7 +279,7 @@ carroll <- function(r_dat,FLG){
 
 まず、データ集めです。
 
-```{r, include=FALSE}
+```{r, include=FALSE, cache=FALSE}
 library(quantmod)
 
 #**************************
@@ -533,27 +533,11 @@ PerformanceAnalytics::charts.PerformanceSummary(result,main = "BACKTEST")
 
 リーマン以降はどうやらベンチマークである等ウェイトポートフォリオよりをアウトパフォームしているようです。特に、DECOはいい感じです。そもそもDECOとDCCはほぼ変わらないパフォーマンスであると思っていたのですが、どうやら自分の理解が足らないらしく、論文の読み返す必要があるようです。Equicorrelationの意味をもう一度考えてみたいと思います。それぞれの組入比率の推移は以下のようになりました。
 
-```{r, eval=FALSE}
-# plot allocation weighting
-d_allocation <- function(weight,title){
-  #install.packages("tidyverse")
+```{r, include=FALSE}
   library(tidyverse)
-  ggweight <- data.frame(weight,index(weight))
-  colnames(ggweight) <- c(colnames(weight),"date")
-  ggweight <- gather(ggweight,ASSET,weight,colnames(weight))
-  ggplot(ggweight, aes(x=date, y=weight,fill=ASSET)) +
-    geom_area(colour="black",size=.1) +
-    scale_y_continuous(limits = c(0,1)) +
-    labs(title=title)
-}
-
-d_allocation(CCC$weight,"CCC")
-d_allocation(DCC$weight,"DCC")
-d_allocation(DECO$weight,"DECO")
-
 ```
 
-```{r, echo=FALSE}
+```{r}
 # plot allocation weighting
 d_allocation <- function(weight,title){
   #install.packages("tidyverse")
@@ -575,7 +559,6 @@ d_allocation(DECO$weight,"DECO")
 
 
 リーマンの際にTLT、つまり米国債への比率を増やしているようです。CCCとDCCはそれ以外の部分でも米国債への比率が高く、よく挙げられる最小分散ポートフォリオの問題点がここでも発生しているようです。一方、DECOがやはり個性的な組入比率の推移をしており、ここらを考えてももう一度論文を読み返してみる必要がありそうです。
-今日はここまで。
 
 追記（2019/3/3）
 これまでは、最小分散ポートフォリオで分析をしていましたが、リスクパリティの結果も見たいなと言うことで、そのコードも書いてみました。
