@@ -2,7 +2,7 @@
 categories:
 - travel
 date: "2017-05-05T19:44:32+05:30"
-draft: false
+draft: true
 image: img/portfolio/bridge1.jpg
 showonlyimage: false
 title: Another Awesome Post

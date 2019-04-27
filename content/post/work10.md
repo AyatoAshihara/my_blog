@@ -1,6 +1,6 @@
 ---
 date: "2018-07-04T20:22:08+05:30"
-draft: false
+draft: true
 image: img/portfolio/trifold.jpg
 showonlyimage: true
 title: Item with image

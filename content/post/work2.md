@@ -3,7 +3,7 @@ categories:
 - design
 date: "2016-11-05T19:41:01+05:30"
 description: Individual meta description for this post
-draft: false
+draft: true
 image: img/portfolio/logs1.jpg
 showonlyimage: false
 title: This is a Standard Post
