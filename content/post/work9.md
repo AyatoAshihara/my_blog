@@ -1,6 +1,6 @@
 ---
 date: "2018-05-06T20:02:19+05:30"
-draft: false
+draft: true
 image: img/portfolio/birds.jpg
 showonlyimage: false
 title: Blogging is Fun and Worthwhile
