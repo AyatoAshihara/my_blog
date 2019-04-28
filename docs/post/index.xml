@@ -50,5 +50,32 @@
 </description>
     </item>
     
+    <item>
+      <title>【日次GDP】BVARについて</title>
+      <link>/my_blog/post/post5/</link>
+      <pubDate>Sat, 01 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post/post5/</guid>
+      <description>
+
+
+&lt;p&gt;時系列解析の分野ではしばしばベクトル自己回帰モデル（Vector Auto Regression, VAR）が使用されます。このモデルはOLSで推定でき、手頃でありながらGrangerの因果性テストで因果関係を統計的に検定することができるなど分析者にとって強力なツールとなっています。また、VARは改良しやすいのも特徴であり、構造VARやマルコフスイッチングVAR、パネルVARなど様々な特徴を備えたVARが提案されています。今回紹介するのは、Bayesian VAR（BVAR）と呼ばれるもので、VARの仲でも予測精度の向上を目材して開発されたモデルです。GDP予測モデルとして今では有名なGDP NOWのモデルもBVARを多用しています。興味のある人は是非。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>はじめまして</title>
+      <link>/my_blog/post/post4/</link>
+      <pubDate>Fri, 18 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post/post4/</guid>
+      <description>
+
+
+&lt;p&gt;どうもはじめまして。
+このブログを始めるに当たってまずは自己紹介をしたいと思います。&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/zenburn.min.css" rel="stylesheet">
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<script type="application/ld+json">
+    {
+        "@context" : "http://schema.org",
+        "@type" : "BlogPosting",
+        "mainEntityOfPage": {
+             "@type": "WebPage",
+             "@id": "\/my_blog\/"
+        },
+        "articleSection" : "post",
+        "name" : "【日次GDP】BVARについて",
+        "headline" : "【日次GDP】BVARについて",
+        "description" : "\r\n\r\n\r\n\x3cp\x3e時系列解析の分野ではしばしばベクトル自己回帰モデル（Vector Auto Regression, VAR）が使用されます。このモデルはOLSで推定でき、手頃でありながらGrangerの因果性テストで因果関係を統計的に検定することができるなど分析者にとって強力なツールとなっています。また、VARは改良しやすいのも特徴であり、構造VARやマルコフスイッチングVAR、パネルVARなど様々な特徴を備えたVARが提案されています。今回紹介するのは、Bayesian VAR（BVAR）と呼ばれるもので、VARの仲でも予測精度の向上を目材して開発されたモデルです。GDP予測モデルとして今では有名なGDP NOWのモデルもBVARを多用しています。興味のある人は是非。\x3c\/p\x3e\r\n",
+        "inLanguage" : "en",
+        "author" : "Ayato Ashihara",
+        "creator" : "Ayato Ashihara",
+        "publisher": "Ayato Ashihara",
+        "accountablePerson" : "Ayato Ashihara",
+        "copyrightHolder" : "Ayato Ashihara",
+        "copyrightYear" : "2018",
+        "datePublished": "2018-12-01 00:00:00 \x2b0000 UTC",
+        "dateModified" : "2018-12-01 00:00:00 \x2b0000 UTC",
+        "url" : "\/my_blog\/post\/post5\/",
+        "wordCount" : "836",
+        "image" : "/my_blog/%!s(\u003cnil\u003e)"",
+        "keywords" : [ ""BVAR"","Blog" ]   
+    }
+    </script>
+
+
+ <title>【日次GDP】BVARについて </title>
+
+
+<meta name="description" content="マクロ経済、機械学習系の記事を投稿しています。" />
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="all,follow">
+<meta name="googlebot" content="index,follow,snippet,archive">
+<link rel="stylesheet" id="ct-tracks-google-fonts-css" href="//fonts.googleapis.com/css?family=Raleway%3A400%2C700&amp;subset=latin%2Clatin-ext&amp;ver=4.7.2" type="text/css" media="all">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+<link href="/my_blog/css/style.css?v=1556479544" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+
+<link href="/my_blog/css/custom.css?v=1556479544" rel="stylesheet" type='text/css' media='all'>
+<link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
+
+
+</head>
+
+
+<body class="post-template-default single single-post single-format-standard ct-body singular singular-post not-front standard">
+
+  <div id="overflow-container" class="overflow-container">
+    <a class="skip-content" href="#main">Skip to content</a>
+    <header id="site-header" class="site-header" role="banner">
+      <div class='top-navigation'>
+        <div class='container'>
+
+  <div id="menu-secondary" class="menu-container menu-secondary" role="navigation">
+    <button id="toggle-secondary-navigation" class="toggle-secondary-navigation"><i class="fas fa-plus"></i></button>
+
+    <div class="menu">
+
+      <ul id="menu-secondary-items" class="menu-secondary-items">
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E4%BB%95%E4%BA%8B%E9%96%A2%E9%80%A3">仕事関連</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E6%97%A5%E6%AC%A1gdp">日次gdp</a>
+        </li>
+        
+
+      </ul>
+
+    </div>
+
+  </div>
+
+
+  <ul class="social-media-icons">
+
+
+    
+    <li>
+      <a href="https://www.facebook.com/ASSIY" data-animate-hover="pulse" class="facebook" target="_blank">
+        <i class="fab fa-facebook-square" title="facebook"></i>
+        <span class="screen-reader-text">facebook</span>
+      </a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+    <li>
+      <a href="mailto:assiy119@yahoo.co.jp" data-animate-hover="pulse" class="email">
+        <i class="fas fa-envelope" title="email"></i>
+        <span class="screen-reader-text">email</span>
+      </a>
+    </li>
+    
+
+    
+
+    
+
+
+    
+    <li>
+      <a href="https://github.com/AyatoAshihara/my_blog" data-animate-hover="pulse" class="github" target="_blank">
+        <i class="fab fa-github" title="github"></i>
+        <span class="screen-reader-text">github</span>
+      </a>
+    </li>
+    
+
+
+    
+
+    
+    <li>
+      <a href="/my_blog/index.xml" data-animate-hover="pulse" class="rss" target="_blank">
+        <i class="fas fa-rss" title="rss"></i>
+        <span class="screen-reader-text">rss</span>
+      </a>
+    </li>
+    
+
+
+  </ul></div>
+
+      </div>
+
+      <div class="container">
+        
+
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+    
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    
+
+<div id="title-info" class="title-info">
+  <div id='site-title' class='site-title'>
+    
+    <a href="/my_blog"> 東京の資産運用会社で働く社会人が研究に没頭するブログ </a>
+    </div>
+  </div>
+  <button id="toggle-navigation" class="toggle-navigation">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div id="menu-primary-tracks" class="menu-primary-tracks"></div>
+  <div id="menu-primary" class="menu-container menu-primary" role="navigation">
+    
+    <p class="site-description">院卒2年目の社会人が夜な夜な更新中。本ブログの内容は筆者が所属する組織の公式見解とは全く関係ありません。</p>
+    
+
+    <div class="menu">
+      <ul id="menu-primary-items" class="menu-primary-items">
+        
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/">Home</a>
+          
+        </li>
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/about/">About</a>
+          
+        </li>
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/contact/">Get in touch</a>
+          
+        </li>
+        
+      </ul>
+    </div>
+
+  </div>
+
+      </div>
+    </header>
+
+    <div id="main" class="main" role="main">
+
+      
+  
+  
+    
+  
+  
+  <div id="loop-container" class="loop-container">
+    
+
+      <div class="post type-post status-publish format-standard hentry category-standard category-travel entry full-without-featured odd excerpt-1">
+
+        
+        <div class="entry-meta">
+          <span class="date">01 December</span>	<span> / </span>
+
+          <span class="author">
+            <a href="/my_blog/" title="Posts by " rel="author"></a>
+          </span>
+
+
+          
+          <span class="category">
+            <span> / </span>
+
+            <a href="/categories/%E6%97%A5%E6%AC%A1gdp">日次GDP</a>
+          </span>
+          
+
+
+        </div>
+        <div class='entry-header'>
+          <h1 class='entry-title'> 【日次GDP】BVARについて</h1>
+        </div>
+        <div class="entry-container">
+          <div class="entry-content">
+            <article>
+              <p>　おはこんばんにちは。日次GDP推計を休日に進めているのですが、今日は少し勉強編でBVARについての記事を書きたいと思います。このBVARはFRBアトランタ連銀のGDPNowでも使用されていることから、日次GDP推計との親和性も高いと思われます。そもそも、時系列でアウトサンプルの予測精度を上げたいということになると真っ先に思いつくのがBVARです。Doan, Litterman and Sims(1984)で提案されたこのモデルは予測精度が良いので、非常に有効な手段になると思われます。BVARはBayesian Vector Autoregressionの略で、ベクトル自己回帰モデル（VAR）の派生版です。「VAR」とネットで調べるとまずValue at Risk（VaR）が出てくると思いますが、それとは違います。よく見るとaが小文字になっていることに気づくかと思います。
+　さて、BVARの説明をこれから行おうとするのですが、その前にまず基本的なVARの説明からしたいと思います。ただし、歴史的な背景（大型マクロ計量モデルからの経緯など）には触れません。あくまで、BVARを説明するうえで必要な知識について触れたいと思います。</p>
+<div id="unrestricted-var" class="section level2">
+<h2>Unrestricted VARについて</h2>
+<p>　まず、注意点を一点。この投稿では、もっとも基本的なVARのことをUnrestricted VAR（UVAR）と呼ぶことにします。UVARはSims(1980)の論文が有名です((Sims, Christopher A, 1980. “Macroeconomics and Reality,” Econometrica, Econometric Society, vol. 48(1), pages 1-48, January.))。このモデルには、理論的な基礎づけは原則ありません。あくまで実証的なモデルです。UVARは一般系は以下のような形をしています。</p>
+<p><span class="math display">\[
+Y_{t} = A_{0} + A_{1}Y_{t-1} + ... + A_{K}Y_{t-K} + U_{t}, U_{t} ～ N(0,\Omega) \\
+Y_{t} = \left(
+    \begin{array}{cccc}
+      y_{1,t} \\
+      y_{2,t} \\
+      \vdots  \\
+      y_{J,t} \\
+    \end{array}
+  \right),
+       A_{0} = \left(
+    \begin{array}{cccc}
+      a_{10} \\
+      a_{20} \\
+      \vdots  \\
+      a_{J0} \\
+    \end{array}
+  \right),
+      A_{k} = \left(
+    \begin{array}{cccc}
+      a_{11,k} &amp; a_{12,k} &amp; \ldots &amp; a_{1J,k} \\
+      a_{21,k} &amp; a_{22,k} &amp; \ldots &amp; a_{2J,k} \\
+      \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+      a_{J1,k} &amp; a_{J2,k} &amp; \ldots &amp; a_{JJ,k}
+    \end{array}
+  \right),
+    U_{t} = \left(
+    \begin{array}{cccc}
+      u_{1,t} \\
+      u_{2,t} \\
+      \vdots  \\
+      u_{J,t} \\
+    \end{array}
+  \right)
+\]</span></p>
+<p>ここで、<span class="math inline">\(t\)</span>は時点、<span class="math inline">\(J\)</span>は変数の数、<span class="math inline">\(K\)</span>はラグ数を表しています。上式を見ると、UVARは自己回帰＋他変数のラグでt期の変数<span class="math inline">\(y_{j,t}\)</span>を説明しようとするモデルであると言えます。しばしば、経済の実証分析で使用され、インサンプルの当てはまりが良いことも知られています（GDP、消費、投資、金利、マネーサプライの５変数VARで金融政策の波及経路を分析したり･･･）。推定するパラメータの個数は、回帰式1本だけでJK+1個（定数項込み）の係数を含むので、J本になればJ(JK+1)個になります。また、<span class="math inline">\(\Omega\)</span>がJ(J+1)/2個のパラメータを持っているので、合計J(JK+1)+J(J+1)/2個のパラメータを推定することになり、かなりパラメータ数が多い印象です（これは後々重要になってきます）。具体的な推計方法ですが、UVARは同時方程式体系ではないのでそこまで面倒ではありません。UVAR自体はSeemingly Unrestricted Regression Equation（SUR）の一種でそれぞれの方程式は誤差項の相関を通じて関係してはいますが（<span class="math inline">\(\Omega\)</span>の部分）、全ての回帰式が同じ説明変数を持つため、各方程式を最小二乗法（OLS）によって推定するだけで良いことが知られています。
+　この事実を説明してみましょう（BVARが気になる方は読み飛ばしてもらって構いません）。説明のために今、UVARをSURの一般系に書き直します。上式はt期のVAR(K)システムですが、UVARを推定する際はこれらJ本の方程式がサンプル数Tセット分存在するので、実際のシステム体系は以下のようになります。</p>
+<p><span class="math display">\[
+   \left(
+    \begin{array}{cccc}
+      Y_{1} \\
+      Y_{2} \\
+      \vdots  \\
+      Y_{J} \\
+    \end{array}
+  \right) = 
+ \left(
+    \begin{array}{cccc}
+      X_{1} &amp; 0 &amp; \ldots &amp; 0 \\
+      0 &amp; X_{2} &amp; \ldots &amp; 0 \\
+      \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+      0 &amp; 0 &amp; \ldots &amp; X_{J}
+    \end{array}
+  \right) 
+  \left(
+    \begin{array}{cccc}
+      A_{1} \\
+      A_{2} \\
+      \vdots  \\
+      A_{J} \\
+    \end{array}
+  \right) +
+  \left(
+    \begin{array}{cccc}
+      U_{1} \\
+      U_{2} \\
+      \vdots  \\
+      U_{J} \\
+    \end{array}
+  \right) = \overline{X}A + U (1式)
+\]</span></p>
+<p>ここで、</p>
+<p><span class="math display">\[
+Y_{j} = \left(
+    \begin{array}{cccc}
+      y_{t,j} \\
+      y_{t+1,j} \\
+      \vdots  \\
+      y_{T,j} \\
+    \end{array}
+  \right) ,
+X_{j} = X = \left(
+    \begin{array}{cccc}
+      1 &amp; y_{t-1,1} &amp; \ldots &amp; y_{t-K,1} &amp; \ldots &amp; y_{t-K,J} \\
+      1 &amp; y_{t,1} &amp; \ldots &amp; y_{t-K+1,1} &amp; \ldots &amp; y_{t-K+1,J} \\
+      \vdots &amp; \vdots &amp; \ldots &amp; \ldots &amp; \ddots &amp; \vdots \\
+      1 &amp; y_{T-1,1} &amp; \ldots &amp; y_{T-K,1} &amp; \ldots &amp; y_{T-K,J} \\
+    \end{array}
+  \right),
+ A_{j} = \left(
+    \begin{array}{cccc}
+      a_{00,j} \\
+      a_{11,j} \\
+      \vdots  \\
+      a_{JK,j} \\
+    \end{array}
+  \right)
+\]</span></p>
+<p>です。上式とは違い、変数順で並べられていることに注意してください（つまり、各方程式を並べる優先順位は１番目にj、２番目にtとなっている）。また、<span class="math inline">\(X_{j}\)</span>が全ての変数<span class="math inline">\(j\)</span>について等しいことに注目してください（jに依存していません、VARなので当たり前ですが）。これが後々非常に重要になってきます。<span class="math inline">\(U\)</span>の分散共分散行列は</p>
+<p><span class="math display">\[
+E[UU&#39;|X_{1}, X_{2},..,X_{J}] = \Omega = 
+\left(
+    \begin{array}{cccc}
+      \sigma_{11}I &amp; \sigma_{12}I &amp; \ldots &amp; \sigma_{1J}I \\
+      \sigma_{21}I &amp; \sigma_{22}I &amp; \ldots &amp; \sigma_{2J}I \\
+      \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+      \sigma_{J1}I &amp; \sigma_{J2}I &amp; \ldots &amp; \sigma_{JJ}I \\
+    \end{array}
+\right)
+\]</span></p>
+<p>となっており、それぞれの変数は誤差項の相関を通じて関係しています（ただし、同じ変数内の異なる時点間の相関はないと仮定します）。このような場合、一般化最小二乗法（GLS）を用いて推計を行うことになりますが、これら方程式体系において説明変数が同じであるならば、GLS推定量とOLS推定量は同値になります。それを確かめてみましょう。上述した方程式体系(1)のGLS推定量は以下になります（<a href="http://user.keio.ac.jp/~nagakura/zemi/GLS.pdf" class="uri">http://user.keio.ac.jp/~nagakura/zemi/GLS.pdf</a>）。</p>
+<p><span class="math display">\[
+A_{GLS} = (\overline{X}&#39;\Omega^{-1}\overline{X})^{-1}\overline{X}&#39;\Omega^{-1}Y = (\overline{X}&#39;(\Sigma^{-1}\otimes I)\overline{X})^{-1}\overline{X}&#39;(\Sigma^{-1}\otimes I)Y
+\]</span></p>
+<p>ここで、<span class="math inline">\(\Sigma\)</span>は誤差項の分散共分散行列のうち、スカラーである分散、共分散を取り出した行列です。先ほど確認したように、<span class="math inline">\(X_{1}=X_{2}=...=X_{J}=X\)</span>なので<span class="math inline">\(\overline{X}=I \otimes X\)</span>であり、その転置も<span class="math inline">\(\overline{X}&#39;=I \otimes X\)</span>となります。よって、<a href="https://mathwords.net/kuronekaseki" class="uri">https://mathwords.net/kuronekaseki</a> の性質を用いると、</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+A_{GLS} &amp;=&amp; [(I \otimes X&#39;)(\Sigma^{-1}\otimes I)(I \otimes X)]^{-1}(I \otimes X&#39;)(\Sigma^{-1}\otimes I)Y \\
+&amp;=&amp; [(\Sigma^{-1}\otimes X&#39;)(I \otimes X)]^{-1}(\Sigma^{-1}\otimes X&#39;)y \\
+&amp;=&amp; (\Sigma^{-1}\otimes(X&#39;X))^{-1}(\Sigma^{-1}\otimes X&#39;)y \\
+&amp;=&amp; (I \otimes (X&#39;X)^{-1}X&#39;)y \\
+&amp;=&amp; (\overline{X}&#39;\overline{X})^{-1}\overline{X}&#39;Y \\
+&amp;=&amp;  \left(
+    \begin{array}{cccc}
+      (X&#39;X)^{-1}X&#39; &amp; 0 &amp; \ldots &amp; 0 \\
+      0 &amp; (X&#39;X)^{-1}X&#39; &amp; \ldots &amp; 0 \\
+      \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+      0 &amp; 0 &amp; \ldots &amp; (X&#39;X)^{-1}X&#39;
+    \end{array}
+  \right) 
+\left(
+    \begin{array}{cccc}
+      Y_{1} \\
+      Y_{2} \\
+      \vdots  \\
+      Y_{J} \\
+    \end{array}
+  \right)\\ 
+&amp;=&amp; \left(
+    \begin{array}{cccc}
+      (X&#39;X)^{-1}X&#39;Y_{1} \\
+      (X&#39;X)^{-1}X&#39;Y_{2} \\
+      \vdots  \\
+      (X&#39;X)^{-1}X&#39;Y_{J} \\
+    \end{array}
+  \right) \\
+&amp;=&amp; \left(
+    \begin{array}{cccc}
+      A_{1,OLS} \\
+      A_{2,OLS} \\
+      \vdots  \\
+      A_{J,OLS} \\
+    \end{array}
+  \right)
+\end{eqnarray}
+\]</span></p>
+<p>となり、各経済変数の方程式を別個にOLS推計していけばよいことがわかります。
+　OLS推定に際し、VARの次数Kの選択を選択する必要がありますが、次数KはAIC（BIC）を評価軸に探索的に決定します。つまり、いろいろな値をKに設定し、OLS推計を行い、計算されたVAR(K)のAIC(BIC)のうちで最も値が大きいモデルの次数を真のモデルの次数Kとして採用するということです。RにもVARselect()という関数があり、引数にラグの探索最大数とデータを渡すことで最適な次数を計算してくれます（便利）。
+　このようにUVARはOLS推計で各変数間の相互依存関係をデータから推計できる手軽な手法です。私が知っている分野ですと財政政策乗数の推計に使用されていました。GDP、消費、投資、政府支出の４変数でVARを推定し、推定したVARでインパルス応答を見ることで１単位の財政支出の増加がGDP等に与える影響を定量的にシミュレートすることができたりします（指導教官が論文を書いてました）。そもそも私の専門のDSGEも誘導系に書き直せばVAR形式になり、インパルス応答などは基本的に一緒です。また、経済変数は慣性が強いので（特に我が国の場合）、インサンプルのモデルの当てはまりもいいです。ただし、あくまでインサンプルです。<b>アウトサンプルの当てはまりはそれほど良い印象はありません。</b>なぜなら、推定パラメータが多すぎるからです。UVARの予測に関する問題点はover-parametrizationです。例えば、先ほどの４変数UVARでラグが６期だったとすると、推定すべきパラメータは３１個になります。よって、データ数にもよりますが、パラメータ数がデータ数に近づくとインサンプルの補間に近づき、過学習を引き起こす危険性があります。日次GDP推計は大量の変数を使用するのでこの問題は非常に致命的になります。BVARはこの問題を解決することに主眼を置いています。</p>
+</div>
+<div id="bvar" class="section level2">
+<h2>BVARについて</h2>
+<p>　UVARの問題点はover-parametrizationであると述べました。BVARはこの問題を防ぐために不必要な説明変数（のパラメータ）をそぎ落とそうとします。ただ、不要なパラメータを推定する前に０と仮置き（カリブレート）するのではなく、１階の自己に関わるパラメータは１周り、その他変数のパラメータは０周りに正規分布するという形の制約を与えます。このモデルの最大の仮定は「各経済変数は多かれ少なかれドリフト付き１階のランダムウォークに従う」というものであり、上述したような事前分布を先験的に与えた上で推定を行うのです。砕けた言い方をすると、BVARの考え方は「経済変数の挙動は基本はランダムウォークだけど他変数のラグに予測力向上に資するものがあればそれも取り入れるよ」というものなんです。さて、前置きが長くなりましたが、具体的な説明に移りたいと思います。</p>
+<div id="section" class="section level3">
+<h3>具体的な推定方法（カルマンフィルタ）</h3>
+<p>　上述した事前分布に加えて、BVARがUVARと異なる点はパラメータがtime-varyingであるということです。なんとなく、パラメータがずっと固定よりもサンプルが増えるたびにその値が更新されるほうが予測精度が上がりそうですよね（笑）。推定手法としてはUVARの時のようにOLSをそれぞれにかけることはせず、<a href="https://qiita.com/MoriKen/items/0c80ef75749977767b43" class="uri">https://qiita.com/MoriKen/items/0c80ef75749977767b43</a> と呼ばれるアルゴリズムを用いて推定を行います。BVARは以下のような状態空間モデルとして定義されます（各ベクトル、行列の次元はUVAR時と同じです）。</p>
+<p><span class="math display">\[
+Y_{t} = X_{t}B_{t} + u_{t} \\
+B_{t} = \Phi B_{t-1} + \epsilon_{t} \\
+B_{t} = \left(
+    \begin{array}{cccc}
+      \beta_{00,t} \\
+      \beta_{11,t} \\
+      \vdots  \\
+      \beta_{JK,t} \\
+    \end{array}
+  \right), 
+\Phi = \left(
+    \begin{array}{cccc}
+      \phi_{00} &amp; 0 &amp; \ldots &amp; 0 \\
+      0 &amp; \phi_{11} &amp; \ldots &amp; 0 \\
+      \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+      0 &amp; 0 &amp; \ldots &amp; \phi_{JK}
+    \end{array}
+  \right),
+u_{t} = \left(
+    \begin{array}{cccc}
+      u_{1,t} \\
+      u_{2,t} \\
+      \vdots  \\
+      u_{J,t} \\
+    \end{array}
+  \right),
+\epsilon_{t} = \left(
+    \begin{array}{cccc}
+      \epsilon_{00,t} \\
+      \epsilon_{11,t} \\
+      \vdots  \\
+      \epsilon_{JK,t} \\
+    \end{array}
+  \right)
+\]</span></p>
+<p>状態空間モデルは観測可能なデータ（ex.経済統計）を用いて、観測不可能なデータ（ex.リスクプレミアムや限界消費性向等）を推定します。観測可能なデータと不可能なデータを関連付ける方程式を観測方程式、観測不可能なデータの挙動をモデル化した方程式を遷移方程式と呼びます。ここでは、1本目が観測方程式、2本目が遷移方程式となります。御覧の通り、観測方程式は通常のVARの形をしている一方、遷移方程式はAR(1)となっており、これによってパラメータ<span class="math inline">\(B_{t}\)</span>は過去の値を引きずりながら<span class="math inline">\(\epsilon_{t}\)</span>によって確率的に変動します。<span class="math inline">\(\Phi\)</span>は自己回帰係数です。誤差項<span class="math inline">\(u_{t}\)</span>と<span class="math inline">\(\epsilon_{t}\)</span>は平均０の正規分布に従い、その分散は</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+Var(u_{t}) &amp;=&amp; \sigma_{u}^{2} \\
+Var(\epsilon_{t}) &amp;=&amp; \sigma_{\epsilon}^{2}R
+\end{eqnarray}
+\]</span></p>
+<p>で与えられます。ここで、<span class="math inline">\(\Phi,R,\sigma_{u}^{2},\sigma_{\epsilon}^{2}\)</span>は既知であるとします。今、t-1期までのデータが入手可能であるとすると、そのデータをカルマンフィルタアルゴリズムで推定した<span class="math inline">\(B_{t-1|t-1}\)</span>とその分散共分散行列<span class="math inline">\(P_{t-1|t-1}\)</span>を用いて、t期の予想値を以下のように計算します。</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+B_{t|t-1} &amp;=&amp; \Phi B_{t-1|t-1} \\
+P_{t|t-1} &amp;=&amp; \Phi P_{t|t-1} \Phi&#39; + \sigma_{\epsilon}^{2}R
+\end{eqnarray}
+\]</span></p>
+<p>観測可能な変数の予測値はこの値を用いて計算します。</p>
+<p>$  = X_{t} B_{t|t-1}$</p>
+<p>次にt期の観測値が得られると次の更新方程式を用いて<span class="math inline">\(B_{t|t}, P_{t|t}\)</span>を計算します。</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+B_{t|t} &amp;=&amp; B_{t|t-1} + P_{t|t-1}X_{t}&#39;(X_{t}P_{t|t-1}X_{t}&#39; + \sigma_{u}^{2})^{-1}(Y_{t}-X_{t}B_{t|t-1}) \\
+P_{t|t} &amp;=&amp; P_{t|t-1} + P_{t|t-1}X_{t}&#39;(X_{t}P_{t|t-1}X_{t}&#39; + \sigma_{u}^{2})^{-1}X_{t}P_{t|t-1}
+\end{eqnarray}
+\]</span></p>
+<p><span class="math inline">\(\sigma_{\epsilon}^{2}R = 0\)</span>かつ<span class="math inline">\(\Phi = I\)</span>の場合は逐次最小二乗法に一致します。要は入手できるサンプル増えるたびにOLSをやり直していくことと同値だということです。こうして推計を行うのがBVARなのですが、カルマンフィルタは漸化式なので初期値<span class="math inline">\(B_{0|0}, P_{0|0}\)</span>を決めてやる必要があります。BVARの２つ目の特徴は初期値の計算に混合推定法を用いているところであり、ここに前述した事前分布が関係してきます。</p>
+</div>
+<div id="section-1" class="section level3">
+<h3>カルマンフィルタの初期値をどのようにきめるか</h3>
+<p>初期値<span class="math inline">\(B_{0|0}, P_{0|0}\)</span>をどうやって計算するのかを考えた際にすぐ思いつく方法としては、カルマンフィルタのスタート地点tの前に、初期値推計期間をある程度用意し、<span class="math inline">\(Y = XB + \epsilon\)</span>で<span class="math inline">\(B_{0|0}, P_{0|0}\)</span>を推定する方法があります。つまり、観測方程式をGLS推計し、そのパラメータを初期値とする方法です。その際のGLS推定量は</p>
+<p><span class="math display">\[
+\hat{B} = (X&#39;V^{-1}X)^{-1}X&#39;V^{-1}Y
+\]</span></p>
+<p>です。これでもいいんですが、これではただ時変パラメータを推計しているだけで先ほど述べたover-parametrizationの問題にはアプローチできていません。そこで、ここではパラメータ<span class="math inline">\(B\)</span>に対してなにか先験的な情報が得られているとしましょう。つまり、先述した「経済変数の挙動は基本はランダムウォークだけど他変数のラグに予測力向上に資するものがあればそれも取り入れるよ」という予想です。これを定式化してみましょう。つまり、パラメータ<span class="math inline">\(B\)</span>に対して以下の制約式を課します。</p>
+<p><span class="math display">\[
+r = RB + \nu
+\]</span></p>
+<p>ここで、<span class="math inline">\(E(\nu) = 0,Var(\nu) = V_{0}\)</span>です。また、<span class="math inline">\(r\)</span>は<span class="math inline">\(RB\)</span>の予想値であり、<span class="math inline">\(V_{0}\)</span>はその予想値の周りでのばらつきを表しています。取っ付きにくいかもしれませんが、<span class="math inline">\(r\)</span>は１階自己回帰係数に関わる部分は1、それ以外は0となるベクトルで、<span class="math inline">\(R\)</span>は単位行列<span class="math inline">\(I\)</span>だと思ってもらえばいいです。つまり、</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\left(
+    \begin{array}{cccc}
+      0 \\
+      1 \\
+      0 \\
+      \vdots  \\
+      1 \\
+      \vdots  \\
+      0 \\
+    \end{array}
+  \right)
+ &amp;=&amp; 
+\left(
+    \begin{array}{cccc}
+　  \beta_{0,1}^{1} \\
+      \beta_{1,1}^{1} \\
+      \beta_{2,1}^{1} \\
+      \vdots  \\
+      \beta_{j,1}^{j} \\
+      \vdots  \\
+      \beta_{J,K}^{J} \\
+    \end{array}
+  \right)
++
+\left(
+    \begin{array}{cccc}
+      \nu_{0,1}^{1} \\
+      \nu_{1,1}^{1} \\
+      \nu_{2,1}^{1}  \\
+\vdots  \\
+      \nu_{j,1}^{j}  \\
+\vdots  \\
+      \nu_{J,K}^{J} \\
+    \end{array}
+  \right)
+\end{eqnarray}
+\]</span></p>
+<p>みたいな感じです。ここで<span class="math inline">\(\beta_{j,k}^{i}\)</span>はi番目の方程式のj番目の変数のk次ラグにかかるパラメータを表しています。混合推定では、正規分布に従う観測値とこの事前分布が独立であるという仮定の下で観測方程式<span class="math inline">\(Y = XB + \epsilon\)</span>と$ r = RB + $を以下のように組み合わせます。</p>
+<p><span class="math display">\[
+\left(
+    \begin{array}{cccc}
+      Y \\
+      r 
+    \end{array}
+  \right) = \left(
+    \begin{array}{cccc}
+      X \\
+      R 
+    \end{array}
+  \right)B + 
+\left(
+    \begin{array}{cccc}
+      \epsilon \\
+      \nu 
+    \end{array}
+  \right)
+\]</span></p>
+<p>ここで、</p>
+<p><span class="math display">\[
+E\left(
+    \begin{array}{cccc}
+      \epsilon \\
+      \nu 
+    \end{array}
+  \right) = 0 \\
+Var\left(
+    \begin{array}{cccc}
+      \epsilon \\
+      \nu 
+    \end{array}
+  \right) = \left(
+    \begin{array}{cccc}
+      \sigma^{2}V &amp; 0 \\
+      0 &amp; V_{0} \\
+    \end{array}
+  \right)
+\]</span></p>
+<p>そして、このシステム体系をGLSで推計するのです。こうすることで、事前分布を考慮した初期値の推定を行うことができます。GLS推定量は以下のようになります。</p>
+<p><span class="math inline">\(\displaystyle \hat{B}_{M} = (\frac{1}{\sigma^{2}}X&#39;V^{-1}X + R&#39;V_{0}^{-1}R)^{-1}(\frac{1}{\sigma^{2}}X&#39;V^{-1}y + R&#39;V_{0}^{-1}r)\)</span></p>
+<p>ご覧になればわかるように、GLS推定量は上記2本の連立方程式(実際には行列なので何本もありますが)それぞれのGLS推定量を按分したような推定量になります。ここで、<span class="math inline">\(\sigma^{2}\)</span>は既知ではないので、いったんOLSで推計しその推定量を用います。問題は<span class="math inline">\(V_{0}\)</span>の置き方です。<span class="math inline">\(V_{0}\)</span>の各要素を小さくとれば、事前分布に整合的な推定量が得られます（つまり、ランダムウォーク）。逆に、大きくとれば通常のGLS推定量に近づいていきます。Doan, Litternam and Sims (1984)では以下のように分散を置いています。</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\displaystyle Var(\beta_{j,k}^{j}) &amp;=&amp; \frac{\pi_{5}・\pi_{1}}{k・exp(\pi_{4}w_{i}^{i})} \\
+\displaystyle Var(\beta_{j,k}^{i}) &amp;=&amp; \frac{\pi_{5}・\pi_{2}・\sigma_{i}^{2}}{k・exp(\pi_{4}w_{j}^{i})・\sigma_{j}^{2}} \\
+Var(c^{i}) &amp;=&amp; \pi_{5}・\pi_{3}・\sigma_{i}^{2}
+\end{eqnarray}
+\]</span></p>
+<p>ここで、<span class="math inline">\(\beta_{j,k}^{j}\)</span>は<span class="math inline">\(i\)</span>番目の方程式の自己回帰パラメータ、<span class="math inline">\(\beta_{j,k}^{i}\)</span>は<span class="math inline">\(i\)</span>番目方程式の他変数ラグ項にかかるパラメータ、<span class="math inline">\(c^{i}\)</span>は定数項です。そして、<span class="math inline">\(\pi_{1},\pi_{2},\pi_{3},\pi_{4},\pi_{5}\)</span>はハイパーパラメータと呼ばれるもので、カルマンフィルタにかけるパラメータの初期値の事前分布の分布の広がりを決定するパラメータとなっています。これらは初期値の推定を行う前に値を指定する必要があります。各ハイパーパラメータの具体的な特徴は以下の通りです。<span class="math inline">\(\pi_{1}\)</span>は<span class="math inline">\(\beta_{j,k}^{j}\)</span>の分散にのみ出現することから自己回帰係数に影響を与えるパラメータとなっています。具体的には、<span class="math inline">\(\pi_{1}\)</span>が大きくなればなるほど自己回帰係数は事前分布から大きく離れた辺りを取りうることになります。<span class="math inline">\(\pi_{2}\)</span>は<span class="math inline">\(\beta_{j,k}^{i}\)</span>の分散にのみ出現することから他変数のラグ項に影響を与えるパラメータとなっています。こちらも値が大きくなればなるほど係数は事前分布から大きく離れた辺りを取りうることになります。<span class="math inline">\(\pi_{3}\)</span>は定数項の事前分布に影響を与えるパラメータでこちらも考え方は同じです。<span class="math inline">\(\pi_{4}\)</span>はラグ項の分散(つまり定数項以外)に影響を与えるパラメータで、値が大きくなるにつれ、初期値は事前分布に近づいていきます。最後に<span class="math inline">\(\pi_{5}\)</span>ですが、こちらは全体にかかるパラメータで、値が大きくなるにつれ、初期値は事前分布から遠ざかります。
+　上式には、ハイパーパラメータ以外にもパラメータや変数が存在します。<span class="math inline">\(\sigma_{i}, \sigma_{j}\)</span>は<span class="math inline">\(y_{j,t}, y_{i,t}\)</span>をそれぞれAR(m)でフィッティングをかけた時の残差の標準偏差の推定値です。変数間のスケーリングの違いを考慮するために、<span class="math inline">\(\sigma_{i}\)</span>を<span class="math inline">\(\sigma_{j}\)</span>で割ったものを使用しています。本来ならば、VARの残差の標準偏差を使用すべきなのですが、推定する前にわかるわけもないので、それぞれAR(m)で推定をかけ、その標準偏差を使用しています((ランダムウォークが先験情報なので整合性は取れているような気がします))。<span class="math inline">\(w_{j}^{i}\)</span>は完全に恣意的なパラメータで、DLSではrelative weightsと呼ばれているものです。i番目の方程式のj番目の変数のラグ項にかかるパラメータが０であるかどうかについて、分析者の先験情報を反映するためのパラメータです。分散の式を見ればわかるように、relative weightが大きくなれば分散は小さくなり、推定値は事前分布に近づいていきます。DLSでは、ほとんどの変数は<span class="math inline">\(w_{i}^{i}=0,w_{j}^{i}=1\)</span>でよいと主張されています。つまり、自己ラグにかかる事前分布の分散に関しては確信をもってランダムウォークであるといえる一方、他変数ラグについては予測力向上に役立つもののあることを考え、値を１と置いているのです。一方、為替レートや株価はランダムウォーク色が強いということから大きい値を使用しています。最後に、<span class="math inline">\(Var(\beta_{j,k}^{j})\)</span>と<span class="math inline">\(Var(\beta_{j,k}^{i})\)</span>には分母にkがついています。つまり、ラグ次数kが大きくなればなるほど、その係数は０に近づいていくことを先験的情報として仮定していることになります((このおかげでVARの次数をこちらで指定する必要がなくなります。適当に大きい次数を指定しておけば、必要のない次数の大きいパラメータに関しては事前と値が０になるので。))。
+　これらがいわゆるMinnesota Priorの正体です((実はこれに加えて自己回帰パラメータの総和が１、他変数のラグ項にかかるパラメータの総和が０となる制約を課すのですが、話が複雑になりすぎるので今回は割愛しました))。初期値が事前分布に近づけばBVARはランダムウォークに近づきますし、離れるとUVARに近づきます。現実はその間となるのですが、なにを評価尺度としてハイパーパラメータの値を決めるかというと、それは当てはまりの良さということになります。</p>
+</div>
+<div id="section-2" class="section level3">
+<h3>ハイパーパラメータの決定方法とその評価尺度</h3>
+<p>当てはまりの良さと言ってもいろいろありますが、DLSはその時点で観測可能なデータから予測できるk期先の予測値の当てはまりの良さを基準としています。DLSでは以下の予測誤差ベクトル<span class="math inline">\(\hat{\epsilon}_{t+k|t}\)</span>のクロス積和を最小化することを目的関数として、ハイパーパラメータのチューニングを行っています。</p>
+<p><span class="math display">\[
+\hat{\epsilon}_{t+k|t} = \hat{Y}_{t+k|t}-Y_{t+k}
+\]</span></p>
+<p>ここで、<span class="math inline">\(\hat{Y}_{t+k|t}\)</span>はカルマンフィルタによるk期先の予測値です（kをいくつ先にすれば良いかは不明）。このクロス積は<span class="math inline">\(\hat{\epsilon}_{t+k|t}\hat{\epsilon}&#39;_{t+k|t}\)</span>であり、これをフィルタリングをかけるt=1期からサンプル期間であるt=T期まで計算していくので、最終的にはT個の予測誤差ベクトルを得ることになり、以下のようなこれらの総和を最小化します。</p>
+<p><span class="math display">\[
+\displaystyle \sum_{t=1}^{T-k}\hat{\epsilon}_{t+k|t}\hat{\epsilon}&#39;_{t+k|t}
+\]</span></p>
+<p>より厳密にはこのクロス積和の対数値を最小化するハイパーパラメータの値をグリッドサーチやランダムサーチで探索していくことになります((ここは機械学習等で用いられているベイズ最適化を利用するとより高速に収束させることが可能かもです。))。
+とまあ、BVARの推定方法はこんな感じです。他のVARと違い、恣意的であり、また推定方法が機械学習に近い点が特徴ではないかと思います。そもそも、BVARは予測に特化したVARですから、他のVARとは別物と考える方が良いかもです。</p>
+</div>
+</div>
+
+            </article>
+          </div>
+          
+      <div class='entry-meta-bottom'>
+        
+
+  <div class="entry-categories"><p><span>Categories</span>
+    
+    <a href="/my_blog/categories/%E6%97%A5%E6%AC%A1gdp" title="View all posts in 日次GDP">日次GDP</a>
+  </p>
+</div>
+
+
+
+<div class="entry-tags"><p><span>Tags</span>
+  
+  <a href="/my_blog/tags/bvar" title="View all posts tagged BVAR">BVAR</a>
+  
+
+</p></div>	</div>
+
+	
+<div class="author-meta">
+
+  <div class="author">
+    	
+      <img alt='Ayato Ashihara' src="https://www.gravatar.com/avatar/6785566618c563847db2adb93ca08111?s=100&d=identicon" class='avatar avatar-72 photo' height='72' width='72'>
+    
+    <span>
+      Written by:<a href="https://ayatoashihara.github.io/my_blog/about/" title="Posts by Ayato Ashihara" rel="author">Ayato Ashihara</a> </span>
+    </div>
+    <div class="bio">
+      
+      
+      <p></p>
+      
+      
+	
+
+<a class="facebook" target="_blank"
+href="https://www.facebook.com/ASSIY">
+<i class="fab fa-facebook-f"
+title="facebook icon"></i>
+</a>
+
+
+
+
+
+
+
+
+
+<a class="email" target="_blank"
+href="mailto:assiy119@yahoo.co.jp">
+<i class="fas fa-envelope"
+title="email icon"></i>
+</a>
+
+
+
+
+
+
+
+<a class="github" target="_blank"
+href="https://github.com/AyatoAshihara/my_blog">
+<i class="fab fa-github"
+title="github icon"></i>
+</a>
+
+
+
+
+
+
+
+</div>
+</div>
+
+</div>
+</div>
+
+<section id="comments" class="comments">
+  
+
+  
+
+
+
+
+</section>
+</div>
+
+ 
+
+
+
+    </div>
+
+    <footer id="site-footer" class="site-footer" role="contentinfo">
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/r.min.js"></script>
+
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+
+	<h1>
+    
+    <a href=""> 東京の資産運用会社で働く社会人が研究に没頭するブログ </a>
+    
+	</h1>
+
+			
+			<p class="site-description">院卒2年目の社会人が夜な夜な更新中。本ブログの内容は筆者が所属する組織の公式見解とは全く関係ありません。</p>
+			
+
+		<div id="menu-footer" class="menu-container menu-footer" role="navigation">
+		<div class="menu">
+
+      <ul id="menu-footer-items" class="menu-footer-items">
+        
+</ul>
+
+</div>	</div>
+
+<ul class="social-media-icons">
+
+        
+				<li>
+					<a class="facebook" target="_blank"
+					   href="https://www.facebook.com/ASSIY" >
+						<i class="fab fa-facebook-f" title="facebook"></i>
+						<span class="screen-reader-text">facebook</span>
+					</a>
+				</li>
+        
+
+        
+
+
+        
+
+        
+
+        
+        <li>
+        <a href="mailto:assiy119@yahoo.co.jp"  class="email">
+            <i class="fas fa-envelope" title="email"></i>
+            <span class="screen-reader-text">email</span>
+        </a>
+        </li>
+        
+
+        
+
+        
+
+
+        
+        <li>
+        <a href="https://github.com/AyatoAshihara/my_blog"  class="github" target="_blank">
+            <i class="fab fa-github" title="github"></i>
+            <span class="screen-reader-text">github</span>
+        </a>
+        </li>
+        
+
+
+        
+
+        
+        <li>
+        <a href="/my_blog/index.xml" data-animate-hover="pulse" class="rss" target="_blank">
+            <i class="fas fa-rss" title="rss"></i>
+            <span class="screen-reader-text">rss</span>
+        </a>
+        </li>
+        
+
+				</ul>	<div class="design-credit">
+		
+		<p>&copy; 2018 Göran Svensson</p>
+		
+		<p>Nederburg Hugo Theme by <a href="https://appernetic.io">Appernetic</a>.</p>
+		
+		<p>A port of Tracks by Compete Themes.</p>
+		
+	</div>
+</footer>
+
+  </div>
+  <script src="/my_blog/js/jquery.min.js"></script>
+<script src="/my_blog/js/jquerymigrate.js"></script>
+<script src="/my_blog/js/production.min.js?v=1556479544"></script>
+
+</body>
+</html>

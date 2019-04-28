@@ -12,7 +12,8 @@ linktitle: ''
 description: ''
 slug: post2
 tags: []
-categories: []
+categories:
+  - 仕事関連
 image: img/portfolio/post2.png
 showonlyimage: true
 ---

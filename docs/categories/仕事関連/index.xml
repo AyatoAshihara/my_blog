@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>仕事関連 on 東京の資産運用会社で働く社会人が研究に没頭するブログ</title>
+    <link>/my_blog/categories/%E4%BB%95%E4%BA%8B%E9%96%A2%E9%80%A3/</link>
+    <description>Recent content in 仕事関連 on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 17 Feb 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/my_blog/categories/%E4%BB%95%E4%BA%8B%E9%96%A2%E9%80%A3/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>【仕事関連】Asset Allocation ModelをRで組んでみた。</title>
+      <link>/my_blog/post/post2/</link>
+      <pubDate>Sun, 17 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post/post2/</guid>
+      <description>
+
+
+&lt;p&gt;今回はいつもと違って金融関連の記事を書きました。というのも社内でワークショップがあり、アセットアロケーションモデルを構築する必要が生じたからです。休日は国会図書館に籠り、先行研究を漁った結果、分散共分散行列をGARCHやARMAで推定し、最小分散ポートフォリオの性能向上を目指している論文がいくつか存在することがわかりました。今回はこれをRで実践し、推定方法によってパフォーマンスがどれほど変化するのかを実証してみたいと思います。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

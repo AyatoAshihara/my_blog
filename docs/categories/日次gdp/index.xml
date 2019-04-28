@@ -24,5 +24,31 @@
 </description>
     </item>
     
+    <item>
+      <title>【日次GDP】ガウス回帰の実装をやってみた</title>
+      <link>/my_blog/post/%E6%97%A5%E6%AC%A1gdp-%E3%82%AC%E3%82%A6%E3%82%B9%E5%9B%9E%E5%B8%B0%E3%81%AE%E5%AE%9F%E8%A3%85%E3%82%92%E3%82%84%E3%81%A3%E3%81%A6%E3%81%BF%E3%81%9F/</link>
+      <pubDate>Sun, 02 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post/%E6%97%A5%E6%AC%A1gdp-%E3%82%AC%E3%82%A6%E3%82%B9%E5%9B%9E%E5%B8%B0%E3%81%AE%E5%AE%9F%E8%A3%85%E3%82%92%E3%82%84%E3%81%A3%E3%81%A6%E3%81%BF%E3%81%9F/</guid>
+      <description>
+
+
+&lt;p&gt;最近巷で話題になっているガウス過程。ベイズ最適化で大活躍していますが、それ以外にも利用できる点はたくさんあります。非常に柔軟でたくさんの関数を近似できる一方、尤度を評価でき、また解析解も得られることからDNNよりも使い勝手が良いと個人的には思っています。また、ベイズ推論を使用しているため、原理的に過学習しないと言う利点もあります。今回はそんなガウス過程をRで実装してみました。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>【日次GDP】BVARについて</title>
+      <link>/my_blog/post/post5/</link>
+      <pubDate>Sat, 01 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post/post5/</guid>
+      <description>
+
+
+&lt;p&gt;時系列解析の分野ではしばしばベクトル自己回帰モデル（Vector Auto Regression, VAR）が使用されます。このモデルはOLSで推定でき、手頃でありながらGrangerの因果性テストで因果関係を統計的に検定することができるなど分析者にとって強力なツールとなっています。また、VARは改良しやすいのも特徴であり、構造VARやマルコフスイッチングVAR、パネルVARなど様々な特徴を備えたVARが提案されています。今回紹介するのは、Bayesian VAR（BVAR）と呼ばれるもので、VARの仲でも予測精度の向上を目材して開発されたモデルです。GDP予測モデルとして今では有名なGDP NOWのモデルもBVARを多用しています。興味のある人は是非。&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>
