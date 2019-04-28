@@ -3,119 +3,44 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/my_blog/post/work1/</loc>
-    <lastmod>2017-02-14T18:25:22+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>/my_blog/post/work2/</loc>
-    <lastmod>2016-11-05T19:41:01+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>/my_blog/post/work3/</loc>
-    <lastmod>2017-05-05T19:44:32+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>/my_blog/post/work4/</loc>
-    <lastmod>2017-11-21T19:50:47+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>/my_blog/post/work5/</loc>
-    <lastmod>2017-12-25T19:53:42+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>/my_blog/post/work7/</loc>
-    <lastmod>2018-01-01T19:57:40+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>/my_blog/post/work8/</loc>
-    <lastmod>2018-02-14T19:59:22+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>/my_blog/post/work9/</loc>
-    <lastmod>2018-05-06T20:02:19+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>/my_blog/post/work10/</loc>
-    <lastmod>2018-07-04T20:22:08+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>/my_blog/post/work11/</loc>
-    <lastmod>2018-09-30T20:23:59+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>/my_blog/about/</loc>
+    <loc>https://ayatoashihara.github.io/my_blog/about/</loc>
     <lastmod>2019-04-27T21:05:33+05:30</lastmod>
   </url>
   
   <url>
-    <loc>/my_blog/</loc>
+    <loc>https://ayatoashihara.github.io/my_blog/</loc>
     <lastmod>2019-04-27T21:05:33+05:30</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/my_blog/post/</loc>
+    <loc>https://ayatoashihara.github.io/my_blog/post/</loc>
     <lastmod>2019-04-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/my_blog/post/%E6%97%A5%E6%AC%A1gdp-%E3%82%AC%E3%82%A6%E3%82%B9%E5%9B%9E%E5%B8%B0%E3%81%AE%E5%AE%9F%E8%A3%85%E3%82%92%E3%82%84%E3%81%A3%E3%81%A6%E3%81%BF%E3%81%9F/</loc>
+    <loc>https://ayatoashihara.github.io/my_blog/post/%E6%97%A5%E6%AC%A1gdp-%E3%82%AC%E3%82%A6%E3%82%B9%E5%9B%9E%E5%B8%B0%E3%81%AE%E5%AE%9F%E8%A3%85%E3%82%92%E3%82%84%E3%81%A3%E3%81%A6%E3%81%BF%E3%81%9F/</loc>
     <lastmod>2019-04-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/my_blog/post/post2/</loc>
+    <loc>https://ayatoashihara.github.io/my_blog/post/post2/</loc>
     <lastmod>2019-02-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/my_blog/categories/</loc>
-    <lastmod>2017-12-25T19:53:42+05:30</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/categories/photography/</loc>
-    <lastmod>2017-12-25T19:53:42+05:30</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/categories/code/</loc>
-    <lastmod>2017-11-21T19:50:47+05:30</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/categories/travel/</loc>
-    <lastmod>2017-05-05T19:44:32+05:30</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/categories/design/</loc>
-    <lastmod>2017-02-14T18:25:22+05:30</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/contact/</loc>
+    <loc>https://ayatoashihara.github.io/my_blog/contact/</loc>
     <lastmod>2016-11-06T13:00:25+05:30</lastmod>
   </url>
   
   <url>
-    <loc>/my_blog/tags/</loc>
+    <loc>https://ayatoashihara.github.io/my_blog/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ayatoashihara.github.io/my_blog/tags/</loc>
     <priority>0</priority>
   </url>
   
