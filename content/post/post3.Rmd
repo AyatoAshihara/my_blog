@@ -726,8 +726,9 @@ $Var(X) = E_{Z}(Var(X|Y=Z))+Var_{Z}(E(X|Y=Z))$
 
 $$
 \begin{eqnarray}
-E(\alpha_{t|T}) &=& E_{\alpha_{t+1|T}}(E(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) &=& a_{t|t} + L_{t}(a_{t+1|T}-a_{t+1|t}) \\
-Var(\alpha_{t|T}) &=& E_{\alpha_{t+1|T}}(Var(\alpha_{t|t}|\alpha_{t+1|t} &=& \alpha_{t+1|T})) + Var_{\alpha_{t+1|T}}(E(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) \\
+E(\alpha_{t|T}) &=& E_{\alpha_{t+1|T}}(E(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) \\
+&=& a_{t|t} + L_{t}(a_{t+1|T}-a_{t+1|t}) \\
+Var(\alpha_{t|T}) &=& E_{\alpha_{t+1|T}}(Var(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) + Var_{\alpha_{t+1|T}}(E(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) \\
 &=& \Sigma_{t|t} - L_{t}\Sigma_{t+1|t}L_{t}' + E( (a_{t|t} + L_{t}(\alpha_{t+1|T}-a_{t+1|t}) - a_{t|t} - L_{t}(a_{t+1|T}-a_{t+1|t}))(a_{t|t} + L_{t}(\alpha_{t+1|T}-a_{t+1|t}) - a_{t|t} - L_{t}(a_{t+1|T}-a_{t+1|t}))') \\
 &=& \Sigma_{t|t} - L_{t}\Sigma_{t+1|t}L_{t}' + E( (L_{t}(\alpha_{t+1|T}-a_{t+1|t}) - L_{t}(a_{t+1|T}-a_{t+1|t}))(L_{t}(\alpha_{t+1|T}-a_{t+1|t}) - L_{t}(a_{t+1|T}-a_{t+1|t}))') \\
 &=& \Sigma_{t|t} - L_{t}\Sigma_{t+1|t}L_{t}' + E( (L_{t}\alpha_{t+1|T} - L_{t}a_{t+1|T})(L_{t}\alpha_{t+1|T} - L_{t}(a_{t+1|T})') \\

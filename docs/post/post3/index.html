@@ -26,7 +26,7 @@
         "datePublished": "2019-02-10 00:00:00 \x2b0000 UTC",
         "dateModified" : "2019-02-10 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post3\/",
-        "wordCount" : "1561",
+        "wordCount" : "1560",
         "image" : "/my_blog/https://hungarytoday.hu/wp-content/uploads/2016/07/Kalman2.jpg"",
         "keywords" : [ ""カルマンフィルタ"",""R"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1556473410" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1556473626" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1556473410" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1556473626" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -642,8 +642,9 @@ Var(\alpha_{t|T}) &amp;=&amp; E_{\alpha_{t+1|T}}(Var(\alpha_{t|t}|\alpha_{t+1|t}
 <p>よって、</p>
 <p><span class="math display">\[
 \begin{eqnarray}
-E(\alpha_{t|T}) &amp;=&amp; E_{\alpha_{t+1|T}}(E(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) &amp;=&amp; a_{t|t} + L_{t}(a_{t+1|T}-a_{t+1|t}) \\
-Var(\alpha_{t|T}) &amp;=&amp; E_{\alpha_{t+1|T}}(Var(\alpha_{t|t}|\alpha_{t+1|t} &amp;=&amp; \alpha_{t+1|T})) + Var_{\alpha_{t+1|T}}(E(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) \\
+E(\alpha_{t|T}) &amp;=&amp; E_{\alpha_{t+1|T}}(E(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) \\
+&amp;=&amp; a_{t|t} + L_{t}(a_{t+1|T}-a_{t+1|t}) \\
+Var(\alpha_{t|T}) &amp;=&amp; E_{\alpha_{t+1|T}}(Var(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) + Var_{\alpha_{t+1|T}}(E(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) \\
 &amp;=&amp; \Sigma_{t|t} - L_{t}\Sigma_{t+1|t}L_{t}&#39; + E( (a_{t|t} + L_{t}(\alpha_{t+1|T}-a_{t+1|t}) - a_{t|t} - L_{t}(a_{t+1|T}-a_{t+1|t}))(a_{t|t} + L_{t}(\alpha_{t+1|T}-a_{t+1|t}) - a_{t|t} - L_{t}(a_{t+1|T}-a_{t+1|t}))&#39;) \\
 &amp;=&amp; \Sigma_{t|t} - L_{t}\Sigma_{t+1|t}L_{t}&#39; + E( (L_{t}(\alpha_{t+1|T}-a_{t+1|t}) - L_{t}(a_{t+1|T}-a_{t+1|t}))(L_{t}(\alpha_{t+1|T}-a_{t+1|t}) - L_{t}(a_{t+1|T}-a_{t+1|t}))&#39;) \\
 &amp;=&amp; \Sigma_{t|t} - L_{t}\Sigma_{t+1|t}L_{t}&#39; + E( (L_{t}\alpha_{t+1|T} - L_{t}a_{t+1|T})(L_{t}\alpha_{t+1|T} - L_{t}(a_{t+1|T})&#39;) \\
@@ -902,7 +903,7 @@ title="github icon"></i>
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1556473410"></script>
+<script src="/my_blog/js/production.min.js?v=1556473626"></script>
 
 </body>
 </html>

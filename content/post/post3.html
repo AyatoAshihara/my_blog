@@ -410,8 +410,9 @@ Var(\alpha_{t|T}) &amp;=&amp; E_{\alpha_{t+1|T}}(Var(\alpha_{t|t}|\alpha_{t+1|t}
 <p>よって、</p>
 <p><span class="math display">\[
 \begin{eqnarray}
-E(\alpha_{t|T}) &amp;=&amp; E_{\alpha_{t+1|T}}(E(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) &amp;=&amp; a_{t|t} + L_{t}(a_{t+1|T}-a_{t+1|t}) \\
-Var(\alpha_{t|T}) &amp;=&amp; E_{\alpha_{t+1|T}}(Var(\alpha_{t|t}|\alpha_{t+1|t} &amp;=&amp; \alpha_{t+1|T})) + Var_{\alpha_{t+1|T}}(E(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) \\
+E(\alpha_{t|T}) &amp;=&amp; E_{\alpha_{t+1|T}}(E(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) \\
+&amp;=&amp; a_{t|t} + L_{t}(a_{t+1|T}-a_{t+1|t}) \\
+Var(\alpha_{t|T}) &amp;=&amp; E_{\alpha_{t+1|T}}(Var(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) + Var_{\alpha_{t+1|T}}(E(\alpha_{t|t}|\alpha_{t+1|t}=\alpha_{t+1|T})) \\
 &amp;=&amp; \Sigma_{t|t} - L_{t}\Sigma_{t+1|t}L_{t}&#39; + E( (a_{t|t} + L_{t}(\alpha_{t+1|T}-a_{t+1|t}) - a_{t|t} - L_{t}(a_{t+1|T}-a_{t+1|t}))(a_{t|t} + L_{t}(\alpha_{t+1|T}-a_{t+1|t}) - a_{t|t} - L_{t}(a_{t+1|T}-a_{t+1|t}))&#39;) \\
 &amp;=&amp; \Sigma_{t|t} - L_{t}\Sigma_{t+1|t}L_{t}&#39; + E( (L_{t}(\alpha_{t+1|T}-a_{t+1|t}) - L_{t}(a_{t+1|T}-a_{t+1|t}))(L_{t}(\alpha_{t+1|T}-a_{t+1|t}) - L_{t}(a_{t+1|T}-a_{t+1|t}))&#39;) \\
 &amp;=&amp; \Sigma_{t|t} - L_{t}\Sigma_{t+1|t}L_{t}&#39; + E( (L_{t}\alpha_{t+1|T} - L_{t}a_{t+1|T})(L_{t}\alpha_{t+1|T} - L_{t}(a_{t+1|T})&#39;) \\
