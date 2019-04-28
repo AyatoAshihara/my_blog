@@ -1,7 +1,7 @@
 ---
 title: 【日次GDP】ガウス回帰の実装をやってみた
 author: AyatoAshihara
-date: '2019-04-24'
+date: '2018-12-02'
 slug: 日次gdp-ガウス回帰の実装をやってみた
 categories: []
 tags: []

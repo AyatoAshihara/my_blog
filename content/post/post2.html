@@ -26,7 +26,10 @@ showonlyimage: true
 <div id="section" class="section level3">
 <h3>最小分散ポートフォリオ</h3>
 <p>最小分散ポートフォリオの詳しい説明はここでは割愛しますが、要は各資産（内株、外株、内債、外債、オルタナ）のリターンの平均と分散を計算し、それらを縦軸平均値、横軸分散の二次平面にプロットしたうえで、投資可能範囲を計算し、その集合の中で最も分散が小さくなるポートフォリオの事らしいです（下図参照）。</p>
-<p>[f:id:osashimix:20190217131412p:plain]</p>
+<div class="figure">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Minimum_variance_flontier_of_MPT.svg/1280px-Minimum_variance_flontier_of_MPT.svg.png" alt="minimum variance portfolio" />
+<p class="caption">minimum variance portfolio</p>
+</div>
 <p>先行研究のCarroll et. al. (2017)では、「 this paper focusses on minimum-variance portfolios requiring only estimates of asset covariance, hence bypassing the well-known problem of estimation error in forecasting expected asset returns. 」と記載されており、現状でも期待リターンの推計は難しく、それを必要としない最小分散ポートフォリオは有益で実践的な手法であるといえます。最小分散ポートフォリオの目的関数は、その名の通り「分散を最小化すること」です。今、各資産のリターンを集めたベクトルを[tex:r]、各資産の保有ウェイトを<span class="math inline">\(\theta\)</span>、ポートフォリオリターンを<span class="math inline">\(R_{p}\)</span>で表すことにすると、ポートフォリオ全体の分散<span class="math inline">\(var(R_{p})\)</span>は以下のように記述できます。</p>
 <p><span class="math display">\[
 var(R_{p}) = var(r^{T}\theta) = E( (r^{T}\theta)(r^{T}\theta)^{T}) = \theta^{T}\Sigma\theta

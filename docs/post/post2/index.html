@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/tomorrow-night-blue.min.css" rel="stylesheet">
+<head><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/zenburn.min.css" rel="stylesheet">
 
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -26,7 +26,7 @@
         "datePublished": "2019-02-17 00:00:00 \x2b0000 UTC",
         "dateModified" : "2019-02-17 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post2\/",
-        "wordCount" : "1052",
+        "wordCount" : "1054",
         "image" : "/my_blog/img/portfolio/post2.png"",
         "keywords" : [ "Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1556455565" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1556473410" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1556455565" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1556473410" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -71,6 +71,10 @@
     <div class="menu">
 
       <ul id="menu-secondary-items" class="menu-secondary-items">
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E6%97%A5%E6%AC%A1gdp">日次gdp</a>
+        </li>
         
 
       </ul>
@@ -243,7 +247,10 @@
 <div id="section" class="section level3">
 <h3>最小分散ポートフォリオ</h3>
 <p>最小分散ポートフォリオの詳しい説明はここでは割愛しますが、要は各資産（内株、外株、内債、外債、オルタナ）のリターンの平均と分散を計算し、それらを縦軸平均値、横軸分散の二次平面にプロットしたうえで、投資可能範囲を計算し、その集合の中で最も分散が小さくなるポートフォリオの事らしいです（下図参照）。</p>
-<p>[f:id:osashimix:20190217131412p:plain]</p>
+<div class="figure">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Minimum_variance_flontier_of_MPT.svg/1280px-Minimum_variance_flontier_of_MPT.svg.png" alt="minimum variance portfolio" />
+<p class="caption">minimum variance portfolio</p>
+</div>
 <p>先行研究のCarroll et. al. (2017)では、「 this paper focusses on minimum-variance portfolios requiring only estimates of asset covariance, hence bypassing the well-known problem of estimation error in forecasting expected asset returns. 」と記載されており、現状でも期待リターンの推計は難しく、それを必要としない最小分散ポートフォリオは有益で実践的な手法であるといえます。最小分散ポートフォリオの目的関数は、その名の通り「分散を最小化すること」です。今、各資産のリターンを集めたベクトルを[tex:r]、各資産の保有ウェイトを<span class="math inline">\(\theta\)</span>、ポートフォリオリターンを<span class="math inline">\(R_{p}\)</span>で表すことにすると、ポートフォリオ全体の分散<span class="math inline">\(var(R_{p})\)</span>は以下のように記述できます。</p>
 <p><span class="math display">\[
 var(R_{p}) = var(r^{T}\theta) = E( (r^{T}\theta)(r^{T}\theta)^{T}) = \theta^{T}\Sigma\theta
@@ -802,7 +809,7 @@ title="github icon"></i>
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1556455565"></script>
+<script src="/my_blog/js/production.min.js?v=1556473410"></script>
 
 </body>
 </html>
