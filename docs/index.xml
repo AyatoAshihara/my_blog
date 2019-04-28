@@ -2,30 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>東京の資産運用会社で働く社会人が研究に没頭するブログ</title>
-    <link>https://ayatoashihara.github.io/my_blog/</link>
+    <link>/my_blog/</link>
     <description>Recent content on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 27 Apr 2019 21:05:33 +0530</lastBuildDate>
     
-	<atom:link href="https://ayatoashihara.github.io/my_blog/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/my_blog/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>About me</title>
-      <link>https://ayatoashihara.github.io/my_blog/about/</link>
+      <link>/my_blog/about/</link>
       <pubDate>Sat, 27 Apr 2019 21:05:33 +0530</pubDate>
       
-      <guid>https://ayatoashihara.github.io/my_blog/about/</guid>
+      <guid>/my_blog/about/</guid>
       <description>奈良県出身の院卒2年目の25歳。関西学院大学大学院総合政策研究科修了。専攻はマクロ経済（主にDynamic Stochastic General Equilibruim model）、時系列解析やテキストマイニングにも手を出していました。現在は運用会社にて機関投資家向けのレポーティング業務に従事。広瀬すずより有村架純よりお姉ちゃんのほうがタイプ。</description>
     </item>
     
     <item>
       <title>【日次GDP】ガウス回帰の実装をやってみた</title>
-      <link>https://ayatoashihara.github.io/my_blog/post/%E6%97%A5%E6%AC%A1gdp-%E3%82%AC%E3%82%A6%E3%82%B9%E5%9B%9E%E5%B8%B0%E3%81%AE%E5%AE%9F%E8%A3%85%E3%82%92%E3%82%84%E3%81%A3%E3%81%A6%E3%81%BF%E3%81%9F/</link>
+      <link>/my_blog/post/%E6%97%A5%E6%AC%A1gdp-%E3%82%AC%E3%82%A6%E3%82%B9%E5%9B%9E%E5%B8%B0%E3%81%AE%E5%AE%9F%E8%A3%85%E3%82%92%E3%82%84%E3%81%A3%E3%81%A6%E3%81%BF%E3%81%9F/</link>
       <pubDate>Wed, 24 Apr 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://ayatoashihara.github.io/my_blog/post/%E6%97%A5%E6%AC%A1gdp-%E3%82%AC%E3%82%A6%E3%82%B9%E5%9B%9E%E5%B8%B0%E3%81%AE%E5%AE%9F%E8%A3%85%E3%82%92%E3%82%84%E3%81%A3%E3%81%A6%E3%81%BF%E3%81%9F/</guid>
+      <guid>/my_blog/post/%E6%97%A5%E6%AC%A1gdp-%E3%82%AC%E3%82%A6%E3%82%B9%E5%9B%9E%E5%B8%B0%E3%81%AE%E5%AE%9F%E8%A3%85%E3%82%92%E3%82%84%E3%81%A3%E3%81%A6%E3%81%BF%E3%81%9F/</guid>
       <description>
 
 
@@ -35,10 +35,10 @@
     
     <item>
       <title>【仕事関連】Asset Allocation ModelをRで組んでみた。</title>
-      <link>https://ayatoashihara.github.io/my_blog/post/post2/</link>
+      <link>/my_blog/post/post2/</link>
       <pubDate>Sun, 17 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://ayatoashihara.github.io/my_blog/post/post2/</guid>
+      <guid>/my_blog/post/post2/</guid>
       <description>
 
 

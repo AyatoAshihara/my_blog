@@ -7,4 +7,4 @@ title: About me
 
 ![This is me][1]
 
-[1]: /img/about.jpg
+[1]: /img/about.png
