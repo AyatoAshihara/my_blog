@@ -235,7 +235,9 @@ P_{t|t-1} &amp;=&amp; \Phi P_{t|t-1} \Phi&#39; + \sigma_{\epsilon}^{2}R
 \end{eqnarray}
 \]</span></p>
 <p>観測可能な変数の予測値はこの値を用いて計算します。</p>
-<p>$  = X_{t} B_{t|t-1}$</p>
+<p><span class="math display">\[
+\hat{Y_{t}} = X_{t} B_{t|t-1}
+\]</span></p>
 <p>次にt期の観測値が得られると次の更新方程式を用いて<span class="math inline">\(B_{t|t}, P_{t|t}\)</span>を計算します。</p>
 <p><span class="math display">\[
 \begin{eqnarray}
@@ -361,5 +363,9 @@ Var(c^{i}) &amp;=&amp; \pi_{5}・\pi_{3}・\sigma_{i}^{2}
 \]</span></p>
 <p>より厳密にはこのクロス積和の対数値を最小化するハイパーパラメータの値をグリッドサーチやランダムサーチで探索していくことになります((ここは機械学習等で用いられているベイズ最適化を利用するとより高速に収束させることが可能かもです。))。
 とまあ、BVARの推定方法はこんな感じです。他のVARと違い、恣意的であり、また推定方法が機械学習に近い点が特徴ではないかと思います。そもそも、BVARは予測に特化したVARですから、他のVARとは別物と考える方が良いかもです。</p>
+<p>（追記　2019/4/29）</p>
+</div>
+<div id="r" class="section level3">
+<h3>Rでの実装</h3>
 </div>
 </div>
