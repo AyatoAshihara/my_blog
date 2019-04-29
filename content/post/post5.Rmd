@@ -644,7 +644,7 @@ MPrior <- function(x,order,pi){
 
 ```
 
-```{r,echo=FALSE}
+```{r,eval=FALSE}
 library(seasonal)
 
 kalmanfiter <- function(y,I,t,z,c=0,R=NA,Q=NA,d=0,S=NA,h=NA,a_int=NA,sig_int=NA){

@@ -26,7 +26,7 @@
         "datePublished": "2018-12-01 00:00:00 \x2b0000 UTC",
         "dateModified" : "2018-12-01 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post5\/",
-        "wordCount" : "841",
+        "wordCount" : "1799",
         "image" : "/my_blog/%!s(\u003cnil\u003e)"",
         "keywords" : [ ""BVAR"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1556504963" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1556505080" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1556504963" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1556505080" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -605,6 +605,241 @@ Var(c^{i}) &amp;=&amp; \pi_{5}・\pi_{3}・\sigma_{i}^{2}
 </div>
 <div id="r" class="section level3">
 <h3>Rでの実装</h3>
+<pre class="r"><code>library(seasonal)
+
+kalmanfiter &lt;- function(y,I,t,z,c=0,R=NA,Q=NA,d=0,S=NA,h=NA,a_int=NA,sig_int=NA){
+  #-------------------------------------------------------------------
+  # Implemention of Kalman filter
+  #   y - observed variable
+  #   I - the number of unobserved variable
+  #   t - parameter of endogenous variable in state equation
+  #   z - parameter of endogenous variable in observable equation
+  #   c - constant in state equaion
+  #   R - parameter of exogenous variable in state equation
+  #   Q - var-cov matrix of exogenous variable in state equation
+  #   d - constant in observable equaion
+  #   S - parameter of exogenous variable in observable equation
+  #   h - var-cov matrix of exogenous variable in observable equation
+  #   a_int - initial value of endogenous variable
+  #   sig_int - initial value of variance of endogenous variable
+  #-------------------------------------------------------------------
+  
+  library(MASS)
+    
+  # 1.Define Variable
+  if (class(y)!=&quot;matrix&quot;){
+    y &lt;- as.matrix(y)
+  }
+  N &lt;- NROW(y) # sample size
+  L &lt;- NCOL(y) # the number of observable variable 
+  a_pre &lt;- array(0,dim = c(I,1,N)) # prediction of unobserved variable
+  a_fil &lt;- array(0,dim = c(I,1,N+1)) # filtered of unobserved variable
+  sig_pre &lt;- array(0,dim = c(I,I,N)) # prediction of var-cov mat. of unobserved variable
+  sig_fil &lt;- array(0,dim = c(I,I,N+1)) # filtered of var-cov mat. of unobserved variable
+  y_pre &lt;- array(0,dim = c(L,1,N)) # prediction of observed variable
+  F_pre &lt;- array(0,dim = c(L,L,N)) # auxiliary variable 
+  k &lt;- array(0,dim = c(I,L,N)) # kalman gain
+  
+  if (is.na(a_int)==TRUE){
+    a_int &lt;- matrix(0,nrow = I,ncol = 1)
+  }
+  if (is.na(sig_int)==TRUE){
+    sig_int &lt;- diag(1,nrow = I,ncol = I)
+  }
+  if (is.na(R)==TRUE){
+    R &lt;- diag(1,nrow = I,ncol = I)
+  }
+  if (is.na(Q)==TRUE){
+    Q &lt;- diag(1,nrow = I,ncol = I)
+  }
+  if (is.na(S)==TRUE){
+    S &lt;- matrix(1,nrow = L,ncol = L)
+  }
+  if (is.na(h)==TRUE){
+    H &lt;- array(0,dim = c(L,L,N))
+    for(i in 1:N){
+      diag(H[,,i]) = 1
+    }
+  }else if (class(h)!=&quot;array&quot;){
+    H &lt;- array(h,dim = c(NROW(h),NCOL(h),N))
+  }
+  
+  # fill infinite if observed data is NA
+  for(i in 1:N){
+    miss &lt;- is.na(y[i,])
+    diag(H[,,i])[miss] &lt;- 1e+32
+  }
+  y[is.na(y)] &lt;- 0
+  
+  # 2.Set Initial Value
+  a_fil[,,1] &lt;- a_int
+  sig_fil[,,1] &lt;- sig_int
+  
+  # 3.Implement Kalman filter
+  for (i in 1:N){
+    if(class(z)==&quot;array&quot;){
+      Z &lt;- z[,,i]
+    }else{
+      Z &lt;- z
+    }
+    a_pre[,,i] &lt;- t%*%a_fil[,,i] + c
+    sig_pre[,,i] &lt;- t%*%sig_fil[,,i]%*%t(t) + R%*%Q%*%t(R)
+    y_pre[,,i] &lt;- Z%*%a_pre[,,i] + d
+    F_pre[,,i] &lt;- Z%*%sig_pre[,,i]%*%t(Z) + S%*%H[,,i]%*%t(S)
+    k[,,i] &lt;- sig_pre[,,i]%*%t(Z)%*%ginv(F_pre[,,i])
+    a_fil[,,i+1] &lt;- a_pre[,,i] + k[,,i]%*%(y[i,]-y_pre[,,i])
+    sig_fil[,,i+1] &lt;- sig_pre[,,i] - k[,,i]%*%F_pre[,,i]%*%t(k[,,i])
+  }
+  
+  # 4.Aggregate results
+  result &lt;- list(a_pre,a_fil,sig_pre,sig_fil,y_pre,k,t,z)
+  names(result) &lt;- c(&quot;state prediction&quot;, &quot;state filtered&quot;, &quot;state var prediction&quot;, 
+                     &quot;state var filtered&quot;, &quot;observable prediction&quot;, &quot;kalman gain&quot;,
+                     &quot;parameter of state eq&quot;, &quot;parameter of observable eq&quot;)
+  return(result)
+}
+
+MPrior &lt;- function(x,order,pi){
+  #-------------------------------------------------------------------
+  # Make Minnesota Prior
+  #   x - dataset
+  #   order - max lag of autoregression
+  #   pi - a set of hyper-parameter of prior matrix
+  #-------------------------------------------------------------------
+
+  library(MASS)
+    
+  # 1. Process row data
+  for (i in 1:5){
+    eval(parse(text = paste0(&quot;pi&quot;,i,&quot;=pi[[&quot;,i,&quot;]]&quot;)))
+  }
+  if (class(x)!=&quot;matrix&quot;){
+    x &lt;- as.matrix(x)
+  }
+  dependent &lt;- as.matrix(x[(order+1):NROW(x),1])
+  for (i in 2:NCOL(x)){
+    dependent &lt;- rbind(dependent,as.matrix(x[(order+1):NROW(x),i]))
+  }
+  explanatory &lt;- matrix(1,nrow = (NROW(x)-order),ncol = 1) # explanatory variable
+  for (i in 1:order){
+    eval(parse(text = paste0(&quot;explanatory&quot;,i,&quot; &lt;- x[(order-i+1):(NROW(x)-i),]&quot;)))
+    eval(parse(text = paste0(&quot;explanatory &lt;- cbind(explanatory,explanatory&quot;,i,&quot;)&quot;)))
+    eval(parse(text = paste0(&quot;rm(explanatory&quot;,i,&quot;)&quot;)))
+  }
+  explanatory &lt;- diag(1,nrow = NCOL(x),ncol = NCOL(x))%x%as.matrix(explanatory)
+  npara &lt;- NCOL(explanatory) # the number of parameters/ ncol(x)*(ncol(x)*order + 1(const))
+  
+  # 2. Make Prior matrixes
+  r &lt;- as.matrix(numeric(npara)) # a part of dependent variable in mixed estimation
+  iter1 &lt;- numeric(NCOL(x))
+  n &lt;- 2
+  for (i in 1:length(iter1)){
+    iter1[i] &lt;- n
+    n &lt;- n + npara/order + 1
+  }
+  for (i in iter1){
+    r[i] &lt;- 1
+  }
+  R &lt;- diag(1,nrow = npara,ncol = npara) # a part of explanatory variables in mixed estimation
+  V &lt;- diag(1,nrow = NROW(explanatory),ncol = NROW(explanatory)) # coefficient matrix of var-cov matrix in mixed estimation
+  
+  V0 &lt;- matrix(0,nrow = npara,ncol = npara) # Prior for var matrix
+  
+  # PRIOR FOR VAR OF CONSTANT
+  sigi &lt;- numeric(NCOL(x)) # var of AR(m)
+  for (i in 1:NCOL(x)){
+    AR &lt;- ar(x[,i],order.max = order)
+    sigi[i] &lt;- AR$var.pred
+  }
+  sigma_AR &lt;- diag(sigi,nrow = NCOL(x),ncol = NCOL(x))
+  iter2 &lt;- seq(1,npara,(NCOL(x)*order+1))
+  n &lt;- 1
+  for (i in iter2){
+    V0[i,i] &lt;- pi5*pi3*sigi[n]
+    n &lt;- n + 1
+  }
+  
+  # PRIOR FOR VAR OF AUTOREGRESSIVE PARAMETER
+  wi &lt;- 0 # prior weight on s.d. of autoregressive parameter
+  k &lt;- 0 # decay parameter
+  iter3 &lt;- numeric((NCOL(x)*order))
+  n &lt;- 2;iter3[1] &lt;- n
+  for (i in 2:length(iter3)){
+    if ((i-1)%%order == 0){
+      n &lt;- n + NCOL(x) + 2 # const
+      iter3[i] &lt;- n 
+    }else{
+      n &lt;- n + NCOL(x)
+      iter3[i] &lt;- n
+    }
+  }
+  for (i in iter3) {
+    k &lt;- k + 1
+    V0[i,i] &lt;- pi5*pi1/(k*exp(pi4*wi))
+    if (k == order){
+      k = 0
+    }
+  }
+  
+  # PRIOR FOR VAR OF DISTRIBUTED LAG PARAMETER
+  wj &lt;- 1 # prior weight on s.d. of distributed lag parameter
+  k &lt;- 1 # decay parameter
+  count &lt;- 0
+  n &lt;- 1
+  ndis &lt;- npara - NCOL(x) - length(iter3) # the number of distibuted lag in each equation
+  
+  l &lt;- rep(1:NCOL(x),length=npara)
+  temp &lt;- numeric(length(iter3))
+  j &lt;- 1;temp[1] &lt;- j
+  for (i in 2:length(temp)){
+    if ((i-1)%%order == 0){
+      j &lt;- j + NCOL(x) + 1 # const
+      temp[i] &lt;- j 
+    }else{
+      j &lt;- j + NCOL(x)
+      temp[i] &lt;- j
+    }
+  }
+  l &lt;- l[-c(temp)]; l &lt;- l[1:(ndis)]
+  
+  iter4 &lt;- 1:npara; iter4 &lt;- iter4[-c(iter2,iter3)]
+  for (i in iter4){
+    count &lt;- count + 1
+    V0[i,i] &lt;- pi5*pi2*sigi[n]/(k*exp(pi4*wj)*sigi[l[count]])
+    if(count%%(order-1) == 0){
+      k &lt;- k + 1
+    }
+    if (count%%(ndis/NCOL(x)) == 0){
+      n = n + 1
+      k = 1
+    }
+  }
+
+  # 3. Estimate OLS
+  beta &lt;- ginv((t(explanatory)%*%explanatory))%*%t(explanatory)%*%dependent
+  sig &lt;- as.numeric((NROW(explanatory)-NCOL(explanatory))^(-1)*
+                      t(dependent-explanatory%*%beta)%*%ginv(V)%*%
+                      (dependent-explanatory%*%beta))
+  
+  # 4. Implement Mixed Estimation for initial values
+  beta_M &lt;- ginv((1/sig)*t(explanatory)%*%ginv(V)%*%explanatory + t(R)%*%ginv(V0)%*%R)%*%
+    ((sig)^(-1)*t(explanatory)%*%ginv(V)%*%dependent + t(R)%*%ginv(V0)%*%r)
+  sig_M &lt;- sig*ginv((sig)^(-1)*t(explanatory)%*%ginv(V)%*%explanatory + t(R)%*%ginv(V0)%*%R)
+  
+  # for kalman filter
+  observable &lt;- as.matrix(x[(order+1):NROW(x),]) # dependent variable
+  coefficient &lt;- array(0,dim = c(nrow = NCOL(x),ncol = npara,(NROW(x)-order))) # explanatory variable
+  for(i in 1:(NROW(x)-order)){
+    for (k in 1:NCOL(x)){
+      coefficient[k,(1+(k-1)*npara/NCOL(x)):(k*npara/NCOL(x)),i] &lt;- explanatory[i,1:(npara/NCOL(x))]
+    }
+  }
+  
+  result &lt;- list(observable, coefficient, beta_M, sig_M, sigma_AR, V0, order, npara)
+  names(result) &lt;- c(&quot;observable&quot;, &quot;coefficient&quot;,&quot;beta_M&quot;, &quot;sig_M&quot;,&quot;sigma_AR&quot;, &quot;V0&quot;,&quot;order&quot;,&quot;npara&quot;)
+  
+  return(result)
+}</code></pre>
 </div>
 </div>
 
@@ -804,7 +1039,7 @@ title="github icon"></i>
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1556504963"></script>
+<script src="/my_blog/js/production.min.js?v=1556505080"></script>
 
 </body>
 </html>
