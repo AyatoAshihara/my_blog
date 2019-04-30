@@ -13,6 +13,9 @@ featuredpath: ''
 linktitle: ''
 image: img/portfolio/post1.png
 showonlyimage: true
+output:
+  blogdown::html_page:
+    highlight: tango
 ---
 
 最近巷で話題になっているガウス過程。ベイズ最適化で大活躍していますが、それ以外にも利用できる点はたくさんあります。非常に柔軟でたくさんの関数を近似できる一方、尤度を評価でき、また解析解も得られることからDNNよりも使い勝手が良いと個人的には思っています。また、ベイズ推論を使用しているため、原理的に過学習しないと言う利点もあります。今回はそんなガウス過程をRで実装してみました。

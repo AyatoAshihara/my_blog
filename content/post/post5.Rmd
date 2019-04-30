@@ -7,6 +7,9 @@ categories:
   - 日次GDP
 tags:
   - BVAR
+output:
+  blogdown::html_page:
+    highlight: tango
 ---
 
 時系列解析の分野ではしばしばベクトル自己回帰モデル（Vector Auto Regression, VAR）が使用されます。このモデルはOLSで推定でき、手頃でありながらGrangerの因果性テストで因果関係を統計的に検定することができるなど分析者にとって強力なツールとなっています。また、VARは改良しやすいのも特徴であり、構造VARやマルコフスイッチングVAR、パネルVARなど様々な特徴を備えたVARが提案されています。今回紹介するのは、Bayesian VAR（BVAR）と呼ばれるもので、VARの仲でも予測精度の向上を目材して開発されたモデルです。GDP予測モデルとして今では有名なGDP NOWのモデルもBVARを多用しています。興味のある人は是非。

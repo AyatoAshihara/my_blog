@@ -8,8 +8,11 @@ categories:
 tags:
   - カルマンフィルタ
   - R
-image: img/portfolio/post6.png
+image: img/portfolio/post6.jpg
 showonlyimage: true
+output:
+  blogdown::html_page:
+    highlight: tango
 ---
 
 前回集めた経済データをGiannone et al (2008)のマルチファクターモデルで推定し、四半期GDPを予測したいと思います。Giannoneらの論文ではUSデータを用いており、予測精度はエコノミストを超えることが実証されていました。今回は日本のデータで実証したいと思います。

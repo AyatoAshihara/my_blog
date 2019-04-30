@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>BVAR on 東京の資産運用会社で働く社会人が研究に没頭するブログ</title>
-    <link>/my_blog/tags/bvar/</link>
-    <description>Recent content in BVAR on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
+    <title>Webスクレイピング on 東京の資産運用会社で働く社会人が研究に没頭するブログ</title>
+    <link>/my_blog/tags/web%E3%82%B9%E3%82%AF%E3%83%AC%E3%82%A4%E3%83%94%E3%83%B3%E3%82%B0/</link>
+    <description>Recent content in Webスクレイピング on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 01 Dec 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 14 Jul 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/my_blog/tags/bvar/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/my_blog/tags/web%E3%82%B9%E3%82%AF%E3%83%AC%E3%82%A4%E3%83%94%E3%83%B3%E3%82%B0/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>【日次GDP】BVARについて</title>
-      <link>/my_blog/post/post5/</link>
-      <pubDate>Sat, 01 Dec 2018 00:00:00 +0000</pubDate>
+      <title>【日次GDP】日次GDP推計に使用する経済統計を統計ダッシュボードから集めてみた。</title>
+      <link>/my_blog/post/post7/</link>
+      <pubDate>Sat, 14 Jul 2018 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post5/</guid>
+      <guid>/my_blog/post/post7/</guid>
       <description>
 &lt;style type=&#34;text/css&#34;&gt;
 a.sourceLine { display: inline-block; line-height: 1.25; }
@@ -82,7 +82,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 &lt;/style&gt;
 
 
-&lt;p&gt;時系列解析の分野ではしばしばベクトル自己回帰モデル（Vector Auto Regression, VAR）が使用されます。このモデルはOLSで推定でき、手頃でありながらGrangerの因果性テストで因果関係を統計的に検定することができるなど分析者にとって強力なツールとなっています。また、VARは改良しやすいのも特徴であり、構造VARやマルコフスイッチングVAR、パネルVARなど様々な特徴を備えたVARが提案されています。今回紹介するのは、Bayesian VAR（BVAR）と呼ばれるもので、VARの仲でも予測精度の向上を目材して開発されたモデルです。GDP予測モデルとして今では有名なGDP NOWのモデルもBVARを多用しています。興味のある人は是非。&lt;/p&gt;
+&lt;p&gt;Rでデータ集めをします。データ分析はデータ集めと前処理が7割を占めるといわれる中、データ集めを自動化すべくウェブスクレイピングを行いました。これで自動的にデータをアップデートすることが可能になりました。経済データはestatのapiが提供されており、それを用いれば代表的なデータを取得することができます。今回はRのパッケージであるrvestを使用しています。&lt;/p&gt;
 </description>
     </item>
     

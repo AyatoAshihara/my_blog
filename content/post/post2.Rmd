@@ -2,9 +2,6 @@
 title: "【仕事関連】Asset Allocation ModelをRで組んでみた。"
 author: "AyatoAshihara"
 date: '2019-02-17'
-output:
-  html_document:
-    df_print: paged
 featured: ''
 featuredalt: ''
 featuredpath: ''
@@ -16,6 +13,9 @@ categories:
   - 仕事関連
 image: img/portfolio/post2.png
 showonlyimage: true
+output:
+  blogdown::html_page:
+    highlight: tango
 ---
 
 今回はいつもと違って金融関連の記事を書きました。というのも社内でワークショップがあり、アセットアロケーションモデルを構築する必要が生じたからです。休日は国会図書館に籠り、先行研究を漁った結果、分散共分散行列をGARCHやARMAで推定し、最小分散ポートフォリオの性能向上を目指している論文がいくつか存在することがわかりました。今回はこれをRで実践し、推定方法によってパフォーマンスがどれほど変化するのかを実証してみたいと思います。

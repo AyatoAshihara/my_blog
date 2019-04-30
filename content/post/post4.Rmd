@@ -5,6 +5,9 @@ date: '2018-05-18'
 slug: post4
 categories: []
 tags: []
+output:
+  blogdown::html_page:
+    highlight: tango
 ---
 
 どうもはじめまして。

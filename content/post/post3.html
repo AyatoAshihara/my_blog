@@ -10,8 +10,73 @@ tags:
   - R
 image: https://hungarytoday.hu/wp-content/uploads/2016/07/Kalman2.jpg
 showonlyimage: true
+output:
+  blogdown::html_page:
+    highlight: tango
 ---
 
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  { background-color: #f8f8f8; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 
 <p>時系列解析には欠かせないカルマンフィルタ。Rでもパッケージが用意されていて非常に便利ですが、ここではいったん理解を優先し、カルマンフィルタの実装を行ってみたいと思います。ちなみに写真はカルマンフィルタの生みの親カルマンさんです（たぶん）。</p>
@@ -171,155 +236,155 @@ a_{t|t} &amp;=&amp; a_{t|t-1} + k_{t}(Y_{t} - Y_{t|t-1}) \\
 <div id="r" class="section level3">
 <h3>Rで実装する。</h3>
 <p>以下がRでの実装コードです。</p>
-<pre class="r"><code>kalmanfiter &lt;- function(y,I,t,z,c=0,R=NA,Q=NA,d=0,S=NA,h=NA,a_int=NA,sig_int=NA){
-  #-------------------------------------------------------------------
-  # Implemention of Kalman filter
-  #   y - observed variable
-  #   I - the number of unobserved variable
-  #   t - parameter of endogenous variable in state equation
-  #   z - parameter of endogenous variable in observable equation
-  #   c - constant in state equaion
-  #   R - parameter of exogenous variable in state equation
-  #   Q - var-cov matrix of exogenous variable in state equation
-  #   d - constant in observable equaion
-  #   S - parameter of exogenous variable in observable equation
-  #   h - var-cov matrix of exogenous variable in observable equation
-  #   a_int - initial value of endogenous variable
-  #   sig_int - initial value of variance of endogenous variable
-  #-------------------------------------------------------------------
+<pre class="sourceCode r"><code class="sourceCode r">kalmanfiter &lt;-<span class="st"> </span><span class="cf">function</span>(y,I,t,z,<span class="dt">c=</span><span class="dv">0</span>,<span class="dt">R=</span><span class="ot">NA</span>,<span class="dt">Q=</span><span class="ot">NA</span>,<span class="dt">d=</span><span class="dv">0</span>,<span class="dt">S=</span><span class="ot">NA</span>,<span class="dt">h=</span><span class="ot">NA</span>,<span class="dt">a_int=</span><span class="ot">NA</span>,<span class="dt">sig_int=</span><span class="ot">NA</span>){
+  <span class="co">#-------------------------------------------------------------------</span>
+  <span class="co"># Implemention of Kalman filter</span>
+  <span class="co">#   y - observed variable</span>
+  <span class="co">#   I - the number of unobserved variable</span>
+  <span class="co">#   t - parameter of endogenous variable in state equation</span>
+  <span class="co">#   z - parameter of endogenous variable in observable equation</span>
+  <span class="co">#   c - constant in state equaion</span>
+  <span class="co">#   R - parameter of exogenous variable in state equation</span>
+  <span class="co">#   Q - var-cov matrix of exogenous variable in state equation</span>
+  <span class="co">#   d - constant in observable equaion</span>
+  <span class="co">#   S - parameter of exogenous variable in observable equation</span>
+  <span class="co">#   h - var-cov matrix of exogenous variable in observable equation</span>
+  <span class="co">#   a_int - initial value of endogenous variable</span>
+  <span class="co">#   sig_int - initial value of variance of endogenous variable</span>
+  <span class="co">#-------------------------------------------------------------------</span>
   
-  library(MASS)
+  <span class="kw">library</span>(MASS)
   
-  # 1.Define Variable
-  if (class(y)!=&quot;matrix&quot;){
-    y &lt;- as.matrix(y)
+  <span class="co"># 1.Define Variable</span>
+  <span class="cf">if</span> (<span class="kw">class</span>(y)<span class="op">!=</span><span class="st">&quot;matrix&quot;</span>){
+    y &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(y)
   }
-  N &lt;- NROW(y) # sample size
-  L &lt;- NCOL(y) # the number of observable variable 
-  a_pre &lt;- array(0,dim = c(I,1,N)) # prediction of unobserved variable
-  a_fil &lt;- array(0,dim = c(I,1,N+1)) # filtered of unobserved variable
-  sig_pre &lt;- array(0,dim = c(I,I,N)) # prediction of var-cov mat. of unobserved variable
-  sig_fil &lt;- array(0,dim = c(I,I,N+1)) # filtered of var-cov mat. of unobserved variable
-  y_pre &lt;- array(0,dim = c(L,1,N)) # prediction of observed variable
-  F_pre &lt;- array(0,dim = c(L,L,N)) # prediction of var-cov mat. of observable variable 
-  F_inv &lt;- array(0,dim = c(L,L,N)) # inverse of F_pre
-  k &lt;- array(0,dim = c(I,L,N)) # kalman gain
+  N &lt;-<span class="st"> </span><span class="kw">NROW</span>(y) <span class="co"># sample size</span>
+  L &lt;-<span class="st"> </span><span class="kw">NCOL</span>(y) <span class="co"># the number of observable variable </span>
+  a_pre &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(I,<span class="dv">1</span>,N)) <span class="co"># prediction of unobserved variable</span>
+  a_fil &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(I,<span class="dv">1</span>,N<span class="op">+</span><span class="dv">1</span>)) <span class="co"># filtered of unobserved variable</span>
+  sig_pre &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(I,I,N)) <span class="co"># prediction of var-cov mat. of unobserved variable</span>
+  sig_fil &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(I,I,N<span class="op">+</span><span class="dv">1</span>)) <span class="co"># filtered of var-cov mat. of unobserved variable</span>
+  y_pre &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(L,<span class="dv">1</span>,N)) <span class="co"># prediction of observed variable</span>
+  F_pre &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(L,L,N)) <span class="co"># prediction of var-cov mat. of observable variable </span>
+  F_inv &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(L,L,N)) <span class="co"># inverse of F_pre</span>
+  k &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(I,L,N)) <span class="co"># kalman gain</span>
   
-  if (is.na(a_int)==TRUE){
-    a_int &lt;- matrix(0,nrow = I,ncol = 1)
+  <span class="cf">if</span> (<span class="kw">is.na</span>(a_int)<span class="op">==</span><span class="ot">TRUE</span>){
+    a_int &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,<span class="dt">nrow =</span> I,<span class="dt">ncol =</span> <span class="dv">1</span>)
   }
-  if (is.na(sig_int)==TRUE){
-    sig_int &lt;- diag(1,nrow = I,ncol = I)
+  <span class="cf">if</span> (<span class="kw">is.na</span>(sig_int)<span class="op">==</span><span class="ot">TRUE</span>){
+    sig_int &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> I,<span class="dt">ncol =</span> I)
   }
-  if (is.na(R)==TRUE){
-    R &lt;- diag(1,nrow = I,ncol = I)
+  <span class="cf">if</span> (<span class="kw">is.na</span>(R)<span class="op">==</span><span class="ot">TRUE</span>){
+    R &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> I,<span class="dt">ncol =</span> I)
   }
-  if (is.na(Q)==TRUE){
-    Q &lt;- diag(1,nrow = I,ncol = I)
+  <span class="cf">if</span> (<span class="kw">is.na</span>(Q)<span class="op">==</span><span class="ot">TRUE</span>){
+    Q &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> I,<span class="dt">ncol =</span> I)
   }
-  if (is.na(S)==TRUE){
-    S &lt;- matrix(1,nrow = L,ncol = L)
+  <span class="cf">if</span> (<span class="kw">is.na</span>(S)<span class="op">==</span><span class="ot">TRUE</span>){
+    S &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> L,<span class="dt">ncol =</span> L)
   }
-  if (is.na(h)==TRUE){
-    H &lt;- array(0,dim = c(L,L,N))
-    for(i in 1:N){
-      diag(H[,,i]) = 1
+  <span class="cf">if</span> (<span class="kw">is.na</span>(h)<span class="op">==</span><span class="ot">TRUE</span>){
+    H &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(L,L,N))
+    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>N){
+      <span class="kw">diag</span>(H[,,i]) =<span class="st"> </span><span class="dv">1</span>
     }
-  }else if (class(h)!=&quot;array&quot;){
-    H &lt;- array(h,dim = c(NROW(h),NCOL(h),N))
+  }<span class="cf">else</span> <span class="cf">if</span> (<span class="kw">class</span>(h)<span class="op">!=</span><span class="st">&quot;array&quot;</span>){
+    H &lt;-<span class="st"> </span><span class="kw">array</span>(h,<span class="dt">dim =</span> <span class="kw">c</span>(<span class="kw">NROW</span>(h),<span class="kw">NCOL</span>(h),N))
   }
   
-  # fill infinite if observed data is NA
-  for(i in 1:N){
-    miss &lt;- is.na(y[i,])
-    diag(H[,,i])[miss] &lt;- 1e+32
+  <span class="co"># fill infinite if observed data is NA</span>
+  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>N){
+    miss &lt;-<span class="st"> </span><span class="kw">is.na</span>(y[i,])
+    <span class="kw">diag</span>(H[,,i])[miss] &lt;-<span class="st"> </span><span class="fl">1e+32</span>
   }
-  y[is.na(y)] &lt;- 0
+  y[<span class="kw">is.na</span>(y)] &lt;-<span class="st"> </span><span class="dv">0</span>
   
-  # 2.Set Initial Value
-  a_fil[,,1] &lt;- a_int
-  sig_fil[,,1] &lt;- sig_int
+  <span class="co"># 2.Set Initial Value</span>
+  a_fil[,,<span class="dv">1</span>] &lt;-<span class="st"> </span>a_int
+  sig_fil[,,<span class="dv">1</span>] &lt;-<span class="st"> </span>sig_int
   
-  # 3.Implement Kalman filter
-  for (i in 1:N){
-    if(class(z)==&quot;array&quot;){
-      Z &lt;- z[,,i]
-    }else{
-      Z &lt;- z
+  <span class="co"># 3.Implement Kalman filter</span>
+  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>N){
+    <span class="cf">if</span>(<span class="kw">class</span>(z)<span class="op">==</span><span class="st">&quot;array&quot;</span>){
+      Z &lt;-<span class="st"> </span>z[,,i]
+    }<span class="cf">else</span>{
+      Z &lt;-<span class="st"> </span>z
     }
-    a_pre[,,i] &lt;- t%*%a_fil[,,i] + c
-    sig_pre[,,i] &lt;- t%*%sig_fil[,,i]%*%t(t) + R%*%Q%*%t(R)
-    y_pre[,,i] &lt;- Z%*%a_pre[,,i] + d
-    F_pre[,,i] &lt;- Z%*%sig_pre[,,i]%*%t(Z) + S%*%H[,,i]%*%t(S)
-    k[,,i] &lt;- sig_pre[,,i]%*%t(Z)%*%ginv(F_pre[,,i])
-    a_fil[,,i+1] &lt;- a_pre[,,i] + k[,,i]%*%(y[i,]-y_pre[,,i])
-    sig_fil[,,i+1] &lt;- sig_pre[,,i] - k[,,i]%*%F_pre[,,i]%*%t(k[,,i])
+    a_pre[,,i] &lt;-<span class="st"> </span>t<span class="op">%*%</span>a_fil[,,i] <span class="op">+</span><span class="st"> </span>c
+    sig_pre[,,i] &lt;-<span class="st"> </span>t<span class="op">%*%</span>sig_fil[,,i]<span class="op">%*%</span><span class="kw">t</span>(t) <span class="op">+</span><span class="st"> </span>R<span class="op">%*%</span>Q<span class="op">%*%</span><span class="kw">t</span>(R)
+    y_pre[,,i] &lt;-<span class="st"> </span>Z<span class="op">%*%</span>a_pre[,,i] <span class="op">+</span><span class="st"> </span>d
+    F_pre[,,i] &lt;-<span class="st"> </span>Z<span class="op">%*%</span>sig_pre[,,i]<span class="op">%*%</span><span class="kw">t</span>(Z) <span class="op">+</span><span class="st"> </span>S<span class="op">%*%</span>H[,,i]<span class="op">%*%</span><span class="kw">t</span>(S)
+    k[,,i] &lt;-<span class="st"> </span>sig_pre[,,i]<span class="op">%*%</span><span class="kw">t</span>(Z)<span class="op">%*%</span><span class="kw">ginv</span>(F_pre[,,i])
+    a_fil[,,i<span class="op">+</span><span class="dv">1</span>] &lt;-<span class="st"> </span>a_pre[,,i] <span class="op">+</span><span class="st"> </span>k[,,i]<span class="op">%*%</span>(y[i,]<span class="op">-</span>y_pre[,,i])
+    sig_fil[,,i<span class="op">+</span><span class="dv">1</span>] &lt;-<span class="st"> </span>sig_pre[,,i] <span class="op">-</span><span class="st"> </span>k[,,i]<span class="op">%*%</span>F_pre[,,i]<span class="op">%*%</span><span class="kw">t</span>(k[,,i])
   }
   
-  # 4.Aggregate results
-  result &lt;- list(a_pre,a_fil,sig_pre,sig_fil,y_pre,k,t,z)
-  names(result) &lt;- c(&quot;state prediction&quot;, &quot;state filtered&quot;, &quot;state var prediction&quot;, 
-                     &quot;state var filtered&quot;, &quot;observable prediction&quot;, &quot;kalman gain&quot;,
-                     &quot;parameter of state eq&quot;, &quot;parameter of observable eq&quot;)
-  return(result)
+  <span class="co"># 4.Aggregate results</span>
+  result &lt;-<span class="st"> </span><span class="kw">list</span>(a_pre,a_fil,sig_pre,sig_fil,y_pre,k,t,z)
+  <span class="kw">names</span>(result) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;state prediction&quot;</span>, <span class="st">&quot;state filtered&quot;</span>, <span class="st">&quot;state var prediction&quot;</span>, 
+                     <span class="st">&quot;state var filtered&quot;</span>, <span class="st">&quot;observable prediction&quot;</span>, <span class="st">&quot;kalman gain&quot;</span>,
+                     <span class="st">&quot;parameter of state eq&quot;</span>, <span class="st">&quot;parameter of observable eq&quot;</span>)
+  <span class="kw">return</span>(result)
 }</code></pre>
 <p>案外簡単に書けるもんですね。これを使って、Giannone et al (2008)をやり直してみます。データセットは前回記事と変わりません。</p>
 <p>以下、分析用のRコードです。</p>
-<pre class="r"><code>#------------------------
-# Giannone et. al. 2008 
-#------------------------
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#------------------------</span>
+<span class="co"># Giannone et. al. 2008 </span>
+<span class="co">#------------------------</span>
 
-library(MASS)
-library(xts)
+<span class="kw">library</span>(MASS)
+<span class="kw">library</span>(xts)
 
-# ファクターを計算
-f &lt;- 3
-z &lt;- scale(dataset1)
-for (i in 1:nrow(z)){
-  eval(parse(text = paste(&quot;S_i &lt;- z[i,]%*%t(z[i,])&quot;,sep = &quot;&quot;)))
-  if (i==1){
-    S &lt;- S_i
-  }else{
-    S &lt;- S + S_i
+<span class="co"># ファクターを計算</span>
+f &lt;-<span class="st"> </span><span class="dv">3</span>
+z &lt;-<span class="st"> </span><span class="kw">scale</span>(dataset1)
+<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(z)){
+  <span class="kw">eval</span>(<span class="kw">parse</span>(<span class="dt">text =</span> <span class="kw">paste</span>(<span class="st">&quot;S_i &lt;- z[i,]%*%t(z[i,])&quot;</span>,<span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)))
+  <span class="cf">if</span> (i<span class="op">==</span><span class="dv">1</span>){
+    S &lt;-<span class="st"> </span>S_i
+  }<span class="cf">else</span>{
+    S &lt;-<span class="st"> </span>S <span class="op">+</span><span class="st"> </span>S_i
   }
 }
-S &lt;- (1/nrow(z))*S
-gamma &lt;- eigen(S)
-D &lt;- diag(gamma$values[1:f])
-V &lt;- gamma$vectors[,1:f]
-F_t &lt;- matrix(0,nrow(z),f)
-for (i in 1:nrow(z)){
-  eval(parse(text = paste(&quot;F_t[&quot;,i,&quot;,]&lt;- z[&quot;,i,&quot;,]%*%V&quot;,sep = &quot;&quot;)))
+S &lt;-<span class="st"> </span>(<span class="dv">1</span><span class="op">/</span><span class="kw">nrow</span>(z))<span class="op">*</span>S
+gamma &lt;-<span class="st"> </span><span class="kw">eigen</span>(S)
+D &lt;-<span class="st"> </span><span class="kw">diag</span>(gamma<span class="op">$</span>values[<span class="dv">1</span><span class="op">:</span>f])
+V &lt;-<span class="st"> </span>gamma<span class="op">$</span>vectors[,<span class="dv">1</span><span class="op">:</span>f]
+F_t &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,<span class="kw">nrow</span>(z),f)
+<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(z)){
+  <span class="kw">eval</span>(<span class="kw">parse</span>(<span class="dt">text =</span> <span class="kw">paste</span>(<span class="st">&quot;F_t[&quot;</span>,i,<span class="st">&quot;,]&lt;- z[&quot;</span>,i,<span class="st">&quot;,]%*%V&quot;</span>,<span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)))
 }
-lambda_hat &lt;- V
-psi &lt;- diag(diag(S-V%*%D%*%t(V)))
-R &lt;- diag(diag(cov(z-z%*%V%*%t(V))))
+lambda_hat &lt;-<span class="st"> </span>V
+psi &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="kw">diag</span>(S<span class="op">-</span>V<span class="op">%*%</span>D<span class="op">%*%</span><span class="kw">t</span>(V)))
+R &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="kw">diag</span>(<span class="kw">cov</span>(z<span class="op">-</span>z<span class="op">%*%</span>V<span class="op">%*%</span><span class="kw">t</span>(V))))
 
-a &lt;- matrix(0,f,f)
-b &lt;- matrix(0,f,f)
-for(t in 2:nrow(z)){
-  a &lt;- a + F_t[t,]%*%t(F_t[t-1,])
-  b &lt;- b + F_t[t-1,]%*%t(F_t[t-1,])
+a &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,f,f)
+b &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,f,f)
+<span class="cf">for</span>(t <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span><span class="kw">nrow</span>(z)){
+  a &lt;-<span class="st"> </span>a <span class="op">+</span><span class="st"> </span>F_t[t,]<span class="op">%*%</span><span class="kw">t</span>(F_t[t<span class="dv">-1</span>,])
+  b &lt;-<span class="st"> </span>b <span class="op">+</span><span class="st"> </span>F_t[t<span class="dv">-1</span>,]<span class="op">%*%</span><span class="kw">t</span>(F_t[t<span class="dv">-1</span>,])
 }
-b_inv &lt;- solve(b)
-A_hat &lt;- a%*%b_inv
+b_inv &lt;-<span class="st"> </span><span class="kw">solve</span>(b)
+A_hat &lt;-<span class="st"> </span>a<span class="op">%*%</span>b_inv
 
-e &lt;- numeric(f)
-for (t in 2:nrow(F_t)){
-  e &lt;- e + F_t[t,]-F_t[t-1,]%*%A_hat
+e &lt;-<span class="st"> </span><span class="kw">numeric</span>(f)
+<span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span><span class="kw">nrow</span>(F_t)){
+  e &lt;-<span class="st"> </span>e <span class="op">+</span><span class="st"> </span>F_t[t,]<span class="op">-</span>F_t[t<span class="dv">-1</span>,]<span class="op">%*%</span>A_hat
 }
-H &lt;- t(e)%*%e
-Q &lt;- diag(1,f,f)
-Q[1:f,1:f] &lt;- H
+H &lt;-<span class="st"> </span><span class="kw">t</span>(e)<span class="op">%*%</span>e
+Q &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="dv">1</span>,f,f)
+Q[<span class="dv">1</span><span class="op">:</span>f,<span class="dv">1</span><span class="op">:</span>f] &lt;-<span class="st"> </span>H
 
-p &lt;- ginv(diag(nrow(kronecker(A_hat,A_hat)))-kronecker(A_hat,A_hat))
+p &lt;-<span class="st"> </span><span class="kw">ginv</span>(<span class="kw">diag</span>(<span class="kw">nrow</span>(<span class="kw">kronecker</span>(A_hat,A_hat)))<span class="op">-</span><span class="kw">kronecker</span>(A_hat,A_hat))
 
-result1 &lt;- kalmanfiter(z,f,A_hat,lambda_hat,c=0,R=NA,Q=Q,d=0,S=NA,h=R,a_int=F_t[1,],sig_int=matrix(p,f,f))</code></pre>
+result1 &lt;-<span class="st"> </span><span class="kw">kalmanfiter</span>(z,f,A_hat,lambda_hat,<span class="dt">c=</span><span class="dv">0</span>,<span class="dt">R=</span><span class="ot">NA</span>,<span class="dt">Q=</span>Q,<span class="dt">d=</span><span class="dv">0</span>,<span class="dt">S=</span><span class="ot">NA</span>,<span class="dt">h=</span>R,<span class="dt">a_int=</span>F_t[<span class="dv">1</span>,],<span class="dt">sig_int=</span><span class="kw">matrix</span>(p,f,f))</code></pre>
 <p>プロットしてみます。</p>
-<pre class="r"><code>library(ggplot2)
-library(tidyverse)
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
+<span class="kw">library</span>(tidyverse)
 
-ggplot(gather(data.frame(factor1=result1$`state filtered`[1,1,-dim(result1$`state filtered`)[3]],factor2=result1$`state filtered`[2,1,-dim(result1$`state filtered`)[3]],factor3=result1$`state filtered`[3,1,-dim(result1$`state filtered`)[3]],time=as.Date(rownames(dataset1))),key = factor,value = value,-time),aes(x=time,y=value,colour=factor)) + geom_line()</code></pre>
+<span class="kw">ggplot</span>(<span class="kw">gather</span>(<span class="kw">data.frame</span>(<span class="dt">factor1=</span>result1<span class="op">$</span><span class="st">`</span><span class="dt">state filtered</span><span class="st">`</span>[<span class="dv">1</span>,<span class="dv">1</span>,<span class="op">-</span><span class="kw">dim</span>(result1<span class="op">$</span><span class="st">`</span><span class="dt">state filtered</span><span class="st">`</span>)[<span class="dv">3</span>]],<span class="dt">factor2=</span>result1<span class="op">$</span><span class="st">`</span><span class="dt">state filtered</span><span class="st">`</span>[<span class="dv">2</span>,<span class="dv">1</span>,<span class="op">-</span><span class="kw">dim</span>(result1<span class="op">$</span><span class="st">`</span><span class="dt">state filtered</span><span class="st">`</span>)[<span class="dv">3</span>]],<span class="dt">factor3=</span>result1<span class="op">$</span><span class="st">`</span><span class="dt">state filtered</span><span class="st">`</span>[<span class="dv">3</span>,<span class="dv">1</span>,<span class="op">-</span><span class="kw">dim</span>(result1<span class="op">$</span><span class="st">`</span><span class="dt">state filtered</span><span class="st">`</span>)[<span class="dv">3</span>]],<span class="dt">time=</span><span class="kw">as.Date</span>(<span class="kw">rownames</span>(dataset1))),<span class="dt">key =</span> factor,<span class="dt">value =</span> value,<span class="op">-</span>time),<span class="kw">aes</span>(<span class="dt">x=</span>time,<span class="dt">y=</span>value,<span class="dt">colour=</span>factor)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>()</code></pre>
 <p><img src="/my_blog/post/post3_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>giannoneの記事を書いた際は、元論文のMATLABコードを参考にRで書いたのですが、通常のカルマンフィルタとは観測変数の分散共分散行列の逆数の計算方法が違うらしくグラフの形が異なっています。まあでも、概形はほとんど同じですが（なので、ちゃんと動いているはず）。</p>
 </div>
@@ -431,44 +496,44 @@ a_{t|T} &amp;=&amp; a_{t|t} + L_{t}(a_{t+1|T} - a_{t+1|t}) \\
 \]</span></p>
 <p>カルマンスムージングの特徴的な点は後ろ向きに計算をしていく点です。つまり、<span class="math inline">\(T\)</span>期から1期に向けて計算を行っていきます。<span class="math inline">\(L_{t}\)</span>に関してはそもそもカルマンフィルタを回した時点で計算可能ですが、<span class="math inline">\(\alpha_{t|T}\)</span>は<span class="math inline">\(T\)</span>期までのデータが手元にないと計算できません。今、<span class="math inline">\(T\)</span>期まで観測可能なデータが入手できたとしましょう。すると、２番目の方程式を用いて、<span class="math inline">\(a_{T-1|T}\)</span>を計算します。ちなみに<span class="math inline">\(a_{T|T}\)</span>はカルマンフィルタを回した時点ですでに手に入っているので、計算する必要はありません。同時に、３番目の式を用いて<span class="math inline">\(\Sigma_{T-1|T}\)</span>を計算します。そして、<span class="math inline">\(a_{T-1|T},\Sigma_{T-1|T}\)</span>と<span class="math inline">\(L_{T-1}\)</span>を用いて<span class="math inline">\(a_{T-2|T},\Sigma_{T-2|T}\)</span>を計算、というように1期に向けて後ろ向きに計算をしていくのです。さきほど、遷移方程式の誤差項<span class="math inline">\(\eta_{t}\)</span>と定数項<span class="math inline">\(c_{t}\)</span>がなく、遷移方程式のパラメータが単位行列のカルマンフィルタは逐次最小自乗法と一致すると書きましたが、カルマンスムージングの場合は<span class="math inline">\(T\)</span>期までのサンプルでOLSを行った結果と一致します。
 Rで実装してみます。</p>
-<pre class="r"><code>kalmansmoothing &lt;- function(filter){
-  #-------------------------------------------------------------------
-  # Implemention of Kalman smoothing
-  #   t - parameter of endogenous variable in state equation
-  #   z - parameter of endogenous variable in observable equation
-  #   a_pre - prediction of state
-  #   a_fil - filtered value of state
-  #   sig_pre - prediction of var of state
-  #   sig_fil - filtered value of state
-  #-------------------------------------------------------------------
+<pre class="sourceCode r"><code class="sourceCode r">kalmansmoothing &lt;-<span class="st"> </span><span class="cf">function</span>(filter){
+  <span class="co">#-------------------------------------------------------------------</span>
+  <span class="co"># Implemention of Kalman smoothing</span>
+  <span class="co">#   t - parameter of endogenous variable in state equation</span>
+  <span class="co">#   z - parameter of endogenous variable in observable equation</span>
+  <span class="co">#   a_pre - prediction of state</span>
+  <span class="co">#   a_fil - filtered value of state</span>
+  <span class="co">#   sig_pre - prediction of var of state</span>
+  <span class="co">#   sig_fil - filtered value of state</span>
+  <span class="co">#-------------------------------------------------------------------</span>
   
-  library(MASS)
+  <span class="kw">library</span>(MASS)
   
-  # 1.Define variable
-  a_pre &lt;- filter$`state prediction`
-  a_fil &lt;- filter$`state filtered`
-  sig_pre &lt;- filter$`state var prediction`
-  sig_fil &lt;- filter$`state var filtered`
-  t &lt;- filter$`parameter of state eq`
-  C &lt;- array(0,dim = dim(sig_pre))
-  a_sm &lt;- array(0,dim = dim(a_pre))
-  sig_sm &lt;- array(0,dim = dim(sig_pre))
-  N &lt;- dim(C)[3]
-  a_sm[,,N] &lt;- a_fil[,,N]
-  sig_sm[,,N] &lt;- sig_fil[,,N]
+  <span class="co"># 1.Define variable</span>
+  a_pre &lt;-<span class="st"> </span>filter<span class="op">$</span><span class="st">`</span><span class="dt">state prediction</span><span class="st">`</span>
+  a_fil &lt;-<span class="st"> </span>filter<span class="op">$</span><span class="st">`</span><span class="dt">state filtered</span><span class="st">`</span>
+  sig_pre &lt;-<span class="st"> </span>filter<span class="op">$</span><span class="st">`</span><span class="dt">state var prediction</span><span class="st">`</span>
+  sig_fil &lt;-<span class="st"> </span>filter<span class="op">$</span><span class="st">`</span><span class="dt">state var filtered</span><span class="st">`</span>
+  t &lt;-<span class="st"> </span>filter<span class="op">$</span><span class="st">`</span><span class="dt">parameter of state eq</span><span class="st">`</span>
+  C &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">dim</span>(sig_pre))
+  a_sm &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">dim</span>(a_pre))
+  sig_sm &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">dim</span>(sig_pre))
+  N &lt;-<span class="st"> </span><span class="kw">dim</span>(C)[<span class="dv">3</span>]
+  a_sm[,,N] &lt;-<span class="st"> </span>a_fil[,,N]
+  sig_sm[,,N] &lt;-<span class="st"> </span>sig_fil[,,N]
   
-  for (i in N:2){
-    C[,,i-1] &lt;- sig_fil[,,i-1]%*%t(t)%*%ginv(sig_pre[,,i])
-    a_sm[,,i-1] &lt;- a_fil[,,i-1] + C[,,i-1]%*%(a_sm[,,i]-a_pre[,,i])
-    sig_sm[,,i-1] &lt;- sig_fil[,,i-1] + C[,,i-1]%*%(sig_sm[,,i]-sig_pre[,,i])%*%t(C[,,i-1])
+  <span class="cf">for</span> (i <span class="cf">in</span> N<span class="op">:</span><span class="dv">2</span>){
+    C[,,i<span class="dv">-1</span>] &lt;-<span class="st"> </span>sig_fil[,,i<span class="dv">-1</span>]<span class="op">%*%</span><span class="kw">t</span>(t)<span class="op">%*%</span><span class="kw">ginv</span>(sig_pre[,,i])
+    a_sm[,,i<span class="dv">-1</span>] &lt;-<span class="st"> </span>a_fil[,,i<span class="dv">-1</span>] <span class="op">+</span><span class="st"> </span>C[,,i<span class="dv">-1</span>]<span class="op">%*%</span>(a_sm[,,i]<span class="op">-</span>a_pre[,,i])
+    sig_sm[,,i<span class="dv">-1</span>] &lt;-<span class="st"> </span>sig_fil[,,i<span class="dv">-1</span>] <span class="op">+</span><span class="st"> </span>C[,,i<span class="dv">-1</span>]<span class="op">%*%</span>(sig_sm[,,i]<span class="op">-</span>sig_pre[,,i])<span class="op">%*%</span><span class="kw">t</span>(C[,,i<span class="dv">-1</span>])
   }
   
   
-  result &lt;- list(a_sm,sig_sm,C)
-  names(result) &lt;- c(&quot;state smoothed&quot;, &quot;state var smoothed&quot;, &quot;c&quot;)
-  return(result)
+  result &lt;-<span class="st"> </span><span class="kw">list</span>(a_sm,sig_sm,C)
+  <span class="kw">names</span>(result) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;state smoothed&quot;</span>, <span class="st">&quot;state var smoothed&quot;</span>, <span class="st">&quot;c&quot;</span>)
+  <span class="kw">return</span>(result)
 }</code></pre>
 <p>先ほどのコードの続きでRコードを書いてみます。</p>
-<pre class="r"><code>result2 &lt;- kalmansmoothing(result1)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">result2 &lt;-<span class="st"> </span><span class="kw">kalmansmoothing</span>(result1)</code></pre>
 <p>かなりシンプルですね。ちなみにグラフにしましたが、１個目とほぼ変わりませんでした。とりあえず、今日はここまで。</p>
 </div>
