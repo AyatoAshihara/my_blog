@@ -405,6 +405,8 @@ $$
    
 ### Rでの実装
 
+ここまでをRで実装したいと思います。まず、カルマンフィルタと事前分布を定義します。
+
 ```{r,include=FALSE}
 library(seasonal)
 
@@ -665,7 +667,7 @@ kalmanfiter <- function(y,I,t,z,c=0,R=NA,Q=NA,d=0,S=NA,h=NA,a_int=NA,sig_int=NA)
   #-------------------------------------------------------------------
   
   library(MASS)
-    
+  
   # 1.Define Variable
   if (class(y)!="matrix"){
     y <- as.matrix(y)
@@ -677,7 +679,8 @@ kalmanfiter <- function(y,I,t,z,c=0,R=NA,Q=NA,d=0,S=NA,h=NA,a_int=NA,sig_int=NA)
   sig_pre <- array(0,dim = c(I,I,N)) # prediction of var-cov mat. of unobserved variable
   sig_fil <- array(0,dim = c(I,I,N+1)) # filtered of var-cov mat. of unobserved variable
   y_pre <- array(0,dim = c(L,1,N)) # prediction of observed variable
-  F_pre <- array(0,dim = c(L,L,N)) # auxiliary variable 
+  F_pre <- array(0,dim = c(L,L,N)) # prediction of var-cov mat. of observable variable 
+  F_inv <- array(0,dim = c(L,L,N)) # inverse of F_pre
   k <- array(0,dim = c(I,L,N)) # kalman gain
   
   if (is.na(a_int)==TRUE){
@@ -881,4 +884,58 @@ MPrior <- function(x,order,pi){
   return(result)
 }
   
+```
+
+```{r}
+BVAR <- function(m){
+  #-------------------------------------------------------------------
+  # Estimation of Bayesian Vector Auto-Regression
+  #   m - dataset
+  #-------------------------------------------------------------------
+  
+  # 1. Process data
+  observable <- m$observable
+  coefficient <- m$coefficient
+  beta_M <- m$beta_M
+  sig_M <- m$sig_M
+  sigma_AR <- m$sigma_AR
+  V0 <- m$V0
+  order <- m$order
+  npara <- m$npara
+  
+  # 2. Run Kalmanfilter
+  results <- kalmanfiter(observable,npara,diag(1,nrow = npara,ncol = npara),
+                         coefficient,0,NA,V0,0,NA,sigma_AR,beta_M,sig_M)
+  
+  return(results)
+}
+
+```
+
+では、varsパッケージに準備されているCanadaデータを使用して、BVARをやってみます。これはカナダの1980～2000年の労働生産性、雇用、失業率、実質賃金をまとめたものになります。
+まずは、通常のVARからやりたいと思います。
+
+```{r, include=FALSE}
+
+library(vars)
+data(Canada)
+Canada.var <- VAR(Canada,p=VARselect(Canada,lag.max = 4)$selection[1])
+
+```
+
+```{r,eval=FALSE}
+
+library(vars)
+data(Canada)
+Canada.var <- VAR(Canada,p=VARselect(Canada,lag.max = 4)$selection[1])
+
+```
+
+予測値をプロットしてみます。
+
+```{r}
+
+summary(Canada.var)
+plot(predict(Canada.var,n.ahead=20,ci=0.95))
+
 ```
