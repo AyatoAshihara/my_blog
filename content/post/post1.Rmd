@@ -22,12 +22,18 @@ output:
 
 <!--more-->
 
-
-```{r setup, include = FALSE}
-
-knitr::opts_chunk$set(class.output = 'nohighlight')
-knitr::opts_chunk$set(echo = TRUE)
-
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = F)
+def.source.hook  <- knitr::knit_hooks$get("source")
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- def.source.hook(x, options)
+  x <- ifelse(!is.null(options$linestretch), 
+              paste0("\\linespread{", options$linestretch,"}\n", x, "\n\n\\linespread{", lstr,"}"), 
+              x)
+  ifelse(!is.null(options$size), 
+         paste0("\\", options$size,"\n\n", x, "\n\n \\normalsize"), 
+         x)
+})
 ```
 
 おはこんばんにちは。昨日、Bayesian Vector Autoregressionの記事を書きました。

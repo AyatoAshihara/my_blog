@@ -94,10 +94,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h3>統計ダッシュボードからのデータの収集</h3>
 <p>政府や日銀が公表しているデータの一部は統計ダッシュボードから落とすことができます。これは総務省統計局が提供しているもので、これまで利用しにくかった経済統計をより身近に使用してもらおうというのが一応のコンセプトとなっています。似たものに総務省統計局が提供しているestatがありますが、日銀の公表データがなかったり、メールアドレスの登録が必要だったりと非常に使い勝手が悪いです(個人的感想)。ただ、estatにはestatapiというRパッケージがあり、データを整形するのは比較的容易であると言えます。今回、統計ダッシュボードを選択した理由はそうは言っても日銀のデータがないのはダメだろうという理由で、データの整形に関しては関数を組みました。
 そもそも統計ダッシュボードは経済統計をグラフなどで見て楽しむ？ものですが、私のような研究をしたい者を対象にAPIを提供してくれています。取得できるデータは大きく分けて6つあります。</p>
-<div class="figure">
-<img src="\img\portfolio\20180714160029.png" alt="alt text" />
-<p class="caption">alt text</p>
-</div>
+<p><img src="\img\portfolio\20180714160029.png" /></p>
 <p>やり方は簡単で、ベースのurlと欲しい統計のIDをGET関数で渡すことによって、データを取得することができます。公式にも以下のように書かれています。</p>
 <blockquote>
 <p>基本的な使い方としては、まず①「統計メタ情報（系列）取得」で取得したいデータの[系列コード]を検索し、 その後⑥「統計データ取得」で[系列コード]を検索条件に指定し、その系列の情報を取得します。
@@ -159,10 +156,7 @@ get_dashboard &lt;-<span class="st"> </span><span class="cf">function</span>(ID)
   <span class="kw">return</span>(c)
 }</code></pre>
 <p>では、実際にデータを取得していきます。今回取得するデータは月次データとなっています。これは統計dashboardが月次以下のデータがとれないからです。なので、例えば日経平均などは月末の終値を引っ張っています。ただし、GDPは四半期データとなっています。さきほど定義したget_dashboardの使用方法は簡単で、引数に統計ダッシュボードで公開されている統計IDを入力するだけでデータが取れます。今回使用するデータを以下の表にまとめました。</p>
-<div class="figure">
-<img src="static/img/portfolio/20180714160029.png" alt="alt text" />
-<p class="caption">alt text</p>
-</div>
+<p><img src="/img/portfolio/20180714212330.png" /></p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># データを取得</span>
 Nikkei &lt;-<span class="st"> </span><span class="kw">get_dashboard</span>(<span class="st">&quot;0702020501000010010&quot;</span>)
 callrate &lt;-<span class="st"> </span><span class="kw">get_dashboard</span>(<span class="st">&quot;0702020300000010010&quot;</span>)
@@ -292,8 +286,44 @@ dataset1 &lt;-<span class="st"> </span>dataset[a<span class="op">:</span><span c
 dataset1 &lt;-<span class="st"> </span><span class="kw">na.omit</span>(dataset1)
 <span class="kw">rownames</span>(dataset1) &lt;-<span class="st"> </span>dataset1<span class="op">$</span>publication
 dataset1 &lt;-<span class="st"> </span>dataset1[,<span class="op">-</span><span class="dv">2</span>]
-dataset1.xts &lt;-<span class="st"> </span><span class="kw">xts</span>(dataset1,<span class="dt">order.by =</span> <span class="kw">as.Date</span>(<span class="kw">rownames</span>(dataset1)))</code></pre>
-<p>各データの推移は以下のようになっています（見にくくてすみません）。
+dataset1.xts &lt;-<span class="st"> </span><span class="kw">xts</span>(dataset1,<span class="dt">order.by =</span> <span class="kw">as.Date</span>(<span class="kw">rownames</span>(dataset1)))
+<span class="kw">head</span>(dataset1.xts)</code></pre>
+<pre><code>##               DCGPI callrate Machinery_Orders Nikkei225 money_stock
+## 2012-01-01 98.45284    0.080         746655.7   8802.51    15015884
+## 2012-02-01 98.59384    0.085         767209.5   9723.24    14973053
+## 2012-03-01 98.99827    0.084         723719.3  10083.56    15005388
+## 2012-04-01 98.66731    0.075         751226.4   9520.89    15096461
+## 2012-05-01 98.21457    0.084         722476.8   8542.73    15071741
+## 2012-06-01 97.73329    0.076         733504.7   9006.78    15093401
+##                 CPI export_price import_price public_works_order
+## 2012-01-01 96.59599         84.1     91.80000            1212647
+## 2012-02-01 96.75785         85.7     93.70000            1169875
+## 2012-03-01 96.85640         88.8     99.39345            1117429
+## 2012-04-01 96.93078         88.3     99.70677            1075370
+## 2012-05-01 96.68153         86.2     96.70000            1034837
+## 2012-06-01 96.44373         85.0     94.00000            1031613
+##            trade_service working_population unemployment_rate
+## 2012-01-01     -4684.784           81073000          4.534285
+## 2012-02-01     -4877.404           80920000          4.436813
+## 2012-03-01     -6644.806           80792000          4.533377
+## 2012-04-01     -6472.747           80689000          4.557022
+## 2012-05-01     -7091.773           80584000          4.446093
+## 2012-06-01     -5751.770           80549000          4.393616
+##            active_opening_ratio hours_worked     wage iip_production
+## 2012-01-01            0.7368946     147.4223 315556.3      100.45385
+## 2012-02-01            0.7541288     147.4326 315845.3      100.62453
+## 2012-03-01            0.7600843     147.2808 315882.5      102.15944
+## 2012-04-01            0.7831201     147.1216 315481.6      101.57819
+## 2012-05-01            0.8000103     146.8847 315692.5       99.82120
+## 2012-06-01            0.8062713     146.9332 315288.2       98.82197
+##            iip_shipment iip_inventory     ITIA retail_sales   yen
+## 2012-01-01     99.36674      106.5669 101.5750     11513.36 76.30
+## 2012-02-01    100.84860      108.0812 101.8307     11649.90 80.49
+## 2012-03-01    101.23772      110.3831 101.5992     11550.68 82.17
+## 2012-04-01    101.96927      111.2536 101.7146     11615.36 80.74
+## 2012-05-01    101.44700      109.4994 102.0323     11556.15 78.81
+## 2012-06-01     98.65910      109.8758 101.7154     11468.83 79.61</code></pre>
+<p>各データの推移は以下のようになっています。
 これでとりあえずデータの収集は終わりました。</p>
 </div>
 <div id="section-2" class="section level3">
