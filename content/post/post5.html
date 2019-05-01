@@ -453,7 +453,7 @@ kalmanfiter &lt;-<span class="st"> </span><span class="cf">function</span>(y,I,t
   <span class="co">#-------------------------------------------------------------------</span>
   
   <span class="kw">library</span>(MASS)
-  
+    
   <span class="co"># 1.Define Variable</span>
   <span class="cf">if</span> (<span class="kw">class</span>(y)<span class="op">!=</span><span class="st">&quot;matrix&quot;</span>){
     y &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(y)
@@ -465,8 +465,7 @@ kalmanfiter &lt;-<span class="st"> </span><span class="cf">function</span>(y,I,t
   sig_pre &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(I,I,N)) <span class="co"># prediction of var-cov mat. of unobserved variable</span>
   sig_fil &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(I,I,N<span class="op">+</span><span class="dv">1</span>)) <span class="co"># filtered of var-cov mat. of unobserved variable</span>
   y_pre &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(L,<span class="dv">1</span>,N)) <span class="co"># prediction of observed variable</span>
-  F_pre &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(L,L,N)) <span class="co"># prediction of var-cov mat. of observable variable </span>
-  F_inv &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(L,L,N)) <span class="co"># inverse of F_pre</span>
+  F_pre &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(L,L,N)) <span class="co"># auxiliary variable </span>
   k &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(I,L,N)) <span class="co"># kalman gain</span>
   
   <span class="cf">if</span> (<span class="kw">is.na</span>(a_int)<span class="op">==</span><span class="ot">TRUE</span>){
@@ -694,10 +693,11 @@ MPrior &lt;-<span class="st"> </span><span class="cf">function</span>(x,order,pi
 <p>では、varsパッケージに準備されているCanadaデータを使用して、BVARをやってみます。これはカナダの1980～2000年の労働生産性、雇用、失業率、実質賃金をまとめたものになります。
 まずは、通常のVARからやりたいと思います。</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(vars)
+<span class="kw">library</span>(plotly)
+
 <span class="kw">data</span>(Canada)
-Canada.var &lt;-<span class="st"> </span><span class="kw">VAR</span>(Canada,<span class="dt">p=</span><span class="kw">VARselect</span>(Canada,<span class="dt">lag.max =</span> <span class="dv">4</span>)<span class="op">$</span>selection[<span class="dv">1</span>])</code></pre>
-<p>予測値をプロットしてみます。</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(Canada.var)</code></pre>
+Canada.var &lt;-<span class="st"> </span><span class="kw">VAR</span>(Canada,<span class="dt">p=</span><span class="kw">VARselect</span>(Canada,<span class="dt">lag.max =</span> <span class="dv">4</span>)<span class="op">$</span>selection[<span class="dv">1</span>])
+<span class="kw">summary</span>(Canada.var)</code></pre>
 <pre><code>## 
 ## VAR Estimation Results:
 ## ========================= 
@@ -834,6 +834,6 @@ Canada.var &lt;-<span class="st"> </span><span class="kw">VAR</span>(Canada,<spa
 ## rw   -0.1425  0.11286  1.0000  0.17084
 ## U    -0.7343  0.08136  0.1708  1.00000</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">predict</span>(Canada.var,<span class="dt">n.ahead=</span><span class="dv">20</span>,<span class="dt">ci=</span><span class="fl">0.95</span>))</code></pre>
-<p><img src="/my_blog/post/post5_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="/my_blog/post/post5_files/figure-html/r-1.png" width="480" style="display: block; margin: auto;" /></p>
 </div>
 </div>
