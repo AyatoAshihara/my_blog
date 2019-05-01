@@ -436,12 +436,12 @@ adf.test(GDP_q$GDP)
 はい。全部単位根もってました…。階差をとったのち、単位根検定を行います。
 
 ```{r, message=FALSE, warning=FALSE}
-GDP <- GDP %>% mutate(growth.rate=(GDP/lag(GDP)-1)*100)
+GDP_q <- GDP_q %>% mutate(growth.rate=(GDP/lag(GDP)-1)*100)
 F_q <- F_q %>% mutate(f1.growth.rate=(factor1/lag(factor1)-1)*100,
                       f2.growth.rate=(factor2/lag(factor2)-1)*100,
                       f3.growth.rate=(factor3/lag(factor3)-1)*100)
 
-adf.test(GDP$growth.rate[2:NROW(GDP$growth.rate)])
+adf.test(GDP_q$growth.rate[2:NROW(GDP_q$growth.rate)])
 adf.test(F_q$f1.growth.rate[2:NROW(F_q$f1.growth.rate)])
 adf.test(F_q$f2.growth.rate[2:NROW(F_q$f2.growth.rate)])
 adf.test(F_q$f3.growth.rate[2:NROW(F_q$f3.growth.rate)])
@@ -451,10 +451,19 @@ factor1だけは5%有意水準で帰無仮説を棄却できない…。困り�
 
 ```{r, message=FALSE,warning=FALSE}
 dataset.q <- cbind(GDP_q[1:(t2-t),],F_q[1:(t2-t),])
-colnames(dataset.q) <- c("publication","GDP","growth.rate","f1.growth.rate","f2.growth.rate","f3.growth.rate")
+colnames(dataset.q) <- c("publication","GDP","growth.rate","factor1","factor2","factor3","f1.growth.rate","f2.growth.rate","f3.growth.rate")
 test1 <- lm(growth.rate~f1.growth.rate + f2.growth.rate + f3.growth.rate,data=dataset.q)
 summary(test1)
 ```
 
 推計結果がわるくなりました…。予測値を計算し、実績値とプロットしてみます。
+
+```{r, message=FALSE, warning=FALSE}
+out_of_sample1 <- cbind(GDP_q[(t2-t+1):nrow(GDP_q),],F_q[(t2-t+1):nrow(GDP_q),]) # out of sampleのデータセットを作成
+test1.pred <- predict(test1, out_of_sample1, interval="prediction")
+pred1.GDP.xts <- xts(cbind(test1.pred[,1],out_of_sample1$growth.rate),order.by = out_of_sample1$publication)
+plot.zoo(pred1.GDP.xts,col = c("red","blue"),plot.type = "single") # 予測値と実績値を時系列プロット
+
+```
+
 ん～、これはやり直しですね。今日はここまでで勘弁してください…。

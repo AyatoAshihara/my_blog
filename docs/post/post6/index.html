@@ -26,7 +26,7 @@
         "datePublished": "2018-07-16 00:00:00 \x2b0000 UTC",
         "dateModified" : "2018-07-16 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post6\/",
-        "wordCount" : "941",
+        "wordCount" : "942",
         "image" : "/my_blog/img/portfolio/post6.jpg"",
         "keywords" : [ ""カルマンフィルタ"",""R"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1556676722" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1556685265" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1556676722" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1556685265" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -475,17 +475,17 @@ pred.GDP.xts &lt;-<span class="st"> </span><span class="kw">xts</span>(<span cla
 ## Dickey-Fuller = -2.1014, Lag order = 3, p-value = 0.5337
 ## alternative hypothesis: stationary</code></pre>
 <p>はい。全部単位根もってました…。階差をとったのち、単位根検定を行います。</p>
-<pre class="sourceCode r"><code class="sourceCode r">GDP &lt;-<span class="st"> </span>GDP <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">growth.rate=</span>(GDP<span class="op">/</span><span class="kw">lag</span>(GDP)<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span><span class="dv">100</span>)
+<pre class="sourceCode r"><code class="sourceCode r">GDP_q &lt;-<span class="st"> </span>GDP_q <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">growth.rate=</span>(GDP<span class="op">/</span><span class="kw">lag</span>(GDP)<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span><span class="dv">100</span>)
 F_q &lt;-<span class="st"> </span>F_q <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">f1.growth.rate=</span>(factor1<span class="op">/</span><span class="kw">lag</span>(factor1)<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span><span class="dv">100</span>,
                       <span class="dt">f2.growth.rate=</span>(factor2<span class="op">/</span><span class="kw">lag</span>(factor2)<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span><span class="dv">100</span>,
                       <span class="dt">f3.growth.rate=</span>(factor3<span class="op">/</span><span class="kw">lag</span>(factor3)<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span><span class="dv">100</span>)
 
-<span class="kw">adf.test</span>(GDP<span class="op">$</span>growth.rate[<span class="dv">2</span><span class="op">:</span><span class="kw">NROW</span>(GDP<span class="op">$</span>growth.rate)])</code></pre>
+<span class="kw">adf.test</span>(GDP_q<span class="op">$</span>growth.rate[<span class="dv">2</span><span class="op">:</span><span class="kw">NROW</span>(GDP_q<span class="op">$</span>growth.rate)])</code></pre>
 <pre><code>## 
 ##  Augmented Dickey-Fuller Test
 ## 
-## data:  GDP$growth.rate[2:NROW(GDP$growth.rate)]
-## Dickey-Fuller = -4.6839, Lag order = 5, p-value = 0.01
+## data:  GDP_q$growth.rate[2:NROW(GDP_q$growth.rate)]
+## Dickey-Fuller = -4.2599, Lag order = 3, p-value = 0.01
 ## alternative hypothesis: stationary</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">adf.test</span>(F_q<span class="op">$</span>f1.growth.rate[<span class="dv">2</span><span class="op">:</span><span class="kw">NROW</span>(F_q<span class="op">$</span>f1.growth.rate)])</code></pre>
 <pre><code>## 
@@ -510,7 +510,7 @@ F_q &lt;-<span class="st"> </span>F_q <span class="op">%&gt;%</span><span class=
 ## alternative hypothesis: stationary</code></pre>
 <p>factor1だけは5%有意水準で帰無仮説を棄却できない…。困りました。有意水準を10%ということにして、とりあえず階差でOLSしてみます。</p>
 <pre class="sourceCode r"><code class="sourceCode r">dataset.q &lt;-<span class="st"> </span><span class="kw">cbind</span>(GDP_q[<span class="dv">1</span><span class="op">:</span>(t2<span class="op">-</span>t),],F_q[<span class="dv">1</span><span class="op">:</span>(t2<span class="op">-</span>t),])
-<span class="kw">colnames</span>(dataset.q) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;publication&quot;</span>,<span class="st">&quot;GDP&quot;</span>,<span class="st">&quot;growth.rate&quot;</span>,<span class="st">&quot;f1.growth.rate&quot;</span>,<span class="st">&quot;f2.growth.rate&quot;</span>,<span class="st">&quot;f3.growth.rate&quot;</span>)
+<span class="kw">colnames</span>(dataset.q) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;publication&quot;</span>,<span class="st">&quot;GDP&quot;</span>,<span class="st">&quot;growth.rate&quot;</span>,<span class="st">&quot;factor1&quot;</span>,<span class="st">&quot;factor2&quot;</span>,<span class="st">&quot;factor3&quot;</span>,<span class="st">&quot;f1.growth.rate&quot;</span>,<span class="st">&quot;f2.growth.rate&quot;</span>,<span class="st">&quot;f3.growth.rate&quot;</span>)
 test1 &lt;-<span class="st"> </span><span class="kw">lm</span>(growth.rate<span class="op">~</span>f1.growth.rate <span class="op">+</span><span class="st"> </span>f2.growth.rate <span class="op">+</span><span class="st"> </span>f3.growth.rate,<span class="dt">data=</span>dataset.q)
 <span class="kw">summary</span>(test1)</code></pre>
 <pre><code>## 
@@ -520,23 +520,26 @@ test1 &lt;-<span class="st"> </span><span class="kw">lm</span>(growth.rate<span 
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -2.6436 -1.0878 -0.1949  1.1505  3.2617 
+## -4.8698 -0.3611  0.0341  0.6511  1.9232 
 ## 
 ## Coefficients:
-##                 Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)     2.002615   0.274468   7.296 1.89e-08 ***
-## f1.growth.rate -0.704296   0.116611  -6.040 7.65e-07 ***
-## f2.growth.rate -0.998816   0.174055  -5.739 1.88e-06 ***
-## f3.growth.rate  0.001545   0.002197   0.703    0.487    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+##                  Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)     0.0803474  0.2248365   0.357    0.723
+## f1.growth.rate -0.0004769  0.0019800  -0.241    0.811
+## f2.growth.rate  0.0014237  0.0046725   0.305    0.762
+## f3.growth.rate  0.0003410  0.0008181   0.417    0.679
 ## 
-## Residual standard error: 1.459 on 34 degrees of freedom
+## Residual standard error: 1.316 on 34 degrees of freedom
 ##   (1 observation deleted due to missingness)
-## Multiple R-squared:  0.6063, Adjusted R-squared:  0.5716 
-## F-statistic: 17.46 on 3 and 34 DF,  p-value: 4.933e-07</code></pre>
-<p>推計結果がわるくなりました…。予測値を計算し、実績値とプロットしてみます。
-ん～、これはやり直しですね。今日はここまでで勘弁してください…。</p>
+## Multiple R-squared:  0.02026,    Adjusted R-squared:  -0.06619 
+## F-statistic: 0.2344 on 3 and 34 DF,  p-value: 0.8718</code></pre>
+<p>推計結果がわるくなりました…。予測値を計算し、実績値とプロットしてみます。</p>
+<pre class="sourceCode r"><code class="sourceCode r">out_of_sample1 &lt;-<span class="st"> </span><span class="kw">cbind</span>(GDP_q[(t2<span class="op">-</span>t<span class="op">+</span><span class="dv">1</span>)<span class="op">:</span><span class="kw">nrow</span>(GDP_q),],F_q[(t2<span class="op">-</span>t<span class="op">+</span><span class="dv">1</span>)<span class="op">:</span><span class="kw">nrow</span>(GDP_q),]) <span class="co"># out of sampleのデータセットを作成</span>
+test1.pred &lt;-<span class="st"> </span><span class="kw">predict</span>(test1, out_of_sample1, <span class="dt">interval=</span><span class="st">&quot;prediction&quot;</span>)
+pred1.GDP.xts &lt;-<span class="st"> </span><span class="kw">xts</span>(<span class="kw">cbind</span>(test1.pred[,<span class="dv">1</span>],out_of_sample1<span class="op">$</span>growth.rate),<span class="dt">order.by =</span> out_of_sample1<span class="op">$</span>publication)
+<span class="kw">plot.zoo</span>(pred1.GDP.xts,<span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>,<span class="st">&quot;blue&quot;</span>),<span class="dt">plot.type =</span> <span class="st">&quot;single&quot;</span>) <span class="co"># 予測値と実績値を時系列プロット</span></code></pre>
+<p><img src="/my_blog/post/post6_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>ん～、これはやり直しですね。今日はここまでで勘弁してください…。</p>
 </div>
 
             </article>
@@ -737,7 +740,7 @@ title="github icon"></i>
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1556676722"></script>
+<script src="/my_blog/js/production.min.js?v=1556685265"></script>
 
 </body>
 </html>
