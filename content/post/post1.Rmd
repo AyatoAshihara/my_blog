@@ -23,7 +23,6 @@ output:
 <!--more-->
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(eval = F)
 def.source.hook  <- knitr::knit_hooks$get("source")
 knitr::knit_hooks$set(source = function(x, options) {
   x <- def.source.hook(x, options)
@@ -34,6 +33,8 @@ knitr::knit_hooks$set(source = function(x, options) {
          paste0("\\", options$size,"\n\n", x, "\n\n \\normalsize"), 
          x)
 })
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
 ```
 
 おはこんばんにちは。昨日、Bayesian Vector Autoregressionの記事を書きました。
