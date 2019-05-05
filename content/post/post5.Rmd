@@ -460,22 +460,22 @@ kalmanfiter <- function(y,I,t,z,c=0,R=NA,Q=NA,d=0,S=NA,h=NA,a_int=NA,sig_int=NA)
   F_pre <- array(0,dim = c(L,L,N)) # auxiliary variable 
   k <- array(0,dim = c(I,L,N)) # kalman gain
   
-  if (is.na(a_int)==TRUE){
+  if (any(is.na(a_int))){
     a_int <- matrix(0,nrow = I,ncol = 1)
   }
-  if (is.na(sig_int)==TRUE){
+  if (any(is.na(sig_int))){
     sig_int <- diag(1,nrow = I,ncol = I)
   }
-  if (is.na(R)==TRUE){
+  if (any(is.na(R))){
     R <- diag(1,nrow = I,ncol = I)
   }
-  if (is.na(Q)==TRUE){
+  if (any(is.na(Q))){
     Q <- diag(1,nrow = I,ncol = I)
   }
-  if (is.na(S)==TRUE){
+  if(any(is.na(S))){
     S <- matrix(1,nrow = L,ncol = L)
   }
-  if (is.na(h)==TRUE){
+  if (any(is.na(h))){
     H <- array(0,dim = c(L,L,N))
     for(i in 1:N){
       diag(H[,,i]) = 1
@@ -542,12 +542,7 @@ kalmanfiter <- function(y,I,t,z,c=0,R=NA,Q=NA,d=0,S=NA,h=NA,a_int=NA,sig_int=NA)
   for (i in 2:NCOL(x)){
     dependent <- rbind(dependent,as.matrix(x[(order+1):NROW(x),i]))
   }
-  explanatory <- matrix(1,nrow = (NROW(x)-order),ncol = 1) # explanatory variable
-  for (i in 1:order){
-    eval(parse(text = paste0("explanatory",i," <- x[(order-i+1):(NROW(x)-i),]")))
-    eval(parse(text = paste0("explanatory <- cbind(explanatory,explanatory",i,")")))
-    eval(parse(text = paste0("rm(explanatory",i,")")))
-  }
+  explanatory <- embed(cbind(1,x),order)[,-((order*NCOL(x)+order-NCOL(x)):(order*NCOL(x)+order))]
   explanatory <- diag(1,nrow = NCOL(x),ncol = NCOL(x))%x%as.matrix(explanatory)
   npara <- NCOL(explanatory) # the number of parameters/ ncol(x)*(ncol(x)*order + 1(const))
   
@@ -603,7 +598,7 @@ library("widgetframe")
 
 TEST <- datatable(explanatory)
 
-setwd("../post/DT")
+setwd("../DT")
 saveWidgetframe(widget = TEST, file = "TEST.html", selfcontained = TRUE)
 
 ```
@@ -899,6 +894,7 @@ BVAR <- function(m){
 
 ```{r,message=FALSE, warning=FALSE,eval=FALSE}
 m <- MPrior(Canada,3,rnorm(5))
+results <- BVAR(m)
 
 BVAR_Prediction <- function(results,horizon){
   
@@ -906,24 +902,23 @@ BVAR_Prediction <- function(results,horizon){
   state_fil <- results$`state filtered`
   obs_pred <- results$`observable prediction`
   A <- results$`parameter of state eq`
-  
+    
   nparaall <- dim(state_pred)[1]
-  npara <- order*num+1
   num <- dim(obs_pred)[1]
+  npara <- order*num+1
   order <- (nparaall-num)/(num^2)
   samplesize <- dim(state_pred)[3]
   
   y <- matrix(0,num,horizon)
   B <- matrix(0,horizon,nparaall)
-  x <- matrix(1,1,npara)
+  x <- results$`parameter of observable eq`[1,1:npara,samplesize]
   
   B[1,] <- state_fil[,1,samplesize]
-  x[,1] <- results$`parameter of observable eq`[1,1:npara,samplesize]
-  
   
   for (i in 1:horizon) {
     B[i+1,] <- A%*%B[i,]
-    y[i+1,] <- B[i+1,]%*%diag(1,nrow = dim(obs_pred)[3],ncol = dim(obs_pred)[3])%x%x[i,]
+    y[i+1,] <- B[i+1,]%*%diag(1,num)%x%t(x)
+    x <- 
   }
 }
 

@@ -612,22 +612,22 @@ kalmanfiter &lt;-<span class="st"> </span><span class="cf">function</span>(y,I,t
   F_pre &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(L,L,N)) <span class="co"># auxiliary variable </span>
   k &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(I,L,N)) <span class="co"># kalman gain</span>
   
-  <span class="cf">if</span> (<span class="kw">is.na</span>(a_int)<span class="op">==</span><span class="ot">TRUE</span>){
+  <span class="cf">if</span> (<span class="kw">any</span>(<span class="kw">is.na</span>(a_int))){
     a_int &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,<span class="dt">nrow =</span> I,<span class="dt">ncol =</span> <span class="dv">1</span>)
   }
-  <span class="cf">if</span> (<span class="kw">is.na</span>(sig_int)<span class="op">==</span><span class="ot">TRUE</span>){
+  <span class="cf">if</span> (<span class="kw">any</span>(<span class="kw">is.na</span>(sig_int))){
     sig_int &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> I,<span class="dt">ncol =</span> I)
   }
-  <span class="cf">if</span> (<span class="kw">is.na</span>(R)<span class="op">==</span><span class="ot">TRUE</span>){
+  <span class="cf">if</span> (<span class="kw">any</span>(<span class="kw">is.na</span>(R))){
     R &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> I,<span class="dt">ncol =</span> I)
   }
-  <span class="cf">if</span> (<span class="kw">is.na</span>(Q)<span class="op">==</span><span class="ot">TRUE</span>){
+  <span class="cf">if</span> (<span class="kw">any</span>(<span class="kw">is.na</span>(Q))){
     Q &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> I,<span class="dt">ncol =</span> I)
   }
-  <span class="cf">if</span> (<span class="kw">is.na</span>(S)<span class="op">==</span><span class="ot">TRUE</span>){
+  <span class="cf">if</span>(<span class="kw">any</span>(<span class="kw">is.na</span>(S))){
     S &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> L,<span class="dt">ncol =</span> L)
   }
-  <span class="cf">if</span> (<span class="kw">is.na</span>(h)<span class="op">==</span><span class="ot">TRUE</span>){
+  <span class="cf">if</span> (<span class="kw">any</span>(<span class="kw">is.na</span>(h))){
     H &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(L,L,N))
     <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>N){
       <span class="kw">diag</span>(H[,,i]) =<span class="st"> </span><span class="dv">1</span>
@@ -689,12 +689,7 @@ kalmanfiter &lt;-<span class="st"> </span><span class="cf">function</span>(y,I,t
   <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span><span class="kw">NCOL</span>(x)){
     dependent &lt;-<span class="st"> </span><span class="kw">rbind</span>(dependent,<span class="kw">as.matrix</span>(x[(order<span class="op">+</span><span class="dv">1</span>)<span class="op">:</span><span class="kw">NROW</span>(x),i]))
   }
-  explanatory &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> (<span class="kw">NROW</span>(x)<span class="op">-</span>order),<span class="dt">ncol =</span> <span class="dv">1</span>) <span class="co"># explanatory variable</span>
-  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>order){
-    <span class="kw">eval</span>(<span class="kw">parse</span>(<span class="dt">text =</span> <span class="kw">paste0</span>(<span class="st">&quot;explanatory&quot;</span>,i,<span class="st">&quot; &lt;- x[(order-i+1):(NROW(x)-i),]&quot;</span>)))
-    <span class="kw">eval</span>(<span class="kw">parse</span>(<span class="dt">text =</span> <span class="kw">paste0</span>(<span class="st">&quot;explanatory &lt;- cbind(explanatory,explanatory&quot;</span>,i,<span class="st">&quot;)&quot;</span>)))
-    <span class="kw">eval</span>(<span class="kw">parse</span>(<span class="dt">text =</span> <span class="kw">paste0</span>(<span class="st">&quot;rm(explanatory&quot;</span>,i,<span class="st">&quot;)&quot;</span>)))
-  }
+  explanatory &lt;-<span class="st"> </span><span class="kw">embed</span>(<span class="kw">cbind</span>(<span class="dv">1</span>,x),order)[,<span class="op">-</span>((order<span class="op">*</span><span class="kw">NCOL</span>(x)<span class="op">+</span>order<span class="op">-</span><span class="kw">NCOL</span>(x))<span class="op">:</span>(order<span class="op">*</span><span class="kw">NCOL</span>(x)<span class="op">+</span>order))]
   explanatory &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> <span class="kw">NCOL</span>(x),<span class="dt">ncol =</span> <span class="kw">NCOL</span>(x))<span class="op">%x%</span><span class="kw">as.matrix</span>(explanatory)
   npara &lt;-<span class="st"> </span><span class="kw">NCOL</span>(explanatory) <span class="co"># the number of parameters/ ncol(x)*(ncol(x)*order + 1(const))</span></code></pre>
 <p>dependentは非説明変数、explanatoryは説明変数です。ちょうど1式を再現した形になります。</p>
@@ -739,7 +734,7 @@ kalmanfiter &lt;-<span class="st"> </span><span class="cf">function</span>(y,I,t
 
 TEST &lt;-<span class="st"> </span><span class="kw">datatable</span>(explanatory)
 
-<span class="kw">setwd</span>(<span class="st">&quot;../post/DT&quot;</span>)
+<span class="kw">setwd</span>(<span class="st">&quot;../DT&quot;</span>)
 <span class="kw">saveWidgetframe</span>(<span class="dt">widget =</span> TEST, <span class="dt">file =</span> <span class="st">&quot;TEST.html&quot;</span>, <span class="dt">selfcontained =</span> <span class="ot">TRUE</span>)</code></pre>
 <iframe seamless src="../DT/TEST_widget/index.html" width="100%" height="500">
 </iframe>
@@ -1017,6 +1012,7 @@ TEST &lt;-<span class="st"> </span><span class="kw">datatable</span>(explanatory
   <span class="kw">return</span>(results)
 }</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">m &lt;-<span class="st"> </span><span class="kw">MPrior</span>(Canada,<span class="dv">3</span>,<span class="kw">rnorm</span>(<span class="dv">5</span>))
+results &lt;-<span class="st"> </span><span class="kw">BVAR</span>(m)
 
 BVAR_Prediction &lt;-<span class="st"> </span><span class="cf">function</span>(results,horizon){
   
@@ -1024,25 +1020,24 @@ BVAR_Prediction &lt;-<span class="st"> </span><span class="cf">function</span>(r
   state_fil &lt;-<span class="st"> </span>results<span class="op">$</span><span class="st">`</span><span class="dt">state filtered</span><span class="st">`</span>
   obs_pred &lt;-<span class="st"> </span>results<span class="op">$</span><span class="st">`</span><span class="dt">observable prediction</span><span class="st">`</span>
   A &lt;-<span class="st"> </span>results<span class="op">$</span><span class="st">`</span><span class="dt">parameter of state eq</span><span class="st">`</span>
-  
+    
   nparaall &lt;-<span class="st"> </span><span class="kw">dim</span>(state_pred)[<span class="dv">1</span>]
-  npara &lt;-<span class="st"> </span>order<span class="op">*</span>num<span class="op">+</span><span class="dv">1</span>
   num &lt;-<span class="st"> </span><span class="kw">dim</span>(obs_pred)[<span class="dv">1</span>]
+  npara &lt;-<span class="st"> </span>order<span class="op">*</span>num<span class="op">+</span><span class="dv">1</span>
   order &lt;-<span class="st"> </span>(nparaall<span class="op">-</span>num)<span class="op">/</span>(num<span class="op">^</span><span class="dv">2</span>)
   samplesize &lt;-<span class="st"> </span><span class="kw">dim</span>(state_pred)[<span class="dv">3</span>]
   
   y &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,num,horizon)
   B &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,horizon,nparaall)
-  x &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span>,<span class="dv">1</span>,npara)
+  x &lt;-<span class="st"> </span>results<span class="op">$</span><span class="st">`</span><span class="dt">parameter of observable eq</span><span class="st">`</span>[<span class="dv">1</span>,<span class="dv">1</span><span class="op">:</span>npara,samplesize]
   
   B[<span class="dv">1</span>,] &lt;-<span class="st"> </span>state_fil[,<span class="dv">1</span>,samplesize]
-  x[,<span class="dv">1</span>] &lt;-<span class="st"> </span>results<span class="op">$</span><span class="st">`</span><span class="dt">parameter of observable eq</span><span class="st">`</span>[<span class="dv">1</span>,<span class="dv">1</span><span class="op">:</span>npara,samplesize]
-  
   
   <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>horizon) {
     B[i<span class="op">+</span><span class="dv">1</span>,] &lt;-<span class="st"> </span>A<span class="op">%*%</span>B[i,]
-    y[i<span class="op">+</span><span class="dv">1</span>,] &lt;-<span class="st"> </span>B[i<span class="op">+</span><span class="dv">1</span>,]<span class="op">%*%</span><span class="kw">diag</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> <span class="kw">dim</span>(obs_pred)[<span class="dv">3</span>],<span class="dt">ncol =</span> <span class="kw">dim</span>(obs_pred)[<span class="dv">3</span>])<span class="op">%x%</span>x[i,]
-  }
+    y[i<span class="op">+</span><span class="dv">1</span>,] &lt;-<span class="st"> </span>B[i<span class="op">+</span><span class="dv">1</span>,]<span class="op">%*%</span><span class="kw">diag</span>(<span class="dv">1</span>,num)<span class="op">%x%</span><span class="kw">t</span>(x)
+    x &lt;-<span class="st"> </span>
+<span class="st">  </span>}
 }
 
 BVAR_OPT &lt;-<span class="st"> </span><span class="cf">function</span>(x){

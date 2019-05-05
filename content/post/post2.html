@@ -382,21 +382,14 @@ d_allocation &lt;-<span class="st"> </span><span class="cf">function</span>(ggwe
   <span class="kw">ggplot</span>(ggweight, <span class="kw">aes</span>(<span class="dt">x=</span>Date, <span class="dt">y=</span>weight,<span class="dt">fill=</span>ASSET)) <span class="op">+</span>
 <span class="st">    </span><span class="kw">geom_area</span>(<span class="dt">colour=</span><span class="st">&quot;black&quot;</span>,<span class="dt">size=</span>.<span class="dv">1</span>) <span class="op">+</span>
 <span class="st">    </span><span class="kw">scale_y_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">labs</span>(<span class="dt">title=</span>title) <span class="op">+</span><span class="st"> </span><span class="kw">facet_wrap</span>(method<span class="op">~</span>.)
+<span class="st">    </span><span class="kw">labs</span>(<span class="dt">title=</span>title) <span class="op">+</span><span class="st"> </span><span class="kw">facet_grid</span>(method<span class="op">~</span>.)
 }
-
-<span class="kw">library</span>(plotly)
-<span class="kw">library</span>(<span class="st">&quot;widgetframe&quot;</span>)
 
 gmv_weight &lt;-<span class="st"> </span><span class="kw">rbind</span>(<span class="kw">data.frame</span>(CCC<span class="op">$</span>weight,<span class="dt">method=</span><span class="st">&quot;CCC&quot;</span>,<span class="dt">Date=</span><span class="kw">index</span>(CCC<span class="op">$</span>weight)),<span class="kw">data.frame</span>(DCC<span class="op">$</span>weight,<span class="dt">method=</span><span class="st">&quot;DCC&quot;</span>,<span class="dt">Date=</span><span class="kw">index</span>(DCC<span class="op">$</span>weight)),<span class="kw">data.frame</span>(DECO<span class="op">$</span>weight,<span class="dt">method=</span><span class="st">&quot;DECO&quot;</span>,<span class="dt">Date=</span><span class="kw">index</span>(DECO<span class="op">$</span>weight)))
 
 <span class="co"># plot allocation weighting</span>
-GG1 &lt;-<span class="st"> </span><span class="kw">ggplotly</span>(<span class="kw">d_allocation</span>(gmv_weight,<span class="st">&quot;GMV Asset Allocation&quot;</span>)) 
-
-<span class="kw">setwd</span>(<span class="st">&quot;../post/Plotly&quot;</span>)
-<span class="kw">saveWidgetframe</span>(<span class="dt">widget =</span> GG1, <span class="dt">file =</span> <span class="st">&quot;TEST1.html&quot;</span>, <span class="dt">selfcontained =</span> <span class="ot">TRUE</span>)</code></pre>
-<iframe seamless src="../Plotly/TEST_widget/index.html" width="100%" height="500">
-</iframe>
+<span class="kw">d_allocation</span>(gmv_weight,<span class="st">&quot;GMV Asset Allocation&quot;</span>)</code></pre>
+<p><img src="/my_blog/post/post2_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>リーマンの際にTLT、つまり米国債への比率を増やしているようです。CCCとDCCはそれ以外の部分でも米国債への比率が高く、よく挙げられる最小分散ポートフォリオの問題点がここでも発生しているようです。一方、DECOがやはり個性的な組入比率の推移をしており、ここらを考えてももう一度論文を読み返してみる必要がありそうです。</p>
 <p>追記（2019/3/3）
 これまでは、最小分散ポートフォリオで分析をしていましたが、リスクパリティの結果も見たいなと言うことで、そのコードも書いてみました。</p>
@@ -451,12 +444,14 @@ result &lt;-<span class="st"> </span><span class="kw">merge</span>(CCC<span clas
 <span class="kw">library</span>(plotly)
 
 <span class="co"># plot allocation weighting</span>
-<span class="kw">ggplotly</span>(<span class="kw">d_allocation</span>(CCC<span class="op">$</span>weight,<span class="st">&quot;CCC&quot;</span>)) 
-<span class="kw">ggplotly</span>(<span class="kw">d_allocation</span>(DCC<span class="op">$</span>weight,<span class="st">&quot;DCC&quot;</span>)) 
-<span class="kw">ggplotly</span>(<span class="kw">d_allocation</span>(DECO<span class="op">$</span>weight,<span class="st">&quot;DECO&quot;</span>))
-<span class="kw">ggplotly</span>(<span class="kw">d_allocation</span>(benchmark<span class="op">$</span>weight,<span class="st">&quot;benchmark&quot;</span>))</code></pre>
-<iframe seamless src="../Plotly/TEST_widget/index.html" width="100%" height="500">
-</iframe>
+riskparity_weight &lt;-<span class="st"> </span><span class="kw">rbind</span>(<span class="kw">data.frame</span>(CCC<span class="op">$</span>weight,<span class="dt">method=</span><span class="st">&quot;CCC&quot;</span>,<span class="dt">Date=</span><span class="kw">index</span>(CCC<span class="op">$</span>weight)),<span class="kw">data.frame</span>(DCC<span class="op">$</span>weight,<span class="dt">method=</span><span class="st">&quot;DCC&quot;</span>,<span class="dt">Date=</span><span class="kw">index</span>(DCC<span class="op">$</span>weight)),<span class="kw">data.frame</span>(DECO<span class="op">$</span>weight,<span class="dt">method=</span><span class="st">&quot;DECO&quot;</span>,<span class="dt">Date=</span><span class="kw">index</span>(DECO<span class="op">$</span>weight)),<span class="kw">data.frame</span>(benchmark<span class="op">$</span>weight,<span class="dt">method=</span><span class="st">&quot;benchmark&quot;</span>,<span class="dt">Date=</span><span class="kw">index</span>(benchmark<span class="op">$</span>weight)))</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">PerformanceAnalytics<span class="op">::</span><span class="kw">charts.PerformanceSummary</span>(result, <span class="dt">main =</span> <span class="st">&quot;BACKTEST COMPARISON&quot;</span>)</code></pre>
+<p><img src="/my_blog/post/post2_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<pre class="sourceCode r"><code class="sourceCode r">riskparity_weight &lt;-<span class="st"> </span><span class="kw">rbind</span>(<span class="kw">data.frame</span>(CCC<span class="op">$</span>weight,<span class="dt">method=</span><span class="st">&quot;CCC&quot;</span>,<span class="dt">Date=</span><span class="kw">index</span>(CCC<span class="op">$</span>weight)),<span class="kw">data.frame</span>(DCC<span class="op">$</span>weight,<span class="dt">method=</span><span class="st">&quot;DCC&quot;</span>,<span class="dt">Date=</span><span class="kw">index</span>(DCC<span class="op">$</span>weight)),<span class="kw">data.frame</span>(DECO<span class="op">$</span>weight,<span class="dt">method=</span><span class="st">&quot;DECO&quot;</span>,<span class="dt">Date=</span><span class="kw">index</span>(DECO<span class="op">$</span>weight)),<span class="kw">data.frame</span>(benchmark<span class="op">$</span>weight,<span class="dt">method=</span><span class="st">&quot;benchmark&quot;</span>,<span class="dt">Date=</span><span class="kw">index</span>(benchmark<span class="op">$</span>weight)))
+
+<span class="co"># plot allocation weighting</span>
+<span class="kw">d_allocation</span>(riskparity_weight, <span class="st">&quot;Risk Parity Asset Allocation&quot;</span>)</code></pre>
+<p><img src="/my_blog/post/post2_files/figure-html/unnamed-chunk-15-2.png" width="672" /></p>
 <p>どの手法もbenchmarkをアウトパーフォームできているという好ましい結果になりました。
 やはり、分散共分散行列の推計がうまくいっているようです。また、DECOのパフォーマンスがよいのは、相関行列に各資産ペアの相関係数の平均値を用いているため、他の手法よりもリスク資産の組み入れが多くなったからだと思われます。ウェイトは以下の通りです。</p>
 <p>とりあえず、今日はここまで。</p>

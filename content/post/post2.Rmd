@@ -540,7 +540,7 @@ PerformanceAnalytics::charts.PerformanceSummary(result,main = "BACKTEST")
   library(tidyverse)
 ```
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, cache=TRUE}
 # plot allocation weighting
 d_allocation <- function(ggweight,title){
   #install.packages("tidyverse")
@@ -549,23 +549,15 @@ d_allocation <- function(ggweight,title){
   ggplot(ggweight, aes(x=Date, y=weight,fill=ASSET)) +
     geom_area(colour="black",size=.1) +
     scale_y_continuous(limits = c(0,1)) +
-    labs(title=title) + facet_wrap(method~.)
+    labs(title=title) + facet_grid(method~.)
 }
-
-library(plotly)
-library("widgetframe")
 
 gmv_weight <- rbind(data.frame(CCC$weight,method="CCC",Date=index(CCC$weight)),data.frame(DCC$weight,method="DCC",Date=index(DCC$weight)),data.frame(DECO$weight,method="DECO",Date=index(DECO$weight)))
 
 # plot allocation weighting
-GG1 <- ggplotly(d_allocation(gmv_weight,"GMV Asset Allocation")) 
-
-setwd("../post/Plotly")
-saveWidgetframe(widget = GG1, file = "TEST1.html", selfcontained = TRUE)
+d_allocation(gmv_weight,"GMV Asset Allocation")
 
 ```
-
-<iframe seamless src="../Plotly/TEST_widget/index.html" width="100%" height="500"></iframe>
 
 リーマンの際にTLT、つまり米国債への比率を増やしているようです。CCCとDCCはそれ以外の部分でも米国債への比率が高く、よく挙げられる最小分散ポートフォリオの問題点がここでも発生しているようです。一方、DECOがやはり個性的な組入比率の推移をしており、ここらを考えてももう一度論文を読み返してみる必要がありそうです。
 
@@ -680,29 +672,20 @@ PerformanceAnalytics::charts.PerformanceSummary(result, main = "BACKTEST COMPARI
 library(plotly)
 
 # plot allocation weighting
-ggplotly(d_allocation(CCC$weight,"CCC")) 
-ggplotly(d_allocation(DCC$weight,"DCC")) 
-ggplotly(d_allocation(DECO$weight,"DECO"))
-ggplotly(d_allocation(benchmark$weight,"benchmark"))
+riskparity_weight <- rbind(data.frame(CCC$weight,method="CCC",Date=index(CCC$weight)),data.frame(DCC$weight,method="DCC",Date=index(DCC$weight)),data.frame(DECO$weight,method="DECO",Date=index(DECO$weight)),data.frame(benchmark$weight,method="benchmark",Date=index(benchmark$weight)))
 
 ```
 
-```{r, include=FALSE}
+```{r, message=FALSE, warning=FALSE}
+
 PerformanceAnalytics::charts.PerformanceSummary(result, main = "BACKTEST COMPARISON")
 
-riskparity_weight <- rbind(data.frame(CCC$weight,method="CCC",Date=index(CCC$weight)),data.frame(DCC$weight,method="DCC",Date=index(DCC$weight)),data.frame(DECO$weight,method="DECO",Date=index(DECO$weight)))
-
-d_allocation(riskparity_weight, "Asset Allocation")
+riskparity_weight <- rbind(data.frame(CCC$weight,method="CCC",Date=index(CCC$weight)),data.frame(DCC$weight,method="DCC",Date=index(DCC$weight)),data.frame(DECO$weight,method="DECO",Date=index(DECO$weight)),data.frame(benchmark$weight,method="benchmark",Date=index(benchmark$weight)))
 
 # plot allocation weighting
-GG2 <- ggplotly(d_allocation(riskparity_weight, "Risk Parity Asset Allocation")) 
-
-setwd("../post/Plotly")
-saveWidgetframe(widget = GG2, file = "TEST2.html", selfcontained = TRUE)
-
+d_allocation(riskparity_weight, "Risk Parity Asset Allocation")
 ```
 
-<iframe seamless src="../Plotly/TEST_widget/index.html" width="100%" height="500"></iframe>
 
 どの手法もbenchmarkをアウトパーフォームできているという好ましい結果になりました。
 やはり、分散共分散行列の推計がうまくいっているようです。また、DECOのパフォーマンスがよいのは、相関行列に各資産ペアの相関係数の平均値を用いているため、他の手法よりもリスク資産の組み入れが多くなったからだと思われます。ウェイトは以下の通りです。
