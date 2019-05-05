@@ -262,10 +262,9 @@ dataset1 <- na.omit(dataset1)
 rownames(dataset1) <- dataset1$publication
 dataset1 <- dataset1[,-2]
 dataset1.xts <- xts(dataset1,order.by = as.Date(rownames(dataset1)))
-head(dataset1.xts)
+
 ```
 
-各データの推移は以下のようになっています。
 これでとりあえずデータの収集は終わりました。
 
 ### 得られたデータを主成分分析にかけてみる

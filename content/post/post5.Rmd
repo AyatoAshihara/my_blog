@@ -408,7 +408,21 @@ $$
    
 ### Rでの実装
 
-ここまでをRで実装したいと思います。まず、カルマンフィルタと事前分布を定義します。
+ここまでをRで実装したいと思います。まずは、varsパッケージに準備されているCanadaデータを使用して、通常のVARの推定をやってみます。これはカナダの1980～2000年の労働生産性、雇用、失業率、実質賃金をまとめたものになります。
+
+```{r fig.height=10, fig.width=5, warning=FALSE, r,message=FALSE, fig.align='center'}
+
+library(vars)
+
+data(Canada)
+Canada.var <- VAR(Canada,p=VARselect(Canada,lag.max = 4)$selection[1])
+summary(Canada.var)
+plot(predict(Canada.var,n.ahead=20,ci=0.95))
+
+```
+
+パッケージが整備されているので簡単に実行できました。上で見たようにやっていることは別々のOLSを4本推定しているだけです。
+次にBVARです。まず、カルマンフィルタと事前分布を定義します。カルマンフィルタは以前記事でご紹介したものと同じです。
 
 ```{r,message=FALSE,warning=FALSE}
 library(seasonal)
@@ -504,15 +518,17 @@ kalmanfiter <- function(y,I,t,z,c=0,R=NA,Q=NA,d=0,S=NA,h=NA,a_int=NA,sig_int=NA)
                      "parameter of state eq", "parameter of observable eq")
   return(result)
 }
+```
 
-MPrior <- function(x,order,pi){
-  #-------------------------------------------------------------------
-  # Make Minnesota Prior
-  #   x - dataset
-  #   order - max lag of autoregression
-  #   pi - a set of hyper-parameter of prior matrix
-  #-------------------------------------------------------------------
+事前分布を計算する関数を定義します。まず、引数を計算しやすい形に変換しておきます。
 
+```{r,message=FALSE,warning=FALSE}
+  
+  # set pi
+  pi <- rnorm(5) # hyperparameter
+  x <- Canada # dataset
+  order <- 4 # order
+  
   library(MASS)
     
   # 1. Process row data
@@ -535,13 +551,73 @@ MPrior <- function(x,order,pi){
   explanatory <- diag(1,nrow = NCOL(x),ncol = NCOL(x))%x%as.matrix(explanatory)
   npara <- NCOL(explanatory) # the number of parameters/ ncol(x)*(ncol(x)*order + 1(const))
   
-  # 2. Make Prior matrixes
+```
+
+dependentは非説明変数、explanatoryは説明変数です。ちょうど1式を再現した形になります。
+
+$$
+   \left(
+    \begin{array}{cccc}
+      Y_{1} \\
+      Y_{2} \\
+      \vdots  \\
+      Y_{J} \\
+    \end{array}
+  \right) = 
+ \left(
+    \begin{array}{cccc}
+      X_{1} & 0 & \ldots & 0 \\
+      0 & X_{2} & \ldots & 0 \\
+      \vdots & \vdots & \ddots & \vdots \\
+      0 & 0 & \ldots & X_{J}
+    \end{array}
+  \right) 
+  \left(
+    \begin{array}{cccc}
+      A_{1} \\
+      A_{2} \\
+      \vdots  \\
+      A_{J} \\
+    \end{array}
+  \right) +
+  \left(
+    \begin{array}{cccc}
+      U_{1} \\
+      U_{2} \\
+      \vdots  \\
+      U_{J} \\
+    \end{array}
+  \right)
+$$
+
+
+```{r, message=FALSE, warning=FALSE,eval=FALSE}
+library(DT)
+datatable(explanatory)
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+library(DT)
+library("widgetframe")
+
+TEST <- datatable(explanatory)
+
+setwd("../post/DT")
+saveWidgetframe(widget = TEST, file = "TEST.html", selfcontained = TRUE)
+
+```
+
+<iframe seamless src="../DT/TEST_widget/index.html" width="100%" height="500"></iframe>
+
+```{r,eval=FALSE}
+# 2. Make Prior matrixes
   r <- as.matrix(numeric(npara)) # a part of dependent variable in mixed estimation
   iter1 <- numeric(NCOL(x))
   n <- 2
   for (i in 1:length(iter1)){
     iter1[i] <- n
-    n <- n + npara/order + 1
+    n <- n + order*NCOL(x) + 1
   }
   for (i in iter1){
     r[i] <- 1
@@ -649,7 +725,153 @@ MPrior <- function(x,order,pi){
 
 ```
 
-```{r}
+
+```{r,message=FALSE,warning=FALSE}
+MPrior <- function(x,order,pi){
+  #-------------------------------------------------------------------
+  # Make Minnesota Prior
+  #   x - dataset
+  #   order - max lag of autoregression
+  #   pi - a set of hyper-parameter of prior matrix
+  #-------------------------------------------------------------------
+
+  library(MASS)
+    
+  # 1. Process row data
+  for (i in 1:5){
+    eval(parse(text = paste0("pi",i,"=pi[[",i,"]]")))
+  }
+  if (class(x)!="matrix"){
+    x <- as.matrix(x)
+  }
+  dependent <- as.matrix(x[(order+1):NROW(x),1])
+  for (i in 2:NCOL(x)){
+    dependent <- rbind(dependent,as.matrix(x[(order+1):NROW(x),i]))
+  }
+  explanatory <- matrix(1,nrow = (NROW(x)-order),ncol = 1) # explanatory variable
+  for (i in 1:order){
+    eval(parse(text = paste0("explanatory",i," <- x[(order-i+1):(NROW(x)-i),]")))
+    eval(parse(text = paste0("explanatory <- cbind(explanatory,explanatory",i,")")))
+    eval(parse(text = paste0("rm(explanatory",i,")")))
+  }
+  explanatory <- diag(1,nrow = NCOL(x),ncol = NCOL(x))%x%as.matrix(explanatory)
+  npara <- NCOL(explanatory) # the number of parameters/ ncol(x)*(ncol(x)*order + 1(const))
+  
+  # 2. Make Prior matrixes
+  r <- as.matrix(numeric(npara)) # a part of dependent variable in mixed estimation
+  iter1 <- numeric(NCOL(x))
+  n <- 2
+  for (i in 1:length(iter1)){
+    iter1[i] <- n
+    n <- n + order*NCOL(x) + 1
+  }
+  for (i in iter1){
+    r[i] <- 1
+  }
+  R <- diag(1,nrow = npara,ncol = npara) # a part of explanatory variables in mixed estimation
+  V <- diag(1,nrow = NROW(explanatory),ncol = NROW(explanatory)) # coefficient matrix of var-cov matrix in mixed estimation
+  
+  V0 <- matrix(0,nrow = npara,ncol = npara) # Prior for var matrix
+  
+  # PRIOR FOR VAR OF CONSTANT
+  sigi <- numeric(NCOL(x)) # var of AR(m)
+  for (i in 1:NCOL(x)){
+    AR <- ar(x[,i],order.max = order)
+    sigi[i] <- AR$var.pred
+  }
+  sigma_AR <- diag(sigi,nrow = NCOL(x),ncol = NCOL(x))
+  iter2 <- seq(1,npara,(NCOL(x)*order+1))
+  n <- 1
+  for (i in iter2){
+    V0[i,i] <- pi5*pi3*sigi[n]
+    n <- n + 1
+  }
+  
+  # PRIOR FOR VAR OF AUTOREGRESSIVE PARAMETER
+  wi <- 0 # prior weight on s.d. of autoregressive parameter
+  k <- 0 # decay parameter
+  iter3 <- numeric((NCOL(x)*order))
+  n <- 2;iter3[1] <- n
+  for (i in 2:length(iter3)){
+    if ((i-1)%%order == 0){
+      n <- n + NCOL(x) + 2 # const
+      iter3[i] <- n 
+    }else{
+      n <- n + NCOL(x)
+      iter3[i] <- n
+    }
+  }
+  for (i in iter3) {
+    k <- k + 1
+    V0[i,i] <- pi5*pi1/(k*exp(pi4*wi))
+    if (k == order){
+      k = 0
+    }
+  }
+  
+  # PRIOR FOR VAR OF DISTRIBUTED LAG PARAMETER
+  wj <- 1 # prior weight on s.d. of distributed lag parameter
+  k <- 1 # decay parameter
+  count <- 0
+  n <- 1
+  ndis <- npara - NCOL(x) - length(iter3) # the number of distibuted lag in each equation
+  
+  l <- rep(1:NCOL(x),length=npara)
+  temp <- numeric(length(iter3))
+  j <- 1;temp[1] <- j
+  for (i in 2:length(temp)){
+    if ((i-1)%%order == 0){
+      j <- j + NCOL(x) + 1 # const
+      temp[i] <- j 
+    }else{
+      j <- j + NCOL(x)
+      temp[i] <- j
+    }
+  }
+  l <- l[-c(temp)]; l <- l[1:(ndis)]
+  
+  iter4 <- 1:npara; iter4 <- iter4[-c(iter2,iter3)]
+  for (i in iter4){
+    count <- count + 1
+    V0[i,i] <- pi5*pi2*sigi[n]/(k*exp(pi4*wj)*sigi[l[count]])
+    if(count%%(order-1) == 0){
+      k <- k + 1
+    }
+    if (count%%(ndis/NCOL(x)) == 0){
+      n = n + 1
+      k = 1
+    }
+  }
+
+  # 3. Estimate OLS
+  beta <- ginv((t(explanatory)%*%explanatory))%*%t(explanatory)%*%dependent
+  sig <- as.numeric((NROW(explanatory)-NCOL(explanatory))^(-1)*
+                      t(dependent-explanatory%*%beta)%*%ginv(V)%*%
+                      (dependent-explanatory%*%beta))
+  
+  # 4. Implement Mixed Estimation for initial values
+  beta_M <- ginv((1/sig)*t(explanatory)%*%ginv(V)%*%explanatory + t(R)%*%ginv(V0)%*%R)%*%
+    ((sig)^(-1)*t(explanatory)%*%ginv(V)%*%dependent + t(R)%*%ginv(V0)%*%r)
+  sig_M <- sig*ginv((sig)^(-1)*t(explanatory)%*%ginv(V)%*%explanatory + t(R)%*%ginv(V0)%*%R)
+  
+  # for kalman filter
+  observable <- as.matrix(x[(order+1):NROW(x),]) # dependent variable
+  coefficient <- array(0,dim = c(nrow = NCOL(x),ncol = npara,(NROW(x)-order))) # explanatory variable
+  for(i in 1:(NROW(x)-order)){
+    for (k in 1:NCOL(x)){
+      coefficient[k,(1+(k-1)*npara/NCOL(x)):(k*npara/NCOL(x)),i] <- explanatory[i,1:(npara/NCOL(x))]
+    }
+  }
+  
+  result <- list(observable, coefficient, beta_M, sig_M, sigma_AR, V0, order, npara)
+  names(result) <- c("observable", "coefficient","beta_M", "sig_M","sigma_AR", "V0","order","npara")
+  
+  return(result)
+}
+
+```
+
+```{r,message=FALSE,warning=FALSE}
 BVAR <- function(m){
   #-------------------------------------------------------------------
   # Estimation of Bayesian Vector Auto-Regression
@@ -669,24 +891,45 @@ BVAR <- function(m){
   # 2. Run Kalmanfilter
   results <- kalmanfiter(observable,npara,diag(1,nrow = npara,ncol = npara),
                          coefficient,0,NA,V0,0,NA,sigma_AR,beta_M,sig_M)
-  
   return(results)
 }
 
 ```
 
-では、varsパッケージに準備されているCanadaデータを使用して、BVARをやってみます。これはカナダの1980～2000年の労働生産性、雇用、失業率、実質賃金をまとめたものになります。
-まずは、通常のVARからやりたいと思います。
 
-```{r fig.height=10, fig.width=5, warning=FALSE, r,message=FALSE, fig.align='center'}
+```{r,message=FALSE, warning=FALSE,eval=FALSE}
+m <- MPrior(Canada,3,rnorm(5))
 
-library(vars)
-library(plotly)
+BVAR_Prediction <- function(results,horizon){
+  
+  state_pred <- results$`state prediction`
+  state_fil <- results$`state filtered`
+  obs_pred <- results$`observable prediction`
+  A <- results$`parameter of state eq`
+  
+  nparaall <- dim(state_pred)[1]
+  npara <- order*num+1
+  num <- dim(obs_pred)[1]
+  order <- (nparaall-num)/(num^2)
+  samplesize <- dim(state_pred)[3]
+  
+  y <- matrix(0,num,horizon)
+  B <- matrix(0,horizon,nparaall)
+  x <- matrix(1,1,npara)
+  
+  B[1,] <- state_fil[,1,samplesize]
+  x[,1] <- results$`parameter of observable eq`[1,1:npara,samplesize]
+  
+  
+  for (i in 1:horizon) {
+    B[i+1,] <- A%*%B[i,]
+    y[i+1,] <- B[i+1,]%*%diag(1,nrow = dim(obs_pred)[3],ncol = dim(obs_pred)[3])%x%x[i,]
+  }
+}
 
-data(Canada)
-Canada.var <- VAR(Canada,p=VARselect(Canada,lag.max = 4)$selection[1])
-summary(Canada.var)
-plot(predict(Canada.var,n.ahead=20,ci=0.95))
+BVAR_OPT <- function(x){
+  int_pi <- rnorm(5)
+  
+}
 
 ```
-
