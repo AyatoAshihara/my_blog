@@ -672,7 +672,7 @@ kalmanfiter &lt;-<span class="st"> </span><span class="cf">function</span>(y,I,t
 }</code></pre>
 <p>事前分布を計算する関数を定義します。まず、引数を計算しやすい形に変換しておきます。</p>
 <pre class="sourceCode r"><code class="sourceCode r">  <span class="co"># set pi</span>
-  pi &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">5</span>) <span class="co"># hyperparameter</span>
+  pi &lt;-<span class="st"> </span><span class="kw">abs</span>(<span class="kw">rnorm</span>(<span class="dv">5</span>)) <span class="co"># hyperparameter</span>
   x &lt;-<span class="st"> </span>Canada <span class="co"># dataset</span>
   order &lt;-<span class="st"> </span><span class="dv">4</span> <span class="co"># order</span>
   
@@ -866,16 +866,11 @@ TEST &lt;-<span class="st"> </span><span class="kw">datatable</span>(explanatory
   <span class="cf">if</span> (<span class="kw">class</span>(x)<span class="op">!=</span><span class="st">&quot;matrix&quot;</span>){
     x &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(x)
   }
-  dependent &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(x[(order<span class="op">+</span><span class="dv">1</span>)<span class="op">:</span><span class="kw">NROW</span>(x),<span class="dv">1</span>])
+  dependent &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(x[<span class="dv">1</span><span class="op">:</span>(<span class="kw">NROW</span>(x)<span class="op">-</span>order),<span class="dv">1</span>])
   <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span><span class="kw">NCOL</span>(x)){
     dependent &lt;-<span class="st"> </span><span class="kw">rbind</span>(dependent,<span class="kw">as.matrix</span>(x[(order<span class="op">+</span><span class="dv">1</span>)<span class="op">:</span><span class="kw">NROW</span>(x),i]))
   }
-  explanatory &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> (<span class="kw">NROW</span>(x)<span class="op">-</span>order),<span class="dt">ncol =</span> <span class="dv">1</span>) <span class="co"># explanatory variable</span>
-  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>order){
-    <span class="kw">eval</span>(<span class="kw">parse</span>(<span class="dt">text =</span> <span class="kw">paste0</span>(<span class="st">&quot;explanatory&quot;</span>,i,<span class="st">&quot; &lt;- x[(order-i+1):(NROW(x)-i),]&quot;</span>)))
-    <span class="kw">eval</span>(<span class="kw">parse</span>(<span class="dt">text =</span> <span class="kw">paste0</span>(<span class="st">&quot;explanatory &lt;- cbind(explanatory,explanatory&quot;</span>,i,<span class="st">&quot;)&quot;</span>)))
-    <span class="kw">eval</span>(<span class="kw">parse</span>(<span class="dt">text =</span> <span class="kw">paste0</span>(<span class="st">&quot;rm(explanatory&quot;</span>,i,<span class="st">&quot;)&quot;</span>)))
-  }
+  explanatory &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="dv">1</span>,<span class="kw">embed</span>(x,order)[<span class="op">-</span><span class="dv">1</span>,])
   explanatory &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> <span class="kw">NCOL</span>(x),<span class="dt">ncol =</span> <span class="kw">NCOL</span>(x))<span class="op">%x%</span><span class="kw">as.matrix</span>(explanatory)
   npara &lt;-<span class="st"> </span><span class="kw">NCOL</span>(explanatory) <span class="co"># the number of parameters/ ncol(x)*(ncol(x)*order + 1(const))</span>
   
@@ -1011,7 +1006,7 @@ TEST &lt;-<span class="st"> </span><span class="kw">datatable</span>(explanatory
                          coefficient,<span class="dv">0</span>,<span class="ot">NA</span>,V0,<span class="dv">0</span>,<span class="ot">NA</span>,sigma_AR,beta_M,sig_M)
   <span class="kw">return</span>(results)
 }</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">m &lt;-<span class="st"> </span><span class="kw">MPrior</span>(Canada,<span class="dv">3</span>,<span class="kw">rnorm</span>(<span class="dv">5</span>))
+<pre class="sourceCode r"><code class="sourceCode r">m &lt;-<span class="st"> </span><span class="kw">MPrior</span>(Canada,<span class="dv">3</span>,<span class="kw">abs</span>(<span class="kw">rnorm</span>(<span class="dv">5</span>)))
 results &lt;-<span class="st"> </span><span class="kw">BVAR</span>(m)
 
 BVAR_Prediction &lt;-<span class="st"> </span><span class="cf">function</span>(results,horizon){
@@ -1027,18 +1022,26 @@ BVAR_Prediction &lt;-<span class="st"> </span><span class="cf">function</span>(r
   order &lt;-<span class="st"> </span>(nparaall<span class="op">-</span>num)<span class="op">/</span>(num<span class="op">^</span><span class="dv">2</span>)
   samplesize &lt;-<span class="st"> </span><span class="kw">dim</span>(state_pred)[<span class="dv">3</span>]
   
-  y &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,num,horizon)
+  y &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,horizon,num)
   B &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,horizon,nparaall)
   x &lt;-<span class="st"> </span>results<span class="op">$</span><span class="st">`</span><span class="dt">parameter of observable eq</span><span class="st">`</span>[<span class="dv">1</span>,<span class="dv">1</span><span class="op">:</span>npara,samplesize]
   
   B[<span class="dv">1</span>,] &lt;-<span class="st"> </span>state_fil[,<span class="dv">1</span>,samplesize]
   
-  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>horizon) {
+  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>(horizon<span class="dv">-1</span>)) {
     B[i<span class="op">+</span><span class="dv">1</span>,] &lt;-<span class="st"> </span>A<span class="op">%*%</span>B[i,]
-    y[i<span class="op">+</span><span class="dv">1</span>,] &lt;-<span class="st"> </span>B[i<span class="op">+</span><span class="dv">1</span>,]<span class="op">%*%</span><span class="kw">diag</span>(<span class="dv">1</span>,num)<span class="op">%x%</span><span class="kw">t</span>(x)
-    x &lt;-<span class="st"> </span>
-<span class="st">  </span>}
+    y[i<span class="op">+</span><span class="dv">1</span>,] &lt;-<span class="st"> </span>B[i<span class="op">+</span><span class="dv">1</span>,]<span class="op">%*%</span>(<span class="kw">diag</span>(<span class="dv">1</span>,num)<span class="op">%x%</span>x)
+    x &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,y[i<span class="op">+</span><span class="dv">1</span>,],x[<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="kw">seq</span>(<span class="dt">from=</span>(npara<span class="op">-</span>order),<span class="dt">to=</span>npara))])
+  }
+  
+  result &lt;-<span class="st"> </span><span class="kw">list</span>(B,y)
+  <span class="kw">names</span>(result) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;B&quot;</span>,<span class="st">&quot;y&quot;</span>)
+  
+  <span class="kw">return</span>(result)
+  
 }
+
+pre &lt;-<span class="st"> </span><span class="kw">BVAR_Prediction</span>(results,<span class="dv">20</span>)
 
 BVAR_OPT &lt;-<span class="st"> </span><span class="cf">function</span>(x){
   int_pi &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">5</span>)

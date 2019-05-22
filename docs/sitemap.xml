@@ -152,4 +152,12 @@
     <priority>0</priority>
   </url>
   
+  <url>
+    <loc>/my_blog/post/post9/</loc>
+  </url>
+  
+  <url>
+    <loc>/my_blog/post/post8/</loc>
+  </url>
+  
 </urlset>

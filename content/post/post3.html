@@ -270,22 +270,22 @@ a_{t|t} &amp;=&amp; a_{t|t-1} + k_{t}(Y_{t} - Y_{t|t-1}) \\
   F_inv &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(L,L,N)) <span class="co"># inverse of F_pre</span>
   k &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(I,L,N)) <span class="co"># kalman gain</span>
   
-  <span class="cf">if</span> (<span class="kw">is.na</span>(a_int)<span class="op">==</span><span class="ot">TRUE</span>){
+  <span class="cf">if</span> (<span class="kw">any</span>(<span class="kw">is.na</span>(a_int))<span class="op">==</span><span class="ot">TRUE</span>){
     a_int &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,<span class="dt">nrow =</span> I,<span class="dt">ncol =</span> <span class="dv">1</span>)
   }
-  <span class="cf">if</span> (<span class="kw">is.na</span>(sig_int)<span class="op">==</span><span class="ot">TRUE</span>){
+  <span class="cf">if</span> (<span class="kw">any</span>(<span class="kw">is.na</span>(sig_int))<span class="op">==</span><span class="ot">TRUE</span>){
     sig_int &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> I,<span class="dt">ncol =</span> I)
   }
-  <span class="cf">if</span> (<span class="kw">is.na</span>(R)<span class="op">==</span><span class="ot">TRUE</span>){
+  <span class="cf">if</span> (<span class="kw">any</span>(<span class="kw">is.na</span>(R))<span class="op">==</span><span class="ot">TRUE</span>){
     R &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> I,<span class="dt">ncol =</span> I)
   }
-  <span class="cf">if</span> (<span class="kw">is.na</span>(Q)<span class="op">==</span><span class="ot">TRUE</span>){
+  <span class="cf">if</span> (<span class="kw">any</span>(<span class="kw">is.na</span>(Q))<span class="op">==</span><span class="ot">TRUE</span>){
     Q &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> I,<span class="dt">ncol =</span> I)
   }
-  <span class="cf">if</span> (<span class="kw">is.na</span>(S)<span class="op">==</span><span class="ot">TRUE</span>){
+  <span class="cf">if</span> (<span class="kw">any</span>(<span class="kw">is.na</span>(S))<span class="op">==</span><span class="ot">TRUE</span>){
     S &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span>,<span class="dt">nrow =</span> L,<span class="dt">ncol =</span> L)
   }
-  <span class="cf">if</span> (<span class="kw">is.na</span>(h)<span class="op">==</span><span class="ot">TRUE</span>){
+  <span class="cf">if</span> (<span class="kw">any</span>(<span class="kw">is.na</span>(h))<span class="op">==</span><span class="ot">TRUE</span>){
     H &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim =</span> <span class="kw">c</span>(L,L,N))
     <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>N){
       <span class="kw">diag</span>(H[,,i]) =<span class="st"> </span><span class="dv">1</span>

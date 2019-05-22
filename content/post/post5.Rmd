@@ -525,7 +525,7 @@ kalmanfiter <- function(y,I,t,z,c=0,R=NA,Q=NA,d=0,S=NA,h=NA,a_int=NA,sig_int=NA)
 ```{r,message=FALSE,warning=FALSE}
   
   # set pi
-  pi <- rnorm(5) # hyperparameter
+  pi <- abs(rnorm(5)) # hyperparameter
   x <- Canada # dataset
   order <- 4 # order
   
@@ -739,16 +739,11 @@ MPrior <- function(x,order,pi){
   if (class(x)!="matrix"){
     x <- as.matrix(x)
   }
-  dependent <- as.matrix(x[(order+1):NROW(x),1])
+  dependent <- as.matrix(x[1:(NROW(x)-order),1])
   for (i in 2:NCOL(x)){
     dependent <- rbind(dependent,as.matrix(x[(order+1):NROW(x),i]))
   }
-  explanatory <- matrix(1,nrow = (NROW(x)-order),ncol = 1) # explanatory variable
-  for (i in 1:order){
-    eval(parse(text = paste0("explanatory",i," <- x[(order-i+1):(NROW(x)-i),]")))
-    eval(parse(text = paste0("explanatory <- cbind(explanatory,explanatory",i,")")))
-    eval(parse(text = paste0("rm(explanatory",i,")")))
-  }
+  explanatory <- cbind(1,embed(x,order)[-1,])
   explanatory <- diag(1,nrow = NCOL(x),ncol = NCOL(x))%x%as.matrix(explanatory)
   npara <- NCOL(explanatory) # the number of parameters/ ncol(x)*(ncol(x)*order + 1(const))
   
@@ -893,7 +888,7 @@ BVAR <- function(m){
 
 
 ```{r,message=FALSE, warning=FALSE,eval=FALSE}
-m <- MPrior(Canada,3,rnorm(5))
+m <- MPrior(Canada,3,abs(rnorm(5)))
 results <- BVAR(m)
 
 BVAR_Prediction <- function(results,horizon){
@@ -909,18 +904,26 @@ BVAR_Prediction <- function(results,horizon){
   order <- (nparaall-num)/(num^2)
   samplesize <- dim(state_pred)[3]
   
-  y <- matrix(0,num,horizon)
+  y <- matrix(0,horizon,num)
   B <- matrix(0,horizon,nparaall)
   x <- results$`parameter of observable eq`[1,1:npara,samplesize]
   
   B[1,] <- state_fil[,1,samplesize]
   
-  for (i in 1:horizon) {
+  for (i in 1:(horizon-1)) {
     B[i+1,] <- A%*%B[i,]
-    y[i+1,] <- B[i+1,]%*%diag(1,num)%x%t(x)
-    x <- 
+    y[i+1,] <- B[i+1,]%*%(diag(1,num)%x%x)
+    x <- c(1,y[i+1,],x[-c(1,seq(from=(npara-order),to=npara))])
   }
+  
+  result <- list(B,y)
+  names(result) <- c("B","y")
+  
+  return(result)
+  
 }
+
+pre <- BVAR_Prediction(results,20)
 
 BVAR_OPT <- function(x){
   int_pi <- rnorm(5)

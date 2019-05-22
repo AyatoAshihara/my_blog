@@ -243,22 +243,22 @@ kalmanfiter <- function(y,I,t,z,c=0,R=NA,Q=NA,d=0,S=NA,h=NA,a_int=NA,sig_int=NA)
   F_inv <- array(0,dim = c(L,L,N)) # inverse of F_pre
   k <- array(0,dim = c(I,L,N)) # kalman gain
   
-  if (is.na(a_int)==TRUE){
+  if (any(is.na(a_int))==TRUE){
     a_int <- matrix(0,nrow = I,ncol = 1)
   }
-  if (is.na(sig_int)==TRUE){
+  if (any(is.na(sig_int))==TRUE){
     sig_int <- diag(1,nrow = I,ncol = I)
   }
-  if (is.na(R)==TRUE){
+  if (any(is.na(R))==TRUE){
     R <- diag(1,nrow = I,ncol = I)
   }
-  if (is.na(Q)==TRUE){
+  if (any(is.na(Q))==TRUE){
     Q <- diag(1,nrow = I,ncol = I)
   }
-  if (is.na(S)==TRUE){
+  if (any(is.na(S))==TRUE){
     S <- matrix(1,nrow = L,ncol = L)
   }
-  if (is.na(h)==TRUE){
+  if (any(is.na(h))==TRUE){
     H <- array(0,dim = c(L,L,N))
     for(i in 1:N){
       diag(H[,,i]) = 1

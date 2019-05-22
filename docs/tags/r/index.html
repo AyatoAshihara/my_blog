@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1557017368" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1558533607" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1557017368" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1558533607" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -564,6 +564,106 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 						</div>
 					</div>
 					
+	
+
+			<div class="post type-post status-publish format-standard hentry category-standard category-travel excerpt zoom full-without-featured odd excerpt">
+
+				
+
+				
+
+				<div class="excerpt-container">
+					<div class="excerpt-meta">
+						<span class="date">01 January 0001</span>	<span> / </span>
+
+						
+
+						<span class="author">
+							
+							<a href="https://ayatoashihara.github.io/my_blog/about/" title="Posts by Ayato Ashihara" rel="author">Ayato Ashihara</a>
+							
+						</span>
+						
+
+						 
+							<span> / </span>
+						<span class="category">
+							<a href="/categories/%E6%97%A5%E6%AC%A1gdp">日次GDP</a>
+						</span>
+						
+					</div>
+							<div class='excerpt-header'>
+								<h2 class='excerpt-title'>
+									<a href="/my_blog/post/post8/ "> 【日次GDP】ガウス過程回帰で四半期GDP予測を行ってみた </a>
+								</h2>
+							</div>
+							<div class='excerpt-content'>
+								<article>
+									おはこんばんにちは。前回、ガウス過程回帰をRで実装しました。今日はこのガウス過程を用いて、GDPの予測を行いたいと思います。
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
+When you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+									<div class="more-link-wrapper"><a class="more-link" href="/my_blog/post/post8/">Read the post<span class="screen-reader-text">This is a Standard Post</span></a></div>
+								</article>
+							</div>
+						</div>
+					</div>
+					
+	
+
+			<div class="post type-post status-publish format-standard hentry category-standard category-travel excerpt zoom full-without-featured odd excerpt">
+
+				
+
+				
+
+				<div class="excerpt-container">
+					<div class="excerpt-meta">
+						<span class="date">01 January 0001</span>	<span> / </span>
+
+						
+
+						<span class="author">
+							
+							<a href="https://ayatoashihara.github.io/my_blog/about/" title="Posts by Ayato Ashihara" rel="author">Ayato Ashihara</a>
+							
+						</span>
+						
+
+						 
+							<span> / </span>
+						<span class="category">
+							<a href="/categories/%E6%97%A5%E6%AC%A1gdp">日次GDP</a>
+						</span>
+						
+					</div>
+							<div class='excerpt-header'>
+								<h2 class='excerpt-title'>
+									<a href="/my_blog/post/post9/ "> 【日次GDP】GPLVMでマルチファクターモデルを構築 </a>
+								</h2>
+							</div>
+							<div class='excerpt-content'>
+								<article>
+									おはこんばんにちは。ずいぶん前にGianonne et al (2008)のマルチファクターモデルで四半期GDPの予想を行いました。
+結果としては、ある程度は予測精度が出ていたものの彼らの論文ほどは満足のいくものではありませんでした。原因としてはクロスセクショナルなデータ数の不足が非常に大きいと思われ、現在さまざまなデータの収集方法についてもEXCELを用いて改善中ではあります。しかし一方で、マルチファクターモデルの改善という点も考えたいと思っています。前回は月次経済統計を主成分分析（実際にはカルマンフィルタ）を用いて次元削減を行い、主成分得点を説明変数としてGDPに回帰しました。今回はこの主成分分析のド発展版であるGaussian Process Latent Variable Model(GPLVM)を用いてファクターを計算し、それをGDPに回帰したいと思います。
+・GPLVMとはGPLVMとは、Gaussian Process Modelの一種です。以前、Gaussian Process Regressionの記事を書きました。
+最も基本的なGaussian Process Modelは上の記事のようなモデルで、非説明変数\(Y=(y_{1},y_{2},...,y_{n})\)と説明変数\(X=(\textbf{x}_{1},\textbf{x}_{2},...,\textbf{x}_{n})\)があり、以下のような関係式で表される際にそのモデルを直接推定することなしに新たな説明変数\(X\)の入力に対し、非説明変数\(Y\)の予測値をはじき出すというものでした。
+\[\displaystyle y_{i} = \textbf{w}^{T}\phi(\textbf{x}_{i})\]
+ここで、\(\textbf{x}_{i}\)は\(i\)番目の説明変数ベクトル、\(\phi(・)\)は非線形関数、 \(\textbf{w}^{T}\)は各入力データに対する重み係数（回帰係数）ベクトルです。非線形関数としては、\(\phi(\textbf{x}_{i}) = (x_{1,i}, x_{1,i}^{2},...,x_{1,i}x_{2,i},...)\)を想定しています（\(x_{1,i}\)は\(i\)番目の入力データ\(\textbf{x}_{i}\)の１番目の変数）。詳しくは過去記事を参照してください。
+今回やるGPLVMは説明変数ベクトルが観測できない潜在変数（Latent Variable）であるところが特徴です。以下のスライドが非常にわかりやすいですが、GP-LVMは確率的主成分分析（PPCA）の非線形版という位置付けになっています。
+https://www.slideshare.net/antiplastics/pcagplvm:embed:cite
+では具体的な説明に移ります。GPLVMは主成分分析の発展版ですので、主に次元削減のために行われることを想定しています。つまり、データセットがあったとして、サンプルサイズ\(n\)よりも変数の次元\(p\)が大きいような場合を想定しています。
+・最もPrimitiveなGP-LVM（http://papers.nips.cc/paper/2540-gaussian-process-latent-variable-models-for-visualisation-of-high-dimensional-data.pdf ）先述したようにGPLVMはPPCAの非線形版です。なので、GPLVMを説明するスタートはPPCAになります。観測可能な\(D\)次元データセットを\(\{\textbf{y}_{n}\}_{n=1}^{N}\)とします。そして、潜在変数を\(\textbf{x}_{n}\)とおきます。今、データセットと潜在変数の間には以下のような関係があるとします。
+\[\textbf{y}_{n} = \textbf{W}\textbf{x}_{n} + \epsilon_{n}\]
+ここで、\(\textbf{W}\)はウェイト行列、\(\epsilon_{n}\)はかく乱項で\(N(0,\beta^{-1}\textbf{I})\)に従います（被説明変数が多次元になることに注意）。また、\(\textbf{x}_{n}\)は\(N(0,\textbf{I})\)に従います。このとき、\(\textbf{y}_{n}\)の尤度を\(\textbf{x}_{n}\)を周辺化することで表現すると、
+\[\begin{eqnarray*}\displaystyle p(\textbf{y}_{n}|\textbf{W},\beta) &amp;=&amp; \int p(\textbf{y}_{n}|\textbf{x}_{n},\textbf{W},\beta)N(0,\textbf{I})d\textbf{x}_{n} \\\displaystyle &amp;=&amp; \int N(\textbf{W}\textbf{x}_{n},\beta^{-1}\textbf{I})N(0,\textbf{I})d\textbf{x}_{n} \\&amp;=&amp; N(0,\textbf{W}\textbf{W}^{T} + \beta^{-1}\textbf{I}) \\\displaystyle &amp;=&amp; \frac{1}{(2\pi)^{DN/2}|\textbf{W}\textbf{W}^{T} + \beta^{-1}\textbf{I}|^{N/2}}\exp(\frac{1}{2}\textbf{tr}( (\textbf{W}\textbf{W}^{T} + \beta^{-1}\textbf{I})^{-1}\textbf{YY}^{T}))\end{eqnarray*}\]
+
+									<div class="more-link-wrapper"><a class="more-link" href="/my_blog/post/post9/">Read the post<span class="screen-reader-text">This is a Standard Post</span></a></div>
+								</article>
+							</div>
+						</div>
+					</div>
+					
 				</div>
 
       </div>
@@ -664,6 +764,6 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
     </div>
     <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1557017368"></script>
+<script src="/my_blog/js/production.min.js?v=1558533607"></script>
 
   </body>
