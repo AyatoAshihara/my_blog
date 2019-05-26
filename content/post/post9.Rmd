@@ -7,9 +7,10 @@ output:
     df_print: paged
 slug: post10
 tags:
-- R
-- ガウス過程
-categories: 日次GDP
+  - R
+  - ガウス過程
+categories: 
+  - 日次GDP
 ---
 
 
