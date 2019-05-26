@@ -1,14 +1,21 @@
 ---
-title: "【日次GDP】GPLVMでマルチファクターモデルを構築"
+title: "【日次GDP】GPLVMでマルチファクターモデルを構築してみた"
 author: "Ayato Ashihara"
-date: "2019/5/20"
-output: html_document
-categories:
-  - 日次GDP
+date: '2019-05-26'
+output:
+  html_document:
+    df_print: paged
+slug: post10
 tags:
-  - Webスクレイピング
-  - R
+- R
+- ガウス過程
+categories: 日次GDP
 ---
+
+
+最近私が注目しているのがガウス過程。今回はそのガウス過程の中でも、主成分分析のようにデータセットの次元削減のために使用されるGaussian Process Latent Variable Model（GPLVM）の紹介をします。このモデルは主成分分析のド発展版で、確率的主成分分析のように尤度を評価できるので圧縮する最適な次元を決定でき、また非線形変換をかけるので複雑なデータ構造を持つデータセットでも主成分がきれいに分かれるのが特徴です。今回は毎度使用しているe-statの経済統計データでGPLVMを実装し、GDP予測モデルを作ってみました。Giannone et. al. (2008)の発展版です。
+
+<!--more-->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(warning = FALSE)
@@ -17,8 +24,7 @@ knitr::opts_chunk$set(message = FALSE)
 
 おはこんばんにちは。
 ずいぶん前にGianonne et al (2008)のマルチファクターモデルで四半期GDPの予想を行いました。
-
-結果としては、ある程度は予測精度が出ていたものの彼らの論文ほどは満足のいくものではありませんでした。原因としてはクロスセクショナルなデータ数の不足が非常に大きいと思われ、現在さまざまなデータの収集方法についてもEXCELを用いて改善中ではあります。しかし一方で、マルチファクターモデルの改善という点も考えたいと思っています。前回は月次経済統計を主成分分析（実際にはカルマンフィルタ）を用いて次元削減を行い、主成分得点を説明変数としてGDPに回帰しました。今回はこの主成分分析のド発展版であるGaussian Process Latent Variable Model(GPLVM)を用いてファクターを計算し、それをGDPに回帰したいと思います。
+結果としては、ある程度は予測精度が出ていたものの彼らの論文ほどは満足のいくものではありませんでした。原因としてはクロスセクショナルなデータ不足が大きいと思われ、現在収集方法についてもEXCELを用いて改修中です。しかし一方で、マルチファクターモデルの改善も考えたいと思っています。前回は月次経済統計を主成分分析（実際にはカルマンフィルタ）を用いて次元削減を行い、主成分得点を説明変数としてGDPに回帰しました。今回はこの主成分分析のド発展版であるGaussian Process Latent Variable Model(GPLVM)を用いてファクターを計算し、それをGDPに回帰したいと思います。
 
 
 #### ・GPLVMとは
@@ -98,7 +104,7 @@ $$
 ここで、$\textbf{w}_{i}$はウェイト行列$\textbf{W}$の$i$番目の列です。では、$\textbf{W}$を周辺化して$\textbf{Y}$の尤度関数を導出してみます。やり方はさっきとほぼ同じなので省略します。
 
 $$
-\displaystyle p(\textbf{Y}|\textbf{X},\beta) = \frac{1}{(2\pi)^{DN/2}|K|^{D/2}}\exp(\frac{1}{2}\textbf{tr}(\textbf{K}^{-1}\textbf{YY}^{T}))]
+\displaystyle p(\textbf{Y}|\textbf{X},\beta) = \frac{1}{(2\pi)^{DN/2}|K|^{D/2}}\exp(\frac{1}{2}\textbf{tr}(\textbf{K}^{-1}\textbf{YY}^{T}))
 $$
 
 ここで、$\textbf{K} = \alpha\textbf{X}\textbf{X}^{T} + \beta^{-1}\textbf{I}$で、$\textbf{X}=(\textbf{x}_{1},\textbf{x}_{2},...,\textbf{x}_{N})^{T}$です。対数尤度は
@@ -199,18 +205,18 @@ get_dashboard <- function(ID){
   )
   result <- content(res)
   x <- result$link$item[[1]]$value
-  x <- t(do.call("data.frame",x))
-  date_x <- result$link$item[[1]]$dimension$Time$category$label
-  date_x <- t(do.call("data.frame",date_x))
-  date_x <- str_replace_all(date_x, pattern="年", replacement="/")
-  date_x <- str_replace_all(date_x, pattern="月", replacement="")
-  date_x <- as.Date(gsub("([0-9]+)/([0-9]+)", "\\1/\\2/1", date_x))
-  date_x <- as.Date(date_x, format = "%m/%d/%Y")
-  date_x <- as.numeric(date_x)
-  date_x <- as.Date(date_x, origin="1970-01-01")
-  #x <- cbind(x,date_x)
-  x <- data.frame(x)
-  x[,1] <- as.character(x[,1])%>%as.numeric(x[,1])
+  x <- as.data.frame(t(do.call("data.frame",x)))
+  date_x <- result$link$item[[1]]$dimension$Time$category$label %>% 
+    do.call("data.frame",.) %>% 
+    t() %>%  
+    str_replace_all(pattern="年", replacement="/") %>% 
+    str_replace_all(pattern="月", replacement="") %>% 
+    gsub("([0-9]+)/([0-9]+)", "\\1/\\2/1", .) %>% 
+    as.Date() %>% 
+    as.Date(format = "%m/%d/%Y") %>% 
+    as.numeric() %>% 
+    as.Date(origin="1970-01-01")
+  x[,1] <- as.character(x[,1]) %>% as.numeric(x[,1])
   colnames(x) <- c(result$link$item[[1]]$label)
   x <- x %>% mutate("publication" = date_x)
   return(x)
@@ -316,26 +322,26 @@ m <- seas(GDP.ts)
 GDP$`国内総生産（支出側）（実質）2011年基準` <- m$series$s11
 
 # データセットに結合
-dataset <- dplyr::full_join(kigyo.bukka,callrate,by="publication")
-dataset <- dplyr::full_join(dataset,kikai,by="publication")
-dataset <- dplyr::full_join(dataset,Nikkei,by="publication")
-dataset <- dplyr::full_join(dataset,money.stock,by="publication")
-dataset <- dplyr::full_join(dataset,cpi,by="publication")
-dataset <- dplyr::full_join(dataset,export.price,by="publication")
-dataset <- dplyr::full_join(dataset,import.price,by="publication")
-dataset <- dplyr::full_join(dataset,public.expenditure,by="publication")
-dataset <- dplyr::full_join(dataset,export.service,by="publication")
-dataset <- dplyr::full_join(dataset,working.population,by="publication")
-dataset <- dplyr::full_join(dataset,unemployment_rate,by="publication")
-dataset <- dplyr::full_join(dataset,yukoukyuujinn,by="publication")
-dataset <- dplyr::full_join(dataset,hours_worked,by="publication")
-dataset <- dplyr::full_join(dataset,nominal.wage,by="publication")
-dataset <- dplyr::full_join(dataset,iip,by="publication")
-dataset <- dplyr::full_join(dataset,shukka.shisu,by="publication")
-dataset <- dplyr::full_join(dataset,zaiko.shisu,by="publication")
-dataset <- dplyr::full_join(dataset,sanji.sangyo,by="publication")
-dataset <- dplyr::full_join(dataset,retail.sells,by="publication")
-dataset <- dplyr::full_join(dataset,yen,by="publication")
+dataset <- dplyr::full_join(kigyo.bukka,callrate,by="publication") %>%
+  dplyr::full_join(kikai,by="publication") %>% 
+  dplyr::full_join(Nikkei,by="publication") %>% 
+  dplyr::full_join(money.stock,by="publication") %>% 
+  dplyr::full_join(cpi,by="publication") %>% 
+  dplyr::full_join(export.price,by="publication") %>% 
+  dplyr::full_join(import.price,by="publication") %>% 
+  dplyr::full_join(public.expenditure,by="publication") %>% 
+  dplyr::full_join(export.service,by="publication") %>% 
+  dplyr::full_join(working.population,by="publication") %>% 
+  dplyr::full_join(unemployment_rate,by="publication") %>% 
+  dplyr::full_join(yukoukyuujinn,by="publication") %>% 
+  dplyr::full_join(hours_worked,by="publication") %>% 
+  dplyr::full_join(nominal.wage,by="publication") %>% 
+  dplyr::full_join(iip,by="publication") %>% 
+  dplyr::full_join(shukka.shisu,by="publication") %>% 
+  dplyr::full_join(zaiko.shisu,by="publication") %>% 
+  dplyr::full_join(sanji.sangyo,by="publication") %>% 
+  dplyr::full_join(retail.sells,by="publication") %>% 
+  dplyr::full_join(yen,by="publication")
 colnames(dataset) <- c("DCGPI","publication","callrate","Machinery_Orders",
                        "Nikkei225","money_stock","CPI","export_price",
                        "import_price","public_works_order",

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ガウス過程 on 東京の資産運用会社で働く社会人が研究に没頭するブログ</title>
+    <link>/my_blog/tags/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B/</link>
+    <description>Recent content in ガウス過程 on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 26 May 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/my_blog/tags/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>【日次GDP】GPLVMでマルチファクターモデルを構築してみた</title>
+      <link>/my_blog/post/post10/</link>
+      <pubDate>Sun, 26 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post/post10/</guid>
+      <description>
+&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/plotly-binding/plotly.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/typedarray/typedarray.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;/my_blog/my_blog/rmarkdown-libs/crosstalk/css/crosstalk.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/crosstalk/js/crosstalk.min.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;/my_blog/my_blog/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/plotly-main/plotly-latest.min.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;最近私が注目しているのがガウス過程。今回はそのガウス過程の中でも、主成分分析のようにデータセットの次元削減のために使用されるGaussian Process Latent Variable Model（GPLVM）の紹介をします。このモデルは主成分分析のド発展版で、確率的主成分分析のように尤度を評価できるので圧縮する最適な次元を決定でき、また非線形変換をかけるので複雑なデータ構造を持つデータセットでも主成分がきれいに分かれるのが特徴です。今回は毎度使用しているe-statの経済統計データでGPLVMを実装し、GDP予測モデルを作ってみました。Giannone et. al. (2008)の発展版です。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
