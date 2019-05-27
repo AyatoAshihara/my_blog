@@ -3,9 +3,9 @@ title: "【日次GDP】GPLVMでマルチファクターモデルを構築して�
 author: "Ayato Ashihara"
 date: '2019-05-26'
 output:
-  html_document:
-    df_print: paged
-slug: post10
+  blogdown::html_page:
+    highlight: tango
+slug: post9
 tags:
   - R
   - ガウス過程
