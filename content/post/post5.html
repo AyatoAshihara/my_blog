@@ -727,17 +727,6 @@ kalmanfiter &lt;-<span class="st"> </span><span class="cf">function</span>(y,I,t
     \end{array}
   \right)
 \]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(DT)
-<span class="kw">datatable</span>(explanatory)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(DT)
-<span class="kw">library</span>(<span class="st">&quot;widgetframe&quot;</span>)
-
-TEST &lt;-<span class="st"> </span><span class="kw">datatable</span>(explanatory)
-
-<span class="kw">setwd</span>(<span class="st">&quot;../DT&quot;</span>)
-<span class="kw">saveWidgetframe</span>(<span class="dt">widget =</span> TEST, <span class="dt">file =</span> <span class="st">&quot;TEST.html&quot;</span>, <span class="dt">selfcontained =</span> <span class="ot">TRUE</span>)</code></pre>
-<iframe seamless src="../DT/TEST_widget/index.html" width="100%" height="500">
-</iframe>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 2. Make Prior matrixes</span>
   r &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(<span class="kw">numeric</span>(npara)) <span class="co"># a part of dependent variable in mixed estimation</span>
   iter1 &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">NCOL</span>(x))
