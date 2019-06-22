@@ -176,13 +176,13 @@ $$
 具体的には、通常のガウス過程と同様、
 
 $$
-\displaystyle y_{i}  = \textbf{W}^{T}\phi(\textbf{x}_{i})+ \epsilon_{n}
+\displaystyle \textbf{y}_{n}  = \textbf{W}^{T}\phi(\textbf{x}_{n})+ \epsilon_{n}
 $$
 
-という風に基底関数$\phi(\textbf{x}_{i})$をかませて拡張します。$\phi(・)$は平均$\textbf{0}$、分散共分散行列$\textbf{K}_{\textbf{x}}$のガウス過程と仮定します。分散共分散行列$\textbf{K}_{\textbf{x}}$は
+という風に基底関数$\phi(\textbf{x}_{n})$をかませて拡張します。$\phi(・)$は平均$\textbf{0}$、分散共分散行列$\textbf{K}_{\textbf{x}}$のガウス過程と仮定します。分散共分散行列$\textbf{K}_{\textbf{x}}$は
 
 $$
-$\textbf{K}_{\textbf{x}}$ = \alpha^2\phi(\textbf{x})\phi(\textbf{x})^T
+\textbf{K}_{\textbf{x}} = \alpha^2\phi(\textbf{x})\phi(\textbf{x})^T
 $$
 
 であり、入力ベクトル$\textbf{X}$を$\phi(\textbf{・})$で非線形変換した特徴量$\phi(\textbf{x})$が近いほど、出力値$\textbf{Y}$も近くなりやすいという性質があることになります。GPLVMではこの性質を逆に利用しています。つまり、出力値$Y_i$と$Y_j$が近い→$\phi(\textbf{x}_i)$と$\phi(\textbf{x}_j)$が近い（内積が大きい）→$\textbf{K}_{x,ij}$が大きい→観測不可能なデータ$X_{i}$と$X_{j}$は近い値（or同じようなパターン）をとる。
@@ -222,7 +222,7 @@ K_{x}(x,x') &=& \lim_{H \to \infty}\sum_{h=-H^2}^{H^2}\phi_{h}(x)\phi_{h}(x') \\
 \end{eqnarray*}
 $$
 
-となります。$h$に関係の内部分を積分の外に出します。
+となります。$h$に関係のない部分を積分の外に出します。
 
 $$
 \begin{eqnarray*}
@@ -230,7 +230,7 @@ $$
 \end{eqnarray*}
 $$
 
-残った積分を見ると、正規分布の正規化手数と等しいことがわかります。
+残った積分を見ると、正規分布の正規化定数と等しいことがわかります。
 
 $$
 \begin{eqnarray*}
@@ -244,7 +244,7 @@ $$
 $$
 \begin{eqnarray*}
 &=& \tau^2 \sqrt{\frac{\pi r}{2}}\exp(-\frac{1}{2r}(x-x')^2)　\\
-&=& \theta_{1}\exp(-\frac{1}{\theta_{2}}(x-x^T)^2)
+&=& \theta_{1}\exp(-\frac{1}{\theta_{2}}(x-x’)^2)
 \end{eqnarray*}
 $$
 
@@ -284,6 +284,15 @@ matplot(x=X,y=Y,type = "l",lwd = 2)
 
 ```
 
+非常に滑らかな関数となっていることがわかります。RBFのほかにもカーネル関数は存在します。カーネル関数を変えると基底関数が変わりますから、サンプルパスは大きく変わることになります。
+
+GPLVMの推定方法に話を進めましょう。PPCAの時と同じく、以下の尤度を最大化する観測不能な入力$x$を推定値とします。
+
+$$
+\displaystyle L = - \frac{DN}{2}\ln{2\pi} - \frac{1}{2}\ln{|\textbf{K}|} - \frac{1}{2}\textbf{tr}(\textbf{K}^{-1}\textbf{YY}^{T})
+$$
+
+ただ、PPCAとは異なり、その値は解析的に求めることができません。尤度関数の導関数$\displaystyle \frac{1}{D}\textbf{Y}\textbf{Y}^{T}\textbf{K}^{-1}\textbf{X} = \textbf{X}$の$\textbf{K}$は今や複雑な関数であり、展開することができないからです。よって、共役勾配法を用いて数値的に計算するのが主流なようです（自分は準ニュートン法で実装）。
 
 ### Rでの実装
 

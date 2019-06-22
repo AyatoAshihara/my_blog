@@ -26,7 +26,7 @@
         "datePublished": "2019-05-26 00:00:00 \x2b0000 UTC",
         "dateModified" : "2019-05-26 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post9\/",
-        "wordCount" : "1004",
+        "wordCount" : "1021",
         "image" : "/my_blog/%!s(\u003cnil\u003e)"",
         "keywords" : [ ""R"",""ガウス過程"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1561192814" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1561206320" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1561192814" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1561206320" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -350,11 +350,11 @@ E[(\textbf{y}_{n}|\textbf{W},\beta)(\textbf{y}_{n}|\textbf{W},\beta)^{T}] &amp;=
 \]</span></p>
 <p>具体的には、通常のガウス過程と同様、</p>
 <p><span class="math display">\[
-\displaystyle y_{i}  = \textbf{W}^{T}\phi(\textbf{x}_{i})+ \epsilon_{n}
+\displaystyle \textbf{y}_{n}  = \textbf{W}^{T}\phi(\textbf{x}_{n})+ \epsilon_{n}
 \]</span></p>
-<p>という風に基底関数<span class="math inline">\(\phi(\textbf{x}_{i})\)</span>をかませて拡張します。<span class="math inline">\(\phi(・)\)</span>は平均<span class="math inline">\(\textbf{0}\)</span>、分散共分散行列<span class="math inline">\(\textbf{K}_{\textbf{x}}\)</span>のガウス過程と仮定します。分散共分散行列<span class="math inline">\(\textbf{K}_{\textbf{x}}\)</span>は</p>
+<p>という風に基底関数<span class="math inline">\(\phi(\textbf{x}_{n})\)</span>をかませて拡張します。<span class="math inline">\(\phi(・)\)</span>は平均<span class="math inline">\(\textbf{0}\)</span>、分散共分散行列<span class="math inline">\(\textbf{K}_{\textbf{x}}\)</span>のガウス過程と仮定します。分散共分散行列<span class="math inline">\(\textbf{K}_{\textbf{x}}\)</span>は</p>
 <p><span class="math display">\[
-$\textbf{K}_{\textbf{x}}$ = \alpha^2\phi(\textbf{x})\phi(\textbf{x})^T
+\textbf{K}_{\textbf{x}} = \alpha^2\phi(\textbf{x})\phi(\textbf{x})^T
 \]</span></p>
 <p>であり、入力ベクトル<span class="math inline">\(\textbf{X}\)</span>を<span class="math inline">\(\phi(\textbf{・})\)</span>で非線形変換した特徴量<span class="math inline">\(\phi(\textbf{x})\)</span>が近いほど、出力値<span class="math inline">\(\textbf{Y}\)</span>も近くなりやすいという性質があることになります。GPLVMではこの性質を逆に利用しています。つまり、出力値<span class="math inline">\(Y_i\)</span>と<span class="math inline">\(Y_j\)</span>が近い→<span class="math inline">\(\phi(\textbf{x}_i)\)</span>と<span class="math inline">\(\phi(\textbf{x}_j)\)</span>が近い（内積が大きい）→<span class="math inline">\(\textbf{K}_{x,ij}\)</span>が大きい→観測不可能なデータ<span class="math inline">\(X_{i}\)</span>と<span class="math inline">\(X_{j}\)</span>は近い値（or同じようなパターン）をとる。
 この議論からもわかるように、<span class="math inline">\(\textbf{K}_{\textbf{x}}\)</span>は入力ベクトル<span class="math inline">\(\textbf{X}\)</span>それぞれの距離を表したものになります。分散共分散行列の計算には入力ベクトル<span class="math inline">\(\textbf{X}\)</span>を基底関数<span class="math inline">\(\phi(\textbf{・})\)</span>で非線形変換した後、内積を求めるといったことをする必要はなく、カーネル関数を計算するのみでOKです。今回は王道中の王道RBFカーネルを使用していますので、これを例説明します。</p>
@@ -383,13 +383,13 @@ K_{x}(x,x&#39;) &amp;=&amp; \lim_{H \to \infty}\sum_{h=-H^2}^{H^2}\phi_{h}(x)\ph
 &amp;=&amp; \tau^2 \int_{-\infty}^{\infty}\exp(-\frac{1}{r}\{2(h-\frac{x+x&#39;}{2})^2+\frac{1}{2}(x-x&#39;)^2\})dh \\
 \end{eqnarray*}
 \]</span></p>
-<p>となります。<span class="math inline">\(h\)</span>に関係の内部分を積分の外に出します。</p>
+<p>となります。<span class="math inline">\(h\)</span>に関係のない部分を積分の外に出します。</p>
 <p><span class="math display">\[
 \begin{eqnarray*}
 &amp;=&amp; \tau^2 \int_{-\infty}^{\infty}\exp(-\frac{2}{r}(h-\frac{x+x&#39;}{2})^2)dh\exp(-\frac{1}{2r}(x-x&#39;)^2) \\
 \end{eqnarray*}
 \]</span></p>
-<p>残った積分を見ると、正規分布の正規化手数と等しいことがわかります。</p>
+<p>残った積分を見ると、正規分布の正規化定数と等しいことがわかります。</p>
 <p><span class="math display">\[
 \begin{eqnarray*}
 \int_{-\infty}^{\infty}\exp(-\frac{1}{2\sigma}(h-\frac{x+x&#39;}{2})^2)dh &amp;=&amp;  \int_{-\infty}^{\infty}\exp(-\frac{2}{r}(h-\frac{x+x&#39;}{2})^2)dh\\
@@ -400,7 +400,7 @@ K_{x}(x,x&#39;) &amp;=&amp; \lim_{H \to \infty}\sum_{h=-H^2}^{H^2}\phi_{h}(x)\ph
 <p><span class="math display">\[
 \begin{eqnarray*}
 &amp;=&amp; \tau^2 \sqrt{\frac{\pi r}{2}}\exp(-\frac{1}{2r}(x-x&#39;)^2)　\\
-&amp;=&amp; \theta_{1}\exp(-\frac{1}{\theta_{2}}(x-x^T)^2)
+&amp;=&amp; \theta_{1}\exp(-\frac{1}{\theta_{2}}(x-x’)^2)
 \end{eqnarray*}
 \]</span></p>
 <p>となり、RBFカーネルと等しくなることがわかります。よって、RBFカーネルで計算した共分散は上述した基底関数で入力<span class="math inline">\(x\)</span>を無限次元へ拡張した特徴量ベクトルの内積から計算した共分散と同値になることがわかります。つまり、入力<span class="math inline">\(x\)</span>と<span class="math inline">\(x&#39;\)</span>のスカラーの計算のみで<span class="math inline">\(K_{x}(x,x&#39;)\)</span>ができてしまうという夢のような計算効率化が可能になるわけです。無限次元特徴量ベクトルの回帰問題なんて普通計算できませんからね。。。カーネル関数は偉大です。
@@ -435,6 +435,12 @@ Y &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">
 <span class="co"># Plot</span>
 <span class="kw">matplot</span>(<span class="dt">x=</span>X,<span class="dt">y=</span>Y,<span class="dt">type =</span> <span class="st">&quot;l&quot;</span>,<span class="dt">lwd =</span> <span class="dv">2</span>)</code></pre>
 <p><img src="/my_blog/post/post9_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>非常に滑らかな関数となっていることがわかります。RBFのほかにもカーネル関数は存在します。カーネル関数を変えると基底関数が変わりますから、サンプルパスは大きく変わることになります。</p>
+<p>GPLVMの推定方法に話を進めましょう。PPCAの時と同じく、以下の尤度を最大化する観測不能な入力<span class="math inline">\(x\)</span>を推定値とします。</p>
+<p><span class="math display">\[
+\displaystyle L = - \frac{DN}{2}\ln{2\pi} - \frac{1}{2}\ln{|\textbf{K}|} - \frac{1}{2}\textbf{tr}(\textbf{K}^{-1}\textbf{YY}^{T})
+\]</span></p>
+<p>ただ、PPCAとは異なり、その値は解析的に求めることができません。尤度関数の導関数<span class="math inline">\(\displaystyle \frac{1}{D}\textbf{Y}\textbf{Y}^{T}\textbf{K}^{-1}\textbf{X} = \textbf{X}\)</span>の<span class="math inline">\(\textbf{K}\)</span>は今や複雑な関数であり、展開することができないからです。よって、共役勾配法を用いて数値的に計算するのが主流なようです（自分は準ニュートン法で実装）。</p>
 </div>
 <div id="r" class="section level3">
 <h3>Rでの実装</h3>
@@ -798,7 +804,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1561192814"></script>
+<script src="/my_blog/js/production.min.js?v=1561206320"></script>
 
 </body>
 </html>
