@@ -179,13 +179,110 @@ $$
 \displaystyle y_{i}  = \textbf{W}^{T}\phi(\textbf{x}_{i})+ \epsilon_{n}
 $$
 
-という風に非線形変換$\phi(\textbf{x}_{i})$をかませて拡張します。$\phi(・)$は平均$\textbf{0}$、分散共分散行列$\textbf{K}_{\textbf{x}}$のガウス過程と仮定します。分散共分散行列$\textbf{K}_{\textbf{x}}$は
+という風に基底関数$\phi(\textbf{x}_{i})$をかませて拡張します。$\phi(・)$は平均$\textbf{0}$、分散共分散行列$\textbf{K}_{\textbf{x}}$のガウス過程と仮定します。分散共分散行列$\textbf{K}_{\textbf{x}}$は
 
 $$
-$\textbf{K}_{\textbf{x}}$ = \alpha^2\phi(\textbf{x}_{i})\phi(\textbf{x}_{i})^T
+$\textbf{K}_{\textbf{x}}$ = \alpha^2\phi(\textbf{x})\phi(\textbf{x})^T
 $$
 
+であり、入力ベクトル$\textbf{X}$を$\phi(\textbf{・})$で非線形変換した特徴量$\phi(\textbf{x})$が近いほど、出力値$\textbf{Y}$も近くなりやすいという性質があることになります。GPLVMではこの性質を逆に利用しています。つまり、出力値$Y_i$と$Y_j$が近い→$\phi(\textbf{x}_i)$と$\phi(\textbf{x}_j)$が近い（内積が大きい）→$\textbf{K}_{x,ij}$が大きい→観測不可能なデータ$X_{i}$と$X_{j}$は近い値（or同じようなパターン）をとる。
+この議論からもわかるように、$\textbf{K}_{\textbf{x}}$は入力ベクトル$\textbf{X}$それぞれの距離を表したものになります。分散共分散行列の計算には入力ベクトル$\textbf{X}$を基底関数$\phi(\textbf{・})$で非線形変換した後、内積を求めるといったことをする必要はなく、カーネル関数を計算するのみでOKです。今回は王道中の王道RBFカーネルを使用していますので、これを例説明します。
 
+RBFカーネル（スカラーに対する）
+$$
+\theta_{1}\exp(-\frac{1}{\theta_{2}}(x-x^T)^2)
+$$
+
+このRBFカーネルは以下の基底関数と対応しています。
+
+$$
+\phi(x)_h = \tau\exp(-\frac{1}{r}(x-h)^2)
+$$
+
+例えば、この基底関数で入力$x$を変換したものを$2H^2+1$個並べた関数を
+
+$$
+\phi(x) = (\phi(x)_{-H^2}, ..., \phi(x)_{0},...,\phi(x)_{H^2})
+$$
+
+入力$x$の特徴量だとすると$x'$との共分散$K_{x}(x,x')$は内積の和なので
+
+$$
+K_{x}(x,x') = \sum_{h=-H^2}^{H^2}\phi_{h}(x)\phi_{h}(x')
+$$
+
+となります。ここで、$H \to \infty$とし、グリッドを極限まで細かくしてみます。
+
+$$
+\begin{eqnarray*}
+K_{x}(x,x') &=& \lim_{H \to \infty}\sum_{h=-H^2}^{H^2}\phi_{h}(x)\phi_{h}(x') \\
+&\to&\int_{-\infty}^{\infty}\tau\exp(-\frac{1}{r}(x-h)^2)\tau\exp(-\frac{1}{r}(x'-h)^2)dh \\
+&=& \tau^2 \int_{-\infty}^{\infty}\exp(-\frac{1}{r}\{(x-h)^2+(x'-h)^2\})dh \\
+&=& \tau^2 \int_{-\infty}^{\infty}\exp(-\frac{1}{r}\{2(h-\frac{x+x'}{2})^2+\frac{1}{2}(x-x')^2\})dh \\
+\end{eqnarray*}
+$$
+
+となります。$h$に関係の内部分を積分の外に出します。
+
+$$
+\begin{eqnarray*}
+&=& \tau^2 \int_{-\infty}^{\infty}\exp(-\frac{2}{r}(h-\frac{x+x'}{2})^2)dh\exp(-\frac{1}{2r}(x-x')^2) \\
+\end{eqnarray*}
+$$
+
+残った積分を見ると、正規分布の正規化手数と等しいことがわかります。
+
+$$
+\begin{eqnarray*}
+\int_{-\infty}^{\infty}\exp(-\frac{1}{2\sigma}(h-\frac{x+x'}{2})^2)dh &=&  \int_{-\infty}^{\infty}\exp(-\frac{2}{r}(h-\frac{x+x'}{2})^2)dh\\
+\sigma &=& \frac{r}{4}
+\end{eqnarray*}
+$$
+
+となるので、ガウス積分の公式を用いて
+
+$$
+\begin{eqnarray*}
+&=& \tau^2 \sqrt{\frac{\pi r}{2}}\exp(-\frac{1}{2r}(x-x')^2)　\\
+&=& \theta_{1}\exp(-\frac{1}{\theta_{2}}(x-x^T)^2)
+\end{eqnarray*}
+$$
+
+となり、RBFカーネルと等しくなることがわかります。よって、RBFカーネルで計算した共分散は上述した基底関数で入力$x$を無限次元へ拡張した特徴量ベクトルの内積から計算した共分散と同値になることがわかります。つまり、入力$x$と$x'$のスカラーの計算のみで$K_{x}(x,x')$ができてしまうという夢のような計算効率化が可能になるわけです。無限次元特徴量ベクトルの回帰問題なんて普通計算できませんからね。。。カーネル関数は偉大です。
+前の記事にも載せましたが、RBFカーネルで分散共分散行列を計算したガウス過程のサンプルパスは以下通りです（$\theta_1=1,\theta_2=0.5$）。
+
+```{r}
+# Define Kernel function
+Kernel_Mat <- function(X,sigma,beta){
+  N <- NROW(X)
+  K <- matrix(0,N,N)
+  for (i in 1:N) {
+    for (k in 1:N) {
+      if(i==k) kdelta = 1 else kdelta = 0
+      K[i,k] <- K[k,i] <- exp(-t(X[i,]-X[k,])%*%(X[i,]-X[k,])/(2*sigma^2)) + beta^{-1}*kdelta
+    }
+  }
+  return(K)
+}
+
+N <- 10 # max value of X
+M <- 1000 # sample size
+X <- matrix(seq(1,N,length=M),M,1) # create X
+testK <- Kernel_Mat(X,0.5,1e+18) # calc kernel matrix
+
+library(MASS)
+
+P <- 6 # num of sample path
+Y <- matrix(0,M,P) # define Y
+
+for(i in 1:P){
+  Y[,i] <- mvrnorm(n=1,rep(0,M),testK) # sample Y
+}
+
+# Plot
+matplot(x=X,y=Y,type = "l",lwd = 2)
+
+```
 
 
 ### Rでの実装
@@ -470,7 +567,7 @@ result <- ESTIMATE_GPLVM(scale(Y),5)
 
 library(tidyverse)
 
-g <- ggplot(gather(as.data.frame(result$output),key = name,value = value),
+ggplot(gather(as.data.frame(result$output),key = name,value = value),
        aes(x=rep(dataset1$publication,5),y=value,colour=name)) + 
   geom_line(size=1)
 

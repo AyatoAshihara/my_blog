@@ -26,7 +26,7 @@
         "datePublished": "2019-05-26 00:00:00 \x2b0000 UTC",
         "dateModified" : "2019-05-26 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post9\/",
-        "wordCount" : "836",
+        "wordCount" : "1004",
         "image" : "/my_blog/%!s(\u003cnil\u003e)"",
         "keywords" : [ ""R"",""ガウス過程"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1560701436" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1561192814" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1560701436" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1561192814" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -352,10 +352,89 @@ E[(\textbf{y}_{n}|\textbf{W},\beta)(\textbf{y}_{n}|\textbf{W},\beta)^{T}] &amp;=
 <p><span class="math display">\[
 \displaystyle y_{i}  = \textbf{W}^{T}\phi(\textbf{x}_{i})+ \epsilon_{n}
 \]</span></p>
-<p>という風に非線形変換<span class="math inline">\(\phi(\textbf{x}_{i})\)</span>をかませて拡張します。<span class="math inline">\(\phi(・)\)</span>は平均<span class="math inline">\(\textbf{0}\)</span>、分散共分散行列<span class="math inline">\(\textbf{K}_{\textbf{x}}\)</span>のガウス過程と仮定します。分散共分散行列<span class="math inline">\(\textbf{K}_{\textbf{x}}\)</span>は</p>
+<p>という風に基底関数<span class="math inline">\(\phi(\textbf{x}_{i})\)</span>をかませて拡張します。<span class="math inline">\(\phi(・)\)</span>は平均<span class="math inline">\(\textbf{0}\)</span>、分散共分散行列<span class="math inline">\(\textbf{K}_{\textbf{x}}\)</span>のガウス過程と仮定します。分散共分散行列<span class="math inline">\(\textbf{K}_{\textbf{x}}\)</span>は</p>
 <p><span class="math display">\[
-$\textbf{K}_{\textbf{x}}$ = \alpha^2\phi(\textbf{x}_{i})\phi(\textbf{x}_{i})^T
+$\textbf{K}_{\textbf{x}}$ = \alpha^2\phi(\textbf{x})\phi(\textbf{x})^T
 \]</span></p>
+<p>であり、入力ベクトル<span class="math inline">\(\textbf{X}\)</span>を<span class="math inline">\(\phi(\textbf{・})\)</span>で非線形変換した特徴量<span class="math inline">\(\phi(\textbf{x})\)</span>が近いほど、出力値<span class="math inline">\(\textbf{Y}\)</span>も近くなりやすいという性質があることになります。GPLVMではこの性質を逆に利用しています。つまり、出力値<span class="math inline">\(Y_i\)</span>と<span class="math inline">\(Y_j\)</span>が近い→<span class="math inline">\(\phi(\textbf{x}_i)\)</span>と<span class="math inline">\(\phi(\textbf{x}_j)\)</span>が近い（内積が大きい）→<span class="math inline">\(\textbf{K}_{x,ij}\)</span>が大きい→観測不可能なデータ<span class="math inline">\(X_{i}\)</span>と<span class="math inline">\(X_{j}\)</span>は近い値（or同じようなパターン）をとる。
+この議論からもわかるように、<span class="math inline">\(\textbf{K}_{\textbf{x}}\)</span>は入力ベクトル<span class="math inline">\(\textbf{X}\)</span>それぞれの距離を表したものになります。分散共分散行列の計算には入力ベクトル<span class="math inline">\(\textbf{X}\)</span>を基底関数<span class="math inline">\(\phi(\textbf{・})\)</span>で非線形変換した後、内積を求めるといったことをする必要はなく、カーネル関数を計算するのみでOKです。今回は王道中の王道RBFカーネルを使用していますので、これを例説明します。</p>
+<p>RBFカーネル（スカラーに対する）
+<span class="math display">\[
+\theta_{1}\exp(-\frac{1}{\theta_{2}}(x-x^T)^2)
+\]</span></p>
+<p>このRBFカーネルは以下の基底関数と対応しています。</p>
+<p><span class="math display">\[
+\phi(x)_h = \tau\exp(-\frac{1}{r}(x-h)^2)
+\]</span></p>
+<p>例えば、この基底関数で入力<span class="math inline">\(x\)</span>を変換したものを<span class="math inline">\(2H^2+1\)</span>個並べた関数を</p>
+<p><span class="math display">\[
+\phi(x) = (\phi(x)_{-H^2}, ..., \phi(x)_{0},...,\phi(x)_{H^2})
+\]</span></p>
+<p>入力<span class="math inline">\(x\)</span>の特徴量だとすると<span class="math inline">\(x&#39;\)</span>との共分散<span class="math inline">\(K_{x}(x,x&#39;)\)</span>は内積の和なので</p>
+<p><span class="math display">\[
+K_{x}(x,x&#39;) = \sum_{h=-H^2}^{H^2}\phi_{h}(x)\phi_{h}(x&#39;)
+\]</span></p>
+<p>となります。ここで、<span class="math inline">\(H \to \infty\)</span>とし、グリッドを極限まで細かくしてみます。</p>
+<p><span class="math display">\[
+\begin{eqnarray*}
+K_{x}(x,x&#39;) &amp;=&amp; \lim_{H \to \infty}\sum_{h=-H^2}^{H^2}\phi_{h}(x)\phi_{h}(x&#39;) \\
+&amp;\to&amp;\int_{-\infty}^{\infty}\tau\exp(-\frac{1}{r}(x-h)^2)\tau\exp(-\frac{1}{r}(x&#39;-h)^2)dh \\
+&amp;=&amp; \tau^2 \int_{-\infty}^{\infty}\exp(-\frac{1}{r}\{(x-h)^2+(x&#39;-h)^2\})dh \\
+&amp;=&amp; \tau^2 \int_{-\infty}^{\infty}\exp(-\frac{1}{r}\{2(h-\frac{x+x&#39;}{2})^2+\frac{1}{2}(x-x&#39;)^2\})dh \\
+\end{eqnarray*}
+\]</span></p>
+<p>となります。<span class="math inline">\(h\)</span>に関係の内部分を積分の外に出します。</p>
+<p><span class="math display">\[
+\begin{eqnarray*}
+&amp;=&amp; \tau^2 \int_{-\infty}^{\infty}\exp(-\frac{2}{r}(h-\frac{x+x&#39;}{2})^2)dh\exp(-\frac{1}{2r}(x-x&#39;)^2) \\
+\end{eqnarray*}
+\]</span></p>
+<p>残った積分を見ると、正規分布の正規化手数と等しいことがわかります。</p>
+<p><span class="math display">\[
+\begin{eqnarray*}
+\int_{-\infty}^{\infty}\exp(-\frac{1}{2\sigma}(h-\frac{x+x&#39;}{2})^2)dh &amp;=&amp;  \int_{-\infty}^{\infty}\exp(-\frac{2}{r}(h-\frac{x+x&#39;}{2})^2)dh\\
+\sigma &amp;=&amp; \frac{r}{4}
+\end{eqnarray*}
+\]</span></p>
+<p>となるので、ガウス積分の公式を用いて</p>
+<p><span class="math display">\[
+\begin{eqnarray*}
+&amp;=&amp; \tau^2 \sqrt{\frac{\pi r}{2}}\exp(-\frac{1}{2r}(x-x&#39;)^2)　\\
+&amp;=&amp; \theta_{1}\exp(-\frac{1}{\theta_{2}}(x-x^T)^2)
+\end{eqnarray*}
+\]</span></p>
+<p>となり、RBFカーネルと等しくなることがわかります。よって、RBFカーネルで計算した共分散は上述した基底関数で入力<span class="math inline">\(x\)</span>を無限次元へ拡張した特徴量ベクトルの内積から計算した共分散と同値になることがわかります。つまり、入力<span class="math inline">\(x\)</span>と<span class="math inline">\(x&#39;\)</span>のスカラーの計算のみで<span class="math inline">\(K_{x}(x,x&#39;)\)</span>ができてしまうという夢のような計算効率化が可能になるわけです。無限次元特徴量ベクトルの回帰問題なんて普通計算できませんからね。。。カーネル関数は偉大です。
+前の記事にも載せましたが、RBFカーネルで分散共分散行列を計算したガウス過程のサンプルパスは以下通りです（<span class="math inline">\(\theta_1=1,\theta_2=0.5\)</span>）。</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Define Kernel function</span>
+Kernel_Mat &lt;-<span class="st"> </span><span class="cf">function</span>(X,sigma,beta){
+  N &lt;-<span class="st"> </span><span class="kw">NROW</span>(X)
+  K &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,N,N)
+  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>N) {
+    <span class="cf">for</span> (k <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>N) {
+      <span class="cf">if</span>(i<span class="op">==</span>k) kdelta =<span class="st"> </span><span class="dv">1</span> <span class="cf">else</span> kdelta =<span class="st"> </span><span class="dv">0</span>
+      K[i,k] &lt;-<span class="st"> </span>K[k,i] &lt;-<span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span><span class="kw">t</span>(X[i,]<span class="op">-</span>X[k,])<span class="op">%*%</span>(X[i,]<span class="op">-</span>X[k,])<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>sigma<span class="op">^</span><span class="dv">2</span>)) <span class="op">+</span><span class="st"> </span>beta<span class="op">^</span>{<span class="op">-</span><span class="dv">1</span>}<span class="op">*</span>kdelta
+    }
+  }
+  <span class="kw">return</span>(K)
+}
+
+N &lt;-<span class="st"> </span><span class="dv">10</span> <span class="co"># max value of X</span>
+M &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="co"># sample size</span>
+X &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">seq</span>(<span class="dv">1</span>,N,<span class="dt">length=</span>M),M,<span class="dv">1</span>) <span class="co"># create X</span>
+testK &lt;-<span class="st"> </span><span class="kw">Kernel_Mat</span>(X,<span class="fl">0.5</span>,<span class="fl">1e+18</span>) <span class="co"># calc kernel matrix</span>
+
+<span class="kw">library</span>(MASS)
+
+P &lt;-<span class="st"> </span><span class="dv">6</span> <span class="co"># num of sample path</span>
+Y &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,M,P) <span class="co"># define Y</span>
+
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>P){
+  Y[,i] &lt;-<span class="st"> </span><span class="kw">mvrnorm</span>(<span class="dt">n=</span><span class="dv">1</span>,<span class="kw">rep</span>(<span class="dv">0</span>,M),testK) <span class="co"># sample Y</span>
+}
+
+<span class="co"># Plot</span>
+<span class="kw">matplot</span>(<span class="dt">x=</span>X,<span class="dt">y=</span>Y,<span class="dt">type =</span> <span class="st">&quot;l&quot;</span>,<span class="dt">lwd =</span> <span class="dv">2</span>)</code></pre>
+<p><img src="/my_blog/post/post9_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 </div>
 <div id="r" class="section level3">
 <h3>Rでの実装</h3>
@@ -446,16 +525,16 @@ GPLVM_SELECT &lt;-<span class="st"> </span><span class="cf">function</span>(Y){
 }
 
 result &lt;-<span class="st"> </span><span class="kw">ESTIMATE_GPLVM</span>(<span class="kw">scale</span>(Y),<span class="dv">5</span>)</code></pre>
-<pre><code>## initial  value 854.613651 
-## final  value 845.176039 
+<pre><code>## initial  value 854.601920 
+## final  value 845.174528 
 ## converged</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
 
-g &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">gather</span>(<span class="kw">as.data.frame</span>(result<span class="op">$</span>output),<span class="dt">key =</span> name,<span class="dt">value =</span> value),
+<span class="kw">ggplot</span>(<span class="kw">gather</span>(<span class="kw">as.data.frame</span>(result<span class="op">$</span>output),<span class="dt">key =</span> name,<span class="dt">value =</span> value),
        <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">rep</span>(dataset1<span class="op">$</span>publication,<span class="dv">5</span>),<span class="dt">y=</span>value,<span class="dt">colour=</span>name)) <span class="op">+</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">size=</span><span class="dv">1</span>)
-
-<span class="kw">library</span>(xts)
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">size=</span><span class="dv">1</span>)</code></pre>
+<p><img src="/my_blog/post/post9_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(xts)
 X.xts &lt;-<span class="st"> </span><span class="kw">xts</span>(result<span class="op">$</span>output,<span class="dt">order.by =</span> dataset1<span class="op">$</span>publication)
 X.q.xts &lt;-<span class="st"> </span><span class="kw">apply.quarterly</span>(X.xts,mean)
 X<span class="fl">.3</span>m.xts &lt;-<span class="st"> </span>X.xts[<span class="kw">endpoints</span>(X.xts,<span class="dt">on=</span><span class="st">&quot;quarters&quot;</span>),]
@@ -472,16 +551,16 @@ rg2 &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="kw">sc
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -1.18810 -0.12298  0.04106  0.20807  0.50294 
+## -1.18809 -0.12301  0.04105  0.20803  0.50298 
 ## 
 ## Coefficients:
 ##                 Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)      0.02656    0.04344   0.611  0.54384    
-## X.q.xts[-54]X.1 -0.29336    0.01606 -18.262  &lt; 2e-16 ***
-## X.q.xts[-54]X.2 -0.16957    0.01911  -8.871 1.32e-11 ***
+## (Intercept)      0.02656    0.04344   0.611  0.54387    
+## X.q.xts[-54]X.1 -0.29337    0.01606 -18.261  &lt; 2e-16 ***
+## X.q.xts[-54]X.2 -0.16957    0.01912  -8.871 1.32e-11 ***
 ## X.q.xts[-54]X.3 -0.09971    0.02906  -3.431  0.00126 ** 
-## X.q.xts[-54]X.4  0.34510    0.04519   7.636 8.94e-10 ***
-## X.q.xts[-54]X.5 -0.09894    0.05017  -1.972  0.05453 .  
+## X.q.xts[-54]X.4  0.34509    0.04519   7.636 8.95e-10 ***
+## X.q.xts[-54]X.5 -0.09895    0.05018  -1.972  0.05451 .  
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
@@ -495,22 +574,22 @@ rg2 &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="kw">sc
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -1.28880 -0.08785  0.02951  0.19003  0.45123 
+## -1.28875 -0.08787  0.02944  0.19008  0.45120 
 ## 
 ## Coefficients:
 ##                 Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)     0.003221   0.046543   0.069  0.94512    
-## X.3m.xts[-54]1 -0.287160   0.016797 -17.096  &lt; 2e-16 ***
-## X.3m.xts[-54]2 -0.152914   0.020457  -7.475 1.56e-09 ***
+## (Intercept)     0.003220   0.046543   0.069  0.94513    
+## X.3m.xts[-54]1 -0.287163   0.016797 -17.096  &lt; 2e-16 ***
+## X.3m.xts[-54]2 -0.152909   0.020457  -7.475 1.57e-09 ***
 ## X.3m.xts[-54]3 -0.097886   0.031014  -3.156  0.00279 ** 
-## X.3m.xts[-54]4  0.310686   0.048035   6.468 5.25e-08 ***
-## X.3m.xts[-54]5 -0.007109   0.051722  -0.137  0.89127    
+## X.3m.xts[-54]4  0.310674   0.048034   6.468 5.26e-08 ***
+## X.3m.xts[-54]5 -0.007124   0.051722  -0.138  0.89103    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Residual standard error: 0.3387 on 47 degrees of freedom
 ## Multiple R-squared:  0.8963, Adjusted R-squared:  0.8853 
-## F-statistic: 81.23 on 5 and 47 DF,  p-value: &lt; 2.2e-16</code></pre>
+## F-statistic: 81.24 on 5 and 47 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>決定係数が大幅に改善しました。</p>
 </div>
 
@@ -719,7 +798,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1560701436"></script>
+<script src="/my_blog/js/production.min.js?v=1561192814"></script>
 
 </body>
 </html>
