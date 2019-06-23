@@ -286,13 +286,36 @@ matplot(x=X,y=Y,type = "l",lwd = 2)
 
 非常に滑らかな関数となっていることがわかります。RBFのほかにもカーネル関数は存在します。カーネル関数を変えると基底関数が変わりますから、サンプルパスは大きく変わることになります。
 
-GPLVMの推定方法に話を進めましょう。PPCAの時と同じく、以下の尤度を最大化する観測不能な入力$x$を推定値とします。
+GPLVMの推定方法に話を進めましょう。PPCAの時と同じく、以下の尤度関数を最大化する観測不能な入力$x$を推定値とします。
 
 $$
 \displaystyle L = - \frac{DN}{2}\ln{2\pi} - \frac{1}{2}\ln{|\textbf{K}|} - \frac{1}{2}\textbf{tr}(\textbf{K}^{-1}\textbf{YY}^{T})
 $$
 
-ただ、PPCAとは異なり、その値は解析的に求めることができません。尤度関数の導関数$\displaystyle \frac{1}{D}\textbf{Y}\textbf{Y}^{T}\textbf{K}^{-1}\textbf{X} = \textbf{X}$の$\textbf{K}$は今や複雑な関数であり、展開することができないからです。よって、共役勾配法を用いて数値的に計算するのが主流なようです（自分は準ニュートン法で実装）。
+ただ、PPCAとは異なり、その値は解析的に求めることができません。尤度関数の導関数は今や複雑な関数であり、展開することができないからです。よって、共役勾配法を用いて数値的に計算するのが主流なようです（自分は準ニュートン法で実装）。解析的、数値的のどちらにせよ導関数を求めておくことは必要なので、導関数を求めてみます。
+
+$$
+\frac{\partial L}{\partial \textbf{K}_x} = \frac{1}{2}(\textbf{K}_x^{-1}\textbf{Y}\textbf{Y}^T\textbf{K}_x^{-1}-D\textbf{K}_x^{-1})
+$$
+
+なので、チェーンルールから
+
+$$
+\frac{\partial L}{\partial \textbf{x}} = \frac{\partial L}{\partial \textbf{K}_x}\frac{\partial \textbf{K}_x}{\partial \textbf{x}}
+$$
+
+なので、カーネル関数を決め、$\textbf{x}$に初期値を与えてやれば勾配法によって尤度$L$が最大となる点を探索することができます。今回使用するRBFカーネルで$\frac{\partial \textbf{K}_x}{\partial x_{nj}$を計算してみます。
+
+$$
+\begin{eqnarray*}
+\frac{\partial \textbf{K}_x(\textbf{x}_n,\textbf{x}_n')}{x_{nj}}&=&\frac{\partial\theta_{1}\exp(-\frac{|\textbf{x}_n-\textbf{x}_n'|^2}{\theta_{2}})}{\partial x_{nk}} \\
+&=& \frac{\partial\theta_{1}\exp(-\frac{(\textbf{x}_n-\textbf{x}_n')^T(\textbf{x}_n-\textbf{x}_n')}{\theta_{2}})}{\partial x_{nk}} \\
+&=& \frac{\partial\theta_{1}\exp(-\frac{-(\textbf{x}_n^T\textbf{x}_n-2\textbf{x}_n'^T\textbf{x}_n+\textbf{x}_n'^T\textbf{x}_n')}{\theta_{2}})}{\partial x_{nk}} \\
+&=& -2\textbf{K}_x(\textbf{x}_n\textbf{x}_n')\frac{(x_{nj}-x_{n'j})}{\sigma}
+\end{eqnarray*}
+$$
+
+$j$番目の潜在変数の$n$番目のサンプルそれぞれに導関数を計算し、それを分散共分散行列と同じ行列に整理したものと$\frac{\partial L}{\partial \textbf{K}_x}$との要素ごとの積を足し合わせたものが勾配となります。
 
 ### Rでの実装
 
@@ -497,7 +520,7 @@ ESTIMATE_GPLVM <- function(Y,P,sigma){
   X0 <- c(as.vector(X))
   sigma <- var(matrix(Y,dim(Y)[1]*dim(Y)[2],1))
   
-  # 2. Define log likelyhood function
+  # 2. Define log likelihood function
   loglik <- function(X0,Y,N,P,D,beta,sigma){
     X <- matrix(X0,N,P)
     K <- matrix(0,N,N)
@@ -515,6 +538,7 @@ ESTIMATE_GPLVM <- function(Y,P,sigma){
     return(L)
   }
   
+  # 3. Define derivatives of log likelihood function
   dloglik <- function(X0,P,D,N,Y,beta,sigma){
     X <- matrix(X0,N,P)
     K <- matrix(0,N,N)
@@ -541,7 +565,7 @@ ESTIMATE_GPLVM <- function(Y,P,sigma){
     return(dLdx)
   }
   
-  # 3. Optimization
+  # 4. Optimization
   res <- optim(X0, loglik, dloglik, Y = Y, N=N, P=P, D=D, beta = exp(2), sigma = sigma,
                method = "BFGS", control = list(fnscale = -1,trace=1000,maxit=10000))
   output <- matrix(res$par,N,P)
