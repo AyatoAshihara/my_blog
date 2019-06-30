@@ -299,7 +299,7 @@ Y &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">
 </div>
 <div id="r" class="section level3">
 <h3>Rでの実装</h3>
-<p>GPLVMをRで実装します。</p>
+<p>GPLVMをRで実装します。使用するデータは以前giannoneの記事で使用したものと同じものです。</p>
 <pre class="sourceCode r"><code class="sourceCode r">ESTIMATE_GPLVM &lt;-<span class="st"> </span><span class="cf">function</span>(Y,P,sigma){
   <span class="co"># 1. Set initial value</span>
   Y &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(Y)
@@ -400,8 +400,16 @@ result &lt;-<span class="st"> </span><span class="kw">ESTIMATE_GPLVM</span>(<spa
 X.xts &lt;-<span class="st"> </span><span class="kw">xts</span>(result<span class="op">$</span>output,<span class="dt">order.by =</span> dataset1<span class="op">$</span>publication)
 X.q.xts &lt;-<span class="st"> </span><span class="kw">apply.quarterly</span>(X.xts,mean)
 X<span class="fl">.3</span>m.xts &lt;-<span class="st"> </span>X.xts[<span class="kw">endpoints</span>(X.xts,<span class="dt">on=</span><span class="st">&quot;quarters&quot;</span>),]
+
+<span class="cf">if</span> (<span class="kw">months</span>(<span class="kw">index</span>(X.q.xts)[<span class="kw">NROW</span>(X.q.xts)]) <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;3月&quot;</span>,<span class="st">&quot;6月&quot;</span>,<span class="st">&quot;9月&quot;</span>,<span class="st">&quot;12月&quot;</span>)){
+} <span class="cf">else</span> X.q.xts &lt;-<span class="st"> </span>X.q.xts[<span class="op">-</span><span class="kw">NROW</span>(X.q.xts),]
+<span class="cf">if</span> (<span class="kw">months</span>(<span class="kw">index</span>(X<span class="fl">.3</span>m.xts)[<span class="kw">NROW</span>(X<span class="fl">.3</span>m.xts)]) <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;3月&quot;</span>,<span class="st">&quot;6月&quot;</span>,<span class="st">&quot;9月&quot;</span>,<span class="st">&quot;12月&quot;</span>)){
+} <span class="cf">else</span> X<span class="fl">.3</span>m.xts &lt;-<span class="st"> </span>X<span class="fl">.3</span>m.xts[<span class="op">-</span><span class="kw">NROW</span>(X<span class="fl">.3</span>m.xts),]
+
 <span class="kw">colnames</span>(X.xts) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;factor1&quot;</span>,<span class="st">&quot;factor2&quot;</span>,<span class="st">&quot;factor3&quot;</span>,<span class="st">&quot;factor4&quot;</span>,<span class="st">&quot;factor5&quot;</span>) 
-GDP.q &lt;-<span class="st"> </span>GDP[GDP<span class="op">$</span>publication<span class="op">&gt;</span><span class="kw">index</span>(X.q.xts)[<span class="dv">1</span>] <span class="op">&amp;</span><span class="st"> </span>GDP<span class="op">$</span>publication<span class="op">&lt;</span><span class="kw">index</span>(X.q.xts)[<span class="kw">NROW</span>(X.q.xts)],]
+
+GDP<span class="op">$</span>publication &lt;-<span class="st"> </span>GDP<span class="op">$</span>publication <span class="op">+</span><span class="st"> </span><span class="kw">months</span>(<span class="dv">2</span>)
+GDP.q &lt;-<span class="st"> </span>GDP[GDP<span class="op">$</span>publication<span class="op">&gt;=</span><span class="kw">index</span>(X.q.xts)[<span class="dv">1</span>] <span class="op">&amp;</span><span class="st"> </span>GDP<span class="op">$</span>publication<span class="op">&lt;=</span><span class="kw">index</span>(X.q.xts)[<span class="kw">NROW</span>(X.q.xts)],]
 
 rg &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="kw">scale</span>(GDP.q<span class="op">$</span>GDP)<span class="op">~</span>X.q.xts[<span class="op">-</span><span class="dv">54</span>])
 rg2 &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="kw">scale</span>(GDP.q<span class="op">$</span>GDP)<span class="op">~</span>X<span class="fl">.3</span>m.xts[<span class="op">-</span><span class="dv">54</span>])
@@ -413,22 +421,22 @@ rg2 &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="kw">sc
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -1.18809 -0.12301  0.04105  0.20803  0.50298 
+## -0.38034 -0.07363  0.01543  0.13095  0.30267 
 ## 
 ## Coefficients:
-##                 Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)      0.02656    0.04344   0.611  0.54387    
-## X.q.xts[-54]X.1 -0.29337    0.01606 -18.261  &lt; 2e-16 ***
-## X.q.xts[-54]X.2 -0.16957    0.01912  -8.871 1.32e-11 ***
-## X.q.xts[-54]X.3 -0.09971    0.02906  -3.431  0.00126 ** 
-## X.q.xts[-54]X.4  0.34509    0.04519   7.636 8.95e-10 ***
-## X.q.xts[-54]X.5 -0.09895    0.05018  -1.972  0.05451 .  
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      0.028480   0.025260   1.127   0.2653    
+## X.q.xts[-54]X.1 -0.317362   0.009342 -33.970   &lt;2e-16 ***
+## X.q.xts[-54]X.2 -0.147827   0.011116 -13.298   &lt;2e-16 ***
+## X.q.xts[-54]X.3 -0.030211   0.016900  -1.788   0.0803 .  
+## X.q.xts[-54]X.4  0.377132   0.026282  14.349   &lt;2e-16 ***
+## X.q.xts[-54]X.5 -0.013091   0.029179  -0.449   0.6558    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 0.3161 on 47 degrees of freedom
-## Multiple R-squared:  0.9097, Adjusted R-squared:  0.9001 
-## F-statistic: 94.71 on 5 and 47 DF,  p-value: &lt; 2.2e-16</code></pre>
+## Residual standard error: 0.1838 on 47 degrees of freedom
+## Multiple R-squared:  0.9695, Adjusted R-squared:  0.9662 
+## F-statistic: 298.4 on 5 and 47 DF,  p-value: &lt; 2.2e-16</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(rg2)</code></pre>
 <pre><code>## 
 ## Call:
@@ -436,21 +444,26 @@ rg2 &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="kw">sc
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -1.28875 -0.08787  0.02944  0.19008  0.45120 
+## -0.66642 -0.09053  0.02103  0.14418  0.60178 
 ## 
 ## Coefficients:
 ##                 Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)     0.003220   0.046543   0.069  0.94513    
-## X.3m.xts[-54]1 -0.287163   0.016797 -17.096  &lt; 2e-16 ***
-## X.3m.xts[-54]2 -0.152909   0.020457  -7.475 1.57e-09 ***
-## X.3m.xts[-54]3 -0.097886   0.031014  -3.156  0.00279 ** 
-## X.3m.xts[-54]4  0.310674   0.048034   6.468 5.26e-08 ***
-## X.3m.xts[-54]5 -0.007124   0.051722  -0.138  0.89103    
+## (Intercept)     0.001923   0.036455   0.053   0.9582    
+## X.3m.xts[-54]1 -0.303852   0.013156 -23.096  &lt; 2e-16 ***
+## X.3m.xts[-54]2 -0.142586   0.016023  -8.899 1.20e-11 ***
+## X.3m.xts[-54]3 -0.038397   0.024291  -1.581   0.1207    
+## X.3m.xts[-54]4  0.310855   0.037623   8.262 1.04e-10 ***
+## X.3m.xts[-54]5  0.082115   0.040511   2.027   0.0484 *  
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 0.3387 on 47 degrees of freedom
-## Multiple R-squared:  0.8963, Adjusted R-squared:  0.8853 
-## F-statistic: 81.24 on 5 and 47 DF,  p-value: &lt; 2.2e-16</code></pre>
-<p>決定係数が大幅に改善しました。</p>
+## Residual standard error: 0.2653 on 47 degrees of freedom
+## Multiple R-squared:  0.9364, Adjusted R-squared:  0.9296 
+## F-statistic: 138.3 on 5 and 47 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>決定係数が大幅に改善しました。
+3ヶ月の平均をとったファクターの方がパフォーマンスが良さそうなので、こちらで実際のGDPと予測値のプロットを行ってみます。</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="kw">gather</span>(<span class="kw">data.frame</span>(<span class="dt">fit=</span>rg<span class="op">$</span>fitted.values,<span class="dt">actual=</span><span class="kw">scale</span>(GDP.q<span class="op">$</span>GDP),<span class="dt">Date=</span>GDP.q<span class="op">$</span>publication),key,value,<span class="op">-</span>Date),<span class="kw">aes</span>(<span class="dt">y=</span>value,<span class="dt">x=</span>Date,<span class="dt">colour=</span>key)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>()</code></pre>
+<p><img src="/my_blog/post/post9_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>いかがでしょうか。個人的にはかなりフィッティングできている印象があります（もはや経済理論などふようなのでしょうか）。ただ、最も新しいの値を除いては未来の値が情報量として加味された上で推計されていることになりますから、フェアではありません。正しく予測能力を検証するためには四半期ごとに逐次的に回帰を行う必要があります。この点は時間があるときに更新します。</p>
 </div>

@@ -319,7 +319,7 @@ $j$番目の潜在変数の$n$番目のサンプルそれぞれに導関数を�
 
 ### Rでの実装
 
-GPLVMをRで実装します。
+GPLVMをRで実装します。使用するデータは以前giannoneの記事で使用したものと同じものです。
 
 ```{r, echo=FALSE, cache=TRUE}
 library(httr)
@@ -508,7 +508,6 @@ Y <- dataset1[,-2]
 colnames(GDP) <- c("publication","GDP")
 ```
 
-
 ```{r}
 ESTIMATE_GPLVM <- function(Y,P,sigma){
   # 1. Set initial value
@@ -608,8 +607,16 @@ library(xts)
 X.xts <- xts(result$output,order.by = dataset1$publication)
 X.q.xts <- apply.quarterly(X.xts,mean)
 X.3m.xts <- X.xts[endpoints(X.xts,on="quarters"),]
+
+if (months(index(X.q.xts)[NROW(X.q.xts)]) %in% c("3月","6月","9月","12月")){
+} else X.q.xts <- X.q.xts[-NROW(X.q.xts),]
+if (months(index(X.3m.xts)[NROW(X.3m.xts)]) %in% c("3月","6月","9月","12月")){
+} else X.3m.xts <- X.3m.xts[-NROW(X.3m.xts),]
+
 colnames(X.xts) <- c("factor1","factor2","factor3","factor4","factor5") 
-GDP.q <- GDP[GDP$publication>index(X.q.xts)[1] & GDP$publication<index(X.q.xts)[NROW(X.q.xts)],]
+
+GDP$publication <- GDP$publication + months(2)
+GDP.q <- GDP[GDP$publication>=index(X.q.xts)[1] & GDP$publication<=index(X.q.xts)[NROW(X.q.xts)],]
 
 rg <- lm(scale(GDP.q$GDP)~X.q.xts[-54])
 rg2 <- lm(scale(GDP.q$GDP)~X.3m.xts[-54])
@@ -620,3 +627,13 @@ summary(rg2)
 ```
 
 決定係数が大幅に改善しました。
+3ヶ月の平均をとったファクターの方がパフォーマンスが良さそうなので、こちらで実際のGDPと予測値のプロットを行ってみます。
+
+```{r}
+
+ggplot(gather(data.frame(fit=rg$fitted.values,actual=scale(GDP.q$GDP),Date=GDP.q$publication),key,value,-Date),aes(y=value,x=Date,colour=key)) +
+  geom_line()
+
+```
+
+いかがでしょうか。個人的にはかなりフィッティングできている印象があります（もはや経済理論などふようなのでしょうか）。ただ、最も新しいの値を除いては未来の値が情報量として加味された上で推計されていることになりますから、フェアではありません。正しく予測能力を検証するためには四半期ごとに逐次的に回帰を行う必要があります。この点は時間があるときに更新します。
