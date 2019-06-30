@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1561883469" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1561897376" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1561883469" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1561897376" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -448,13 +448,13 @@ Y &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">
 <p><span class="math display">\[
 \frac{\partial L}{\partial \textbf{x}} = \frac{\partial L}{\partial \textbf{K}_x}\frac{\partial \textbf{K}_x}{\partial \textbf{x}}
 \]</span></p>
-<p>なので、カーネル関数を決め、<span class="math inline">\(\textbf{x}\)</span>に初期値を与えてやれば勾配法によって尤度<span class="math inline">\(L\)</span>が最大となる点を探索することができます。今回使用するRBFカーネルで<span class="math inline">\(\frac{\partial \textbf{K}_x}{\partial x_{nj}\)</span>を計算してみます。</p>
+<p>なので、カーネル関数を決め、<span class="math inline">\(\textbf{x}\)</span>に初期値を与えてやれば勾配法によって尤度<span class="math inline">\(L\)</span>が最大となる点を探索することができます。今回使用するRBFカーネルで<span class="math inline">\(\frac{\partial \textbf{K}_x}{\partial x_{nj}}\)</span>を計算してみます。</p>
 <p><span class="math display">\[
 \begin{eqnarray*}
 \frac{\partial \textbf{K}_x(\textbf{x}_n,\textbf{x}_n&#39;)}{x_{nj}}&amp;=&amp;\frac{\partial\theta_{1}\exp(-\frac{|\textbf{x}_n-\textbf{x}_n&#39;|^2}{\theta_{2}})}{\partial x_{nk}} \\
 &amp;=&amp; \frac{\partial\theta_{1}\exp(-\frac{(\textbf{x}_n-\textbf{x}_n&#39;)^T(\textbf{x}_n-\textbf{x}_n&#39;)}{\theta_{2}})}{\partial x_{nk}} \\
 &amp;=&amp; \frac{\partial\theta_{1}\exp(-\frac{-(\textbf{x}_n^T\textbf{x}_n-2\textbf{x}_n&#39;^T\textbf{x}_n+\textbf{x}_n&#39;^T\textbf{x}_n&#39;)}{\theta_{2}})}{\partial x_{nk}} \\
-&amp;=&amp; -2\textbf{K}_x(\textbf{x}_n\textbf{x}_n&#39;)\frac{(x_{nj}-x_{n&#39;j})}{\sigma}
+&amp;=&amp; -2\textbf{K}_x(\textbf{x}_n\textbf{x}_n&#39;)\frac{(x_{nj}-x_{n&#39;j})}{\theta_2}
 \end{eqnarray*}
 \]</span></p>
 <p><span class="math inline">\(j\)</span>番目の潜在変数の<span class="math inline">\(n\)</span>番目のサンプルそれぞれに導関数を計算し、それを分散共分散行列と同じ行列に整理したものと<span class="math inline">\(\frac{\partial L}{\partial \textbf{K}_x}\)</span>との要素ごとの積を足し合わせたものが勾配となります。</p>
@@ -627,7 +627,7 @@ rg2 &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="kw">sc
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="kw">gather</span>(<span class="kw">data.frame</span>(<span class="dt">fit=</span>rg<span class="op">$</span>fitted.values,<span class="dt">actual=</span><span class="kw">scale</span>(GDP.q<span class="op">$</span>GDP),<span class="dt">Date=</span>GDP.q<span class="op">$</span>publication),key,value,<span class="op">-</span>Date),<span class="kw">aes</span>(<span class="dt">y=</span>value,<span class="dt">x=</span>Date,<span class="dt">colour=</span>key)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>()</code></pre>
 <p><img src="/my_blog/post/post9_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<p>いかがでしょうか。個人的にはかなりフィッティングできている印象があります（もはや経済理論などふようなのでしょうか）。ただ、最も新しいの値を除いては未来の値が情報量として加味された上で推計されていることになりますから、フェアではありません。正しく予測能力を検証するためには四半期ごとに逐次的に回帰を行う必要があります。この点は時間があるときに更新します。</p>
+<p>いかがでしょうか。個人的にはかなりフィッティングできている印象があります（もはや経済理論など不要なのでしょうか）。ただ、最も新しい値を除いては未来の値が情報量として加味された上で推計されていることになりますから、フェアではありません。正しく予測能力を検証するためには四半期ごとに逐次的に回帰を行う必要があります。この点は時間があるときに更新します。</p>
 </div>
 
             </article>
@@ -835,7 +835,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1561883470"></script>
+<script src="/my_blog/js/production.min.js?v=1561897376"></script>
 
 </body>
 </html>

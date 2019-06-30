@@ -304,14 +304,14 @@ $$
 \frac{\partial L}{\partial \textbf{x}} = \frac{\partial L}{\partial \textbf{K}_x}\frac{\partial \textbf{K}_x}{\partial \textbf{x}}
 $$
 
-なので、カーネル関数を決め、$\textbf{x}$に初期値を与えてやれば勾配法によって尤度$L$が最大となる点を探索することができます。今回使用するRBFカーネルで$\frac{\partial \textbf{K}_x}{\partial x_{nj}$を計算してみます。
+なので、カーネル関数を決め、$\textbf{x}$に初期値を与えてやれば勾配法によって尤度$L$が最大となる点を探索することができます。今回使用するRBFカーネルで$\frac{\partial \textbf{K}_x}{\partial x_{nj}}$を計算してみます。
 
 $$
 \begin{eqnarray*}
 \frac{\partial \textbf{K}_x(\textbf{x}_n,\textbf{x}_n')}{x_{nj}}&=&\frac{\partial\theta_{1}\exp(-\frac{|\textbf{x}_n-\textbf{x}_n'|^2}{\theta_{2}})}{\partial x_{nk}} \\
 &=& \frac{\partial\theta_{1}\exp(-\frac{(\textbf{x}_n-\textbf{x}_n')^T(\textbf{x}_n-\textbf{x}_n')}{\theta_{2}})}{\partial x_{nk}} \\
 &=& \frac{\partial\theta_{1}\exp(-\frac{-(\textbf{x}_n^T\textbf{x}_n-2\textbf{x}_n'^T\textbf{x}_n+\textbf{x}_n'^T\textbf{x}_n')}{\theta_{2}})}{\partial x_{nk}} \\
-&=& -2\textbf{K}_x(\textbf{x}_n\textbf{x}_n')\frac{(x_{nj}-x_{n'j})}{\sigma}
+&=& -2\textbf{K}_x(\textbf{x}_n\textbf{x}_n')\frac{(x_{nj}-x_{n'j})}{\theta_2}
 \end{eqnarray*}
 $$
 
@@ -636,4 +636,4 @@ ggplot(gather(data.frame(fit=rg$fitted.values,actual=scale(GDP.q$GDP),Date=GDP.q
 
 ```
 
-いかがでしょうか。個人的にはかなりフィッティングできている印象があります（もはや経済理論などふようなのでしょうか）。ただ、最も新しいの値を除いては未来の値が情報量として加味された上で推計されていることになりますから、フェアではありません。正しく予測能力を検証するためには四半期ごとに逐次的に回帰を行う必要があります。この点は時間があるときに更新します。
+いかがでしょうか。個人的にはかなりフィッティングできている印象があります（もはや経済理論など不要なのでしょうか）。ただ、最も新しい値を除いては未来の値が情報量として加味された上で推計されていることになりますから、フェアではありません。正しく予測能力を検証するためには四半期ごとに逐次的に回帰を行う必要があります。この点は時間があるときに更新します。
