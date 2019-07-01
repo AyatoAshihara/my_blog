@@ -6,6 +6,7 @@ output:
   blogdown::html_page:
     highlight: tango
 slug: post9
+image: img/portfolio/GPLVM.png
 tags:
   - R
   - ガウス過程

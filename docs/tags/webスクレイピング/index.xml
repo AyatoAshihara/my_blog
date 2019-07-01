@@ -86,5 +86,18 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </description>
     </item>
     
+    <item>
+      <title>【競馬統計解析】rvestでyahoo競馬にある過去のレース結果をスクレイピングしてみた。</title>
+      <link>/my_blog/post/post10/</link>
+      <pubDate>Sat, 19 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post/post10/</guid>
+      <description>
+
+
+&lt;p&gt;今、競馬×データサイエンスが熱いです。ウマナリティクスなるものがあり、単純に言えば、これまでのレース結果からなんらかのモデルを作成し、順位予想や回収率を高める馬券購入方法を考えようというものです。中には回収率100%を超える事に成功された方もいるようで、馬券市場には歪みがある事がわかりますただし、その具体的な方法などは当たり前ですが一般に公開はされておらず、そのインパクトがどれほどなのかもわかりません。今回はその第一歩として、競馬をデータ解析するためのデータを取得します。rvestを用いて、ごりごりにクローリングを行いました。&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

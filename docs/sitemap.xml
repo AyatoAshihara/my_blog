@@ -114,53 +114,19 @@
   </url>
   
   <url>
+    <loc>/my_blog/post/post10/</loc>
+    <lastmod>2018-05-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/my_blog/categories/%E7%AB%B6%E9%A6%AC/</loc>
+    <lastmod>2018-05-19T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/my_blog/post/post4/</loc>
     <lastmod>2018-05-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/my_blog/dt/test/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/dt/test_widget/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/plotly/test/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/plotly/test1/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/plotly/test1_widget/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/plotly/test2/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/plotly/test2_widget/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/dt/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/plotly/</loc>
-    <priority>0</priority>
   </url>
   
 </urlset>
