@@ -6,10 +6,23 @@
     <description>Recent content in Posts on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 May 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 06 Jul 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/my_blog/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>【仕事関連】イールドカーブのモデル化について</title>
+      <link>/my_blog/post/post11/</link>
+      <pubDate>Sat, 06 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post/post11/</guid>
+      <description>
+
+
+&lt;p&gt;今回は、今やっている資産運用会社でのレポーティングに仕事に関連する投稿です。債券運用のパフォーマンス要因分解を行う際、①イールドカーブ効果、②銘柄選択効果、③為替効果で超過リターンを分解することがあります。そして、このイールドカーブ効果は理論イールドカーブを使用して算出するらしいのですが、イールドカーブってどうやってモデル化するのだろうと思ったので、今回まとめてみたいと思います。ぱっと浮かぶのはやはりNelson-Siegelモデルです。マクロ経済予測なんかでも使用されているモデルです。まずこの復習から始めたいと思います。
+</description>
+    </item>
     
     <item>
       <title>【日次GDP】GPLVMでマルチファクターモデルを構築してみた</title>
@@ -561,6 +574,15 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 &lt;p&gt;どうもはじめまして。
 このブログを始めるに当たってまずは自己紹介をしたいと思います。&lt;/p&gt;
 </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/my_blog/post/htmlwidget/jgb/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post/htmlwidget/jgb/</guid>
+      <description>plotly(function() {// If window.HTMLWidgets is already defined, then use it; otherwise create a// new object. This allows preceding code to set options that affect the// initialization process (though none currently exist).window.HTMLWidgets = window.HTMLWidgets || {};// See if we&#39;re running in a viewer pane. If not, we&#39;re in a web browser.var viewerMode = window.HTMLWidgets.viewerMode =/\bviewer_pane=1\b/.test(window.location);// See if we&#39;re running in Shiny mode.</description>
     </item>
     
   </channel>

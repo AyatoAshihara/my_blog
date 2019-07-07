@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Htmlwidgets on 東京の資産運用会社で働く社会人が研究に没頭するブログ</title>
+    <link>/my_blog/htmlwidget/</link>
+    <description>Recent content in Htmlwidgets on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="/my_blog/htmlwidget/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title></title>
+      <link>/my_blog/htmlwidget/jgb/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/htmlwidget/jgb/</guid>
+      <description>plotly(function() {// If window.HTMLWidgets is already defined, then use it; otherwise create a// new object. This allows preceding code to set options that affect the// initialization process (though none currently exist).window.HTMLWidgets = window.HTMLWidgets || {};// See if we&#39;re running in a viewer pane. If not, we&#39;re in a web browser.var viewerMode = window.HTMLWidgets.viewerMode =/\bviewer_pane=1\b/.test(window.location);// See if we&#39;re running in Shiny mode.</description>
+    </item>
+    
+  </channel>
+</rss>
