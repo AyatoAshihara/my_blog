@@ -7,11 +7,12 @@ categories:
   - 仕事関連
 tags:
   - R
+image: img/portfolio/yield_curve.png
 ---
 
 
 
-<p>今回は、今やっている資産運用会社でのレポーティングに仕事に関連する投稿です。債券運用のパフォーマンス要因分解を行う際、①イールドカーブ効果、②銘柄選択効果、③為替効果で超過リターンを分解することがあります。そして、このイールドカーブ効果は理論イールドカーブを使用して算出するらしいのですが、イールドカーブってどうやってモデル化するのだろうと思ったので、今回まとめてみたいと思います。ぱっと浮かぶのはやはりNelson-Siegelモデルです。マクロ経済予測なんかでも使用されているモデルです。まずこの復習から始めたいと思います。
+<p>今回は、今やっている資産運用会社でのレポーティングに関連する投稿です。債券運用のパフォーマンス要因分解を行う際、①イールドカーブ効果、②銘柄選択効果、③為替効果で超過リターンを分解することがあります。そして、このイールドカーブ効果は理論イールドカーブを使用して算出するらしいのですが、イールドカーブってどうやってモデル化するのだろうと思ったので、今回まとめてみたいと思います。ぱっと浮かぶのはやはりNelson-Siegelモデルです。マクロ経済予測なんかでも使用されているモデルです。まずこの復習から始めたいと思います。
 <!--more--></p>
 <p>お久しぶりです。今回は、今やっている資産運用会社でのレポーティングに仕事に関連する投稿です。債券運用のパフォーマンス要因分解を行う際、①イールドカーブ効果、②銘柄選択効果、③為替効果で超過リターンを分解することがあります。そして、このイールドカーブ効果は理論イールドカーブを使用して算出するらしいのですが、イールドカーブってどうやってモデル化するのだろうと思ったので、今回まとめてみたいと思います。ぱっと浮かぶのはやはりNelson-Siegelモデルです。マクロ経済予測なんかでも使用されているモデルです。まずこの復習から始めたいと思います。</p>
 <div id="nelson-siegel" class="section level3">
@@ -54,7 +55,8 @@ y(m)=\frac{1}{m}(Lm+S(\frac{1−e^{−m\lambda}}{\lambda})+C(\frac{1−e^{−m\l
 \]</span></p>
 <p>と表すことができます。先ほど少しパラメータの意味についてご説明しましたが、この形を見ればよりその意味が分かるのではないかと思います。(3)の第一項は定数項なので、全ての残存期間に対して共通の金利水準を表しています（つまり、金利シフトに関わるパラメータ）。第二項は残存期間に対して以下のように単調減少関数となっており、S
 はイールドカーブの勾配を表していることがわかります。つまり、おおざっぱに言えば、S&gt;0の時は逆イールド、逆の時は順イールドを表現することができるということです。</p>
-<pre class="r"><code>f1 &lt;- function(m,lambda){
+<pre class="r"><code>library(tidyverse)
+f1 &lt;- function(m,lambda){
   ((1-exp(-m*lambda))/(m*lambda))
 }
 plot(1:20,f1(1:20,0.25),type=&quot;l&quot;,xlab = &quot;Maturity&quot;,ylab = &quot;Yield&quot;)</code></pre>
@@ -131,7 +133,7 @@ jgb.xts[&quot;2000::&quot;] %&gt;%
       zaxis=list(title=&quot;yield&quot;)
     )
   )</code></pre>
-<iframe src="../htmlwidget/jgb/index.html" width="100%" height="500">
+<iframe src="../htmlwidget/jgb/index.html" width="100%" height="500" seamless>
 </iframe>
 <p>金利は低下傾向であり、また2010年の前と後では短期ゾーンの形状が変わっていることもわかると思います。つまり、これは先述したパラメータが一定ではないことを意味しており、各時期のイールドカーブにフィッティングするためには時変パラメータの推定が必要であることを示唆しています。当たり前といえば当たり前ですが、しかしパラメータが推定期間に対して安定性がないのではモデルとしてはいまいちなのではと思ってしまいます。</p>
 <p>では、固定パラメータの推計に移ります。Nelson and Siegel(1987)では<span class="math inline">\(\lambda\)</span>の値を先に決め、その後でほかのパラメータをOLS推計することを繰り返し、決定係数が最大になる点を推定値としています。とりあえず、こちらもこの推計方法に従いたいと思います。まず推計用のデータセットを作成します。</p>
@@ -223,7 +225,7 @@ summary(results)</code></pre>
 <pre class="r"><code>maturity &lt;- 1:600
 plot(maturity,results$coefficients[1]+results$coefficients[2]*f1(maturity,lambda)+results$coefficients[3]*f2(maturity,lambda),type = &quot;l&quot;,xlab = &quot;Maturity&quot;,ylab = &quot;Yield&quot;)</code></pre>
 <p><img src="/my_blog/post/post11_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>んー、なんか違う気がするなぁ。まあとりあえず、イールドカーブの推計はできました。</p>
+<p>まあこんな感じですかね。とりあえず、イールドカーブの推計はできました。</p>
 </div>
 <div id="section" class="section level3">
 <h3>パフォーマンス要因分解とイールドカーブモデル</h3>
@@ -232,8 +234,8 @@ plot(maturity,results$coefficients[1]+results$coefficients[2]*f1(maturity,lambda
 <p>以下引用
 FIXED INCOME ATTRIBUTION: ANALYZING SOURCES OF RETURN Appendix2: DMT (at t-1) is a treasury rate on a 2.14 year treasury bill at the beginning of the attribution period. DMT (at t) is a treasury rate on a 2.14 year treasury bill at the end of the attribution period. It is unlikely that we are going to find 2.14 year treasury bill trading in the market at any given point in time. As such, we will be required to interpolate it’s yield from a standard treasury yield curve. There are several choices available for interpolation, with the simplest one being linear interpolation. Models that are more complex may apply quadratic, cubic interpolation, or Nelson-Siegel (1987) approach. As long as interpolation approach is consistent for both benchmark and portfolio, the bias is kept to minimum.</p>
 <p>トータルリターンをシフト効果とツイスト効果に分解する際に、Duration-matched Tresury rateを計算する必要があるらしく、その際にイールドカーブモデルが必要になるとのことです。保有している債券のデュレーションはパフォーマンス計測期間にきっちり整数値をとるとは限りませんが、市場には例えば2.14のデュレーションを持つ債券は常にありそうにはないので当然です。ただ、Nelson Siegelモデルを使用するほかにも、線形補間や2次、3次補間を行うこともあるようです。こうして考えてみると、このモデルをパフォーマンス要因分解が目的で使用するのであれば、推計時点でパラメータの安定性がないことにさほど問題はないように思われます。時系列分析に使用するのが問題のような気がしてきました（いくつかペーパーがありますが）。基本的に補間のために作られたモデルと理解した方が良さそうです。Appendix3では各要因分解の計算方法が掲載されているので、それを見て今回の記事は終わりにしたいと思います。トータルリターンは以下のように、①Income、②Shift、③Twist、④Spread、⑤Selectionに分解することができます。</p>
-<p>$$
-Income=\</p>
+<p>$$</p>
+<p>Income=\</p>
 <p>Shift=−Duration×ΔKRD \</p>
 <p>Twist=−Duration×(ΔDMT−ΔKRD) \</p>
 <p>Spread=−Duration×() \</p>
