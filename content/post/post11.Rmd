@@ -224,7 +224,7 @@ saveWidget(jgb.plotly, "jgb.html", selfcontained = T)
 setwd("../")
 ```
 
-<iframe src="../htmlwidget/jgb/index.html" width=100% height=100%"></iframe>
+<iframe src="../htmlwidget/jgb/index.html" width="100%" height="500"></iframe>
 
 金利は低下傾向であり、また2010年の前と後では短期ゾーンの形状が変わっていることもわかると思います。つまり、これは先述したパラメータが一定ではないことを意味しており、各時期のイールドカーブにフィッティングするためには時変パラメータの推定が必要であることを示唆しています。当たり前といえば当たり前ですが、しかしパラメータが推定期間に対して安定性がないのではモデルとしてはいまいちなのではと思ってしまいます。
 
