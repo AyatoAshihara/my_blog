@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1562507456" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1562760284" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1562507456" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1562760284" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -401,11 +401,11 @@ obj.func &lt;- function(lambda,dataset,time_end,time_start){
 <pre class="r"><code>test &lt;- optimize(obj.func,interval = c(1/10,1/200),dataset=dataset,time_start=&quot;1992-01-01&quot;,time_end=&quot;2019-07-01&quot;,maximum = TRUE)
 test</code></pre>
 <pre><code>## $maximum
-## [1] 0.06412383
+## [1] 0.06429411
 ## 
 ## $objective
-## [1] 0.141889</code></pre>
-<p>決定係数を最大にする<span class="math inline">\(\lambda\)</span>は0.0641238であり、その時の決定係数は0.141889という結果になりました。いや、決定係数低すぎるなぁ。やはり、先ほどお示ししたように2010年（もしかするとリーマン）の前後でイールドカーブの形状が大きく変わっており、また全ての残存期間で金利が低下傾向ということが原因であると思います。やはり、固定パラメータでは全サンプルに対する当てはまりが悪い。安直な手ですが、サンプル期間を2010年で分断し、推計を二回行ってみます。もちろん、決定係数にこだわりすぎることは危険ではあるのですが、これではモデルを使用している意味がないほど当てはまりが悪いので。</p>
+## [1] 0.140107</code></pre>
+<p>決定係数を最大にする<span class="math inline">\(\lambda\)</span>は0.0642941であり、その時の決定係数は0.140107という結果になりました。いや、決定係数低すぎるなぁ。やはり、先ほどお示ししたように2010年（もしかするとリーマン）の前後でイールドカーブの形状が大きく変わっており、また全ての残存期間で金利が低下傾向ということが原因であると思います。やはり、固定パラメータでは全サンプルに対する当てはまりが悪い。安直な手ですが、サンプル期間を2010年で分断し、推計を二回行ってみます。もちろん、決定係数にこだわりすぎることは危険ではあるのですが、これではモデルを使用している意味がないほど当てはまりが悪いので。</p>
 <pre class="r"><code># 1992-01-01~2009-12-31で推計
 optimize(obj.func,interval = c(1/10,1/200),dataset=dataset,time_end=&quot;2010-01-01&quot;,time_start=&quot;1992-01-01&quot;,maximum = TRUE)</code></pre>
 <pre><code>## $maximum
@@ -416,10 +416,10 @@ optimize(obj.func,interval = c(1/10,1/200),dataset=dataset,time_end=&quot;2010-0
 <pre class="r"><code># 2010-01-01~2019-07-01で推計
 optimize(obj.func,interval = c(1/10,1/200),dataset=dataset,time_end=&quot;2019-07-01&quot;,time_start=&quot;2010-01-01&quot;,maximum = TRUE)</code></pre>
 <pre><code>## $maximum
-## [1] 0.02290492
+## [1] 0.02284422
 ## 
 ## $objective
-## [1] 0.6385757</code></pre>
+## [1] 0.6290687</code></pre>
 <p>どうやら2010年以降のサンプルでは当てはまり良いようです。この<span class="math inline">\(\lambda\)</span>の値を用いて、OLS推計を行います。</p>
 <pre class="r"><code>lambda = 0.02290492
 dataset &lt;- dataset %&gt;%
@@ -442,19 +442,19 @@ summary(results)</code></pre>
 ## 
 ## Residuals:
 ##        Min         1Q     Median         3Q        Max 
-## -0.0151201 -0.0026248  0.0004511  0.0025975  0.0103322 
+## -0.0149407 -0.0027083  0.0004238  0.0026368  0.0104803 
 ## 
 ## Coefficients:
 ##               Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  2.027e-02  7.473e-05  271.29   &lt;2e-16 ***
-## f1          -1.900e-02  9.834e-05 -193.24   &lt;2e-16 ***
-## f2          -3.028e-02  3.171e-04  -95.49   &lt;2e-16 ***
+## (Intercept)  2.006e-02  7.495e-05   267.7   &lt;2e-16 ***
+## f1          -1.881e-02  9.863e-05  -190.7   &lt;2e-16 ***
+## f2          -3.012e-02  3.181e-04   -94.7   &lt;2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 0.004114 on 34287 degrees of freedom
-## Multiple R-squared:  0.6386, Adjusted R-squared:  0.6386 
-## F-statistic: 3.029e+04 on 2 and 34287 DF,  p-value: &lt; 2.2e-16</code></pre>
+## Residual standard error: 0.004161 on 34872 degrees of freedom
+## Multiple R-squared:  0.6291, Adjusted R-squared:  0.629 
+## F-statistic: 2.957e+04 on 2 and 34872 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>推計したイールドカーブをプロットしたのが以下です。</p>
 <pre class="r"><code>maturity &lt;- 1:600
 plot(maturity,results$coefficients[1]+results$coefficients[2]*f1(maturity,lambda)+results$coefficients[3]*f2(maturity,lambda),type = &quot;l&quot;,xlab = &quot;Maturity&quot;,ylab = &quot;Yield&quot;)</code></pre>
@@ -680,7 +680,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1562507456"></script>
+<script src="/my_blog/js/production.min.js?v=1562760284"></script>
 
 </body>
 </html>

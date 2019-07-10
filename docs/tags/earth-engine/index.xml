@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Earth Engine on 東京の資産運用会社で働く社会人が研究に没頭するブログ</title>
+    <link>/my_blog/tags/earth-engine/</link>
+    <description>Recent content in Earth Engine on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 08 Jul 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/my_blog/tags/earth-engine/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>（執筆中）【日次GDP】Earth Engineの衛星写真を使って景況感をナウキャスティングしてみる</title>
+      <link>/my_blog/post12/</link>
+      <pubDate>Mon, 08 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post12/</guid>
+      <description>#library(devtools)#install_github(&amp;quot;JesJehle/earthEngineGrabR&amp;quot;)library(earthEngineGrabR)#chirps_data &amp;lt;- ee_grab(data = ee_data_collection(datasetID = &amp;quot;UCSB-CHG/CHIRPS/DAILY&amp;quot;,# spatialReducer = &amp;quot;mean&amp;quot;,# temporalReducer = &amp;quot;sum&amp;quot;, # timeStart = &amp;quot;2017-05-01&amp;quot;,# timeEnd = &amp;quot;2017-05-31&amp;quot;, # resolution = 200# ),# targetArea = system.file(&amp;quot;data/territories.shp&amp;quot;, package = &amp;quot;earthEngineGrabR&amp;quot;)# )</description>
+    </item>
+    
+  </channel>
+</rss>
