@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>前処理 on 東京の資産運用会社で働く社会人が研究に没頭するブログ</title>
+    <link>/my_blog/tags/%E5%89%8D%E5%87%A6%E7%90%86/</link>
+    <description>Recent content in 前処理 on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 19 May 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/my_blog/tags/%E5%89%8D%E5%87%A6%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>【競馬統計解析】rvestでyahoo競馬にある過去のレース結果をクローリングしてみた。</title>
+      <link>/my_blog/post/post10/</link>
+      <pubDate>Sat, 19 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post/post10/</guid>
+      <description>
+
+
+&lt;p&gt;今、競馬×データサイエンスが熱いです。ウマナリティクスなるものがあり、これまでのレース結果からなんらかのモデルを作成し、順位予想や回収率を高める馬券購入方法を考えようとする人が一定数いるようです。中には回収率100%を超える事に成功された方もいるようで、馬券市場には歪みがある事がわかります。ただし、その具体的な方法などは一般に公開はされておらず、そのインパクトがどれほどなのかもわかりません。今回はその第一歩として、競馬をデータ解析するためのデータを取得します。rvestを用いて、ごりごりにクローリングを行いました。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

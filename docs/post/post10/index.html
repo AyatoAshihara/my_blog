@@ -26,9 +26,9 @@
         "datePublished": "2018-05-19 00:00:00 \x2b0000 UTC",
         "dateModified" : "2018-05-19 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post10\/",
-        "wordCount" : "862",
+        "wordCount" : "859",
         "image" : "/my_blog/img/portfolio/horse.jpg"",
-        "keywords" : [ ""R"",""Webスクレイピング"","Blog" ]   
+        "keywords" : [ ""R"",""Webスクレイピング"",""前処理"","Blog" ]   
     }
     </script>
 
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1562760703" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1562761109" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1562760703" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1562761109" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -278,10 +278,14 @@ html_attr(&quot;href&quot;) # 全urlを取得
 race_url &lt;- race_url[str_detect(race_url, pattern=&quot;result&quot;)==1] # 「result」が含まれるurlを抽出</code></pre>
 <p>まず、read_htmlでyahoo競馬のレース結果一覧のhtml構造を引っ張ってきます（リンクは2016年1月の全レース）。ここで、kと出ているのは月を表し、k=1であれば2016年1月のレース結果を引っ張ってくるということです。keiba.yahooを覗いてみると以下のようにそのページ全体のhtml構造が格納されているのが分かります。</p>
 <pre class="r"><code>keiba.yahoo</code></pre>
-<pre><code>## {xml_document}
-## &lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
-## [1] &lt;head&gt;\n&lt;!---京---&gt;&lt;!-- SpaceID=0 robot --&gt;&lt;meta http-equiv=&quot;Content- ...
-## [2] &lt;body&gt;\n\n&lt;div id=&quot;wrapH&quot;&gt;\n\n&lt;header&gt;&lt;!-- SpaceID=0 robot --&gt;&lt;/head ...</code></pre>
+<pre><code>## $node
+## &lt;pointer: (nil)&gt;
+## 
+## $doc
+## &lt;pointer: (nil)&gt;
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;xml_document&quot; &quot;xml_node&quot;</code></pre>
 <p>race_urlにはyahoo.keibaのうちの2016年k月にあった全レース結果のリンクを格納しています。html_nodeとはhtml構造のうちどの要素を引っ張るかを指定し、それを引っ張る関数で、簡単に言えばほしいデータの住所を入力する関数であると認識しています（おそらく正しくない）。ここではa要素を引っ張ることにしています。注意すべきことは、html_nodeは欲しい情報をhtml形式で引っ張ることです。なので、テキストデータとしてリンクを保存するためにはhtml_attrを使用する必要があります。html_attrの引数として、リンク属性を表すhrefを渡しています。これでレース結果のurlが取れたと思いきや、実はこれでは他のリンクもとってしまっています。一番わかりやすいのが広告のリンクです。こういったリンクは除外する必要があります。レース結果のurlには“result”が含まれているので、この文字が入っている要素だけを抽出したのが一番最後のコードです。</p>
 <pre class="r"><code>for (i in 1:length(race_url)){
   race1 &lt;- read_html(str_c(&quot;https://keiba.yahoo.co.jp&quot;,race_url[i])) # レース結果のurlを取得
@@ -520,6 +524,8 @@ race_url &lt;- race_url[str_detect(race_url, pattern=&quot;result&quot;)==1] # �
   
   <a href="/my_blog/tags/web%E3%82%B9%E3%82%AF%E3%83%AC%E3%82%A4%E3%83%94%E3%83%B3%E3%82%B0" title="View all posts tagged Webスクレイピング">Webスクレイピング</a>
   
+  <a href="/my_blog/tags/%E5%89%8D%E5%87%A6%E7%90%86" title="View all posts tagged 前処理">前処理</a>
+  
 
 </p></div>	</div>
 
@@ -705,7 +711,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1562760703"></script>
+<script src="/my_blog/js/production.min.js?v=1562761109"></script>
 
 </body>
 </html>
