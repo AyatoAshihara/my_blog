@@ -1,10 +1,4 @@
 base
-methods
-datasets
-utils
-grDevices
-graphics
-stats
 MASS
 httr
 estatapi
@@ -22,3 +16,10 @@ strucchange
 urca
 lmtest
 vars
+tidyverse
+tibble
+tidyr
+readr
+purrr
+forcats
+lubridate

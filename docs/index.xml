@@ -6,10 +6,22 @@
     <description>Recent content on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 08 Jul 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 13 Jul 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/my_blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>【競馬】rvestでyahoo競馬にある過去のレース結果をスクレイピングしてみた（2回目）。</title>
+      <link>/my_blog/post13/</link>
+      <pubDate>Sat, 13 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post13/</guid>
+      <description>
+
+
+</description>
+    </item>
     
     <item>
       <title>（執筆中）【日次GDP】Earth Engineの衛星写真を使って景況感をナウキャスティングしてみる</title>
@@ -17,7 +29,7 @@
       <pubDate>Mon, 08 Jul 2019 00:00:00 +0000</pubDate>
       
       <guid>/my_blog/post12/</guid>
-      <description>#library(devtools)#install_github(&amp;quot;JesJehle/earthEngineGrabR&amp;quot;)library(earthEngineGrabR)#chirps_data &amp;lt;- ee_grab(data = ee_data_collection(datasetID = &amp;quot;UCSB-CHG/CHIRPS/DAILY&amp;quot;,# spatialReducer = &amp;quot;mean&amp;quot;,# temporalReducer = &amp;quot;sum&amp;quot;, # timeStart = &amp;quot;2017-05-01&amp;quot;,# timeEnd = &amp;quot;2017-05-31&amp;quot;, # resolution = 200# ),# targetArea = system.file(&amp;quot;data/territories.shp&amp;quot;, package = &amp;quot;earthEngineGrabR&amp;quot;)# )</description>
+      <description>library(Rnightlights)library(lubridate)library(reshape2)#(Optional performance enhancement if you have aria2c and gdal installed)#pkgOptions(downloadMethod = &amp;quot;aria&amp;quot;, cropMaskMethod = &amp;quot;gdal&amp;quot;, extractMethod = &amp;quot;gdal&amp;quot;, deleteTiles = TRUE)#Optional performance enhancement. If extractMethod=&amp;quot;rast&amp;quot; you can specify the number of#CPU cores to use in parallel#pkgOptions(extractMethod = &amp;quot;rast&amp;quot;, numCores=4)ctry &amp;lt;- &amp;quot;USA&amp;quot; #replace to run for any other country#download and process monthly VIIRS stats at the highest admin levelhighestAdmLevelStats &amp;lt;- getCtryNlData(ctryCode = ctry, admLevel = &amp;quot;highest&amp;quot;,nlType = &amp;quot;VIIRS.</description>
     </item>
     
     <item>

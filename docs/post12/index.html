@@ -15,7 +15,7 @@
         "articleSection" : "",
         "name" : "（執筆中）【日次GDP】Earth Engineの衛星写真を使って景況感をナウキャスティングしてみる",
         "headline" : "（執筆中）【日次GDP】Earth Engineの衛星写真を使って景況感をナウキャスティングしてみる",
-        "description" : "\r#library(devtools)\r#install_github(\x26quot;JesJehle\/earthEngineGrabR\x26quot;)\rlibrary(earthEngineGrabR)\r#chirps_data \x26lt;- ee_grab(data = ee_data_collection(datasetID = \x26quot;UCSB-CHG\/CHIRPS\/DAILY\x26quot;,\r# spatialReducer = \x26quot;mean\x26quot;,\r# temporalReducer = \x26quot;sum\x26quot;, # timeStart = \x26quot;2017-05-01\x26quot;,\r# timeEnd = \x26quot;2017-05-31\x26quot;, # resolution = 200\r# ),\r# targetArea = system.file(\x26quot;data\/territories.shp\x26quot;, package = \x26quot;earthEngineGrabR\x26quot;)\r# )\r",
+        "description" : "library(Rnightlights)\rlibrary(lubridate)\rlibrary(reshape2)\r#(Optional performance enhancement if you have aria2c and gdal installed)\r#pkgOptions(downloadMethod = \x26quot;aria\x26quot;, cropMaskMethod = \x26quot;gdal\x26quot;, extractMethod = \x26quot;gdal\x26quot;, deleteTiles = TRUE)\r#Optional performance enhancement. If extractMethod=\x26quot;rast\x26quot; you can specify the number of\r#CPU cores to use in parallel\r#pkgOptions(extractMethod = \x26quot;rast\x26quot;, numCores=4)\rctry \x26lt;- \x26quot;USA\x26quot; #replace to run for any other country\r#download and process monthly VIIRS stats at the highest admin level\rhighestAdmLevelStats \x26lt;- getCtryNlData(ctryCode = ctry, admLevel = \x26quot;highest\x26quot;,\rnlType = \x26quot;VIIRS.",
         "inLanguage" : "en",
         "author" : "Ayato Ashihara",
         "creator" : "Ayato Ashihara",
@@ -26,7 +26,7 @@
         "datePublished": "2019-07-08 00:00:00 \x2b0000 UTC",
         "dateModified" : "2019-07-08 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post12\/",
-        "wordCount" : "41",
+        "wordCount" : "218",
         "image" : "/my_blog/%!s(\u003cnil\u003e)"",
         "keywords" : [ ""R"",""画像解析"",""Earth Engine"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1562761109" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1563041188" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1562761109" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1563041188" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -249,20 +249,70 @@ if (!doNotTrack) {
               
 
 
+<pre class="r"><code>library(Rnightlights)
+library(lubridate)
+library(reshape2)
+
+#(Optional performance enhancement if you have aria2c and gdal installed)
+#pkgOptions(downloadMethod = &quot;aria&quot;, cropMaskMethod = &quot;gdal&quot;, extractMethod = &quot;gdal&quot;, deleteTiles = TRUE)
+
+#Optional performance enhancement. If extractMethod=&quot;rast&quot; you can specify the number of
+#CPU cores to use in parallel
+#pkgOptions(extractMethod = &quot;rast&quot;, numCores=4)
+
+ctry &lt;- &quot;USA&quot; #replace to run for any other country
+
+#download and process monthly VIIRS stats at the highest admin level
+highestAdmLevelStats &lt;- getCtryNlData(ctryCode = ctry, 
+                                     admLevel = &quot;highest&quot;,
+                                     nlType = &quot;VIIRS.M&quot;, 
+                                     nlPeriods = nlRange(&quot;201401&quot;, &quot;201412&quot;,&quot;VIIRS.M&quot;), 
+                                     nlStats = list(&quot;sum&quot;,na.rm=TRUE),
+                                     ignoreMissing=FALSE)
+
+  #Optionally plot the data
+library(ggplot2)
+library(plotly)
+
+#melt the stats into key-value format for easy multi-line plotting with ggplot2
+highestAdmLevelStats &lt;- melt(highestAdmLevelStats,
+                              id.vars = grep(&quot;NL_&quot;, names(highestAdmLevelStats), 
+                                             invert=TRUE), 
+                              variable.name = &quot;nlPeriod&quot;, 
+                              value.name = &quot;radiancesum&quot;)
+
+#extract date from the NL col names
+highestAdmLevelStats$nlPeriod &lt;- substr(highestAdmLevelStats$nlPeriod, 12, 17)
+
+#format period as date
+highestAdmLevelStats$nlPeriod &lt;- ymd(paste0(substr(highestAdmLevelStats$nlPeriod, 1,4), 
+                                               &quot;-&quot;,substr(highestAdmLevelStats$nlPeriod, 5,6), &quot;-01&quot;))
+
+#plot admin level sums for the year
+g &lt;- ggplot(data = highestAdmLevelStats, 
+            aes(x=nlPeriod, y=radiancesum, 
+                color=highestAdmLevelStats[[2]])) +
+  scale_x_date(date_breaks = &quot;1 month&quot;, date_labels = &quot;%Y-%m&quot;)+
+  geom_line()+geom_point() + labs(color = names(highestAdmLevelStats)[2]) + 
+  xlab(&quot;Month&quot;) + 
+  ylab(&quot;Sum of Radiances&quot;) +
+  ggtitle(paste0(unique(names(highestAdmLevelStats)[2]), &quot; sum of radiances for &quot;, ctry))
+
+print(g)</code></pre>
 <pre class="r"><code>#library(devtools)
 #install_github(&quot;JesJehle/earthEngineGrabR&quot;)
 
 library(earthEngineGrabR)
 
-#chirps_data &lt;- ee_grab(data = ee_data_collection(datasetID = &quot;UCSB-CHG/CHIRPS/DAILY&quot;,
-#                                                 spatialReducer = &quot;mean&quot;,
-#                                                 temporalReducer = &quot;sum&quot;, 
-#                                                 timeStart = &quot;2017-05-01&quot;,
-#                                                 timeEnd = &quot;2017-05-31&quot;, 
-#                                                 resolution = 200
-#                                                 ),
-#                       targetArea = system.file(&quot;data/territories.shp&quot;, package = &quot;earthEngineGrabR&quot;)
-#                      )</code></pre>
+chirps_data &lt;- ee_grab(data = ee_data_collection(datasetID = &quot;UCSB-CHG/CHIRPS/DAILY&quot;,
+                                                 spatialReducer = &quot;mean&quot;,
+                                                 temporalReducer = &quot;sum&quot;, 
+                                                 timeStart = &quot;2017-05-01&quot;,
+                                                 timeEnd = &quot;2017-05-31&quot;, 
+                                                 resolution = 200
+                                                 ),
+                       targetArea = system.file(&quot;data/territories.shp&quot;, package = &quot;earthEngineGrabR&quot;)
+                      )</code></pre>
 
             </article>
           </div>
@@ -471,7 +521,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1562761109"></script>
+<script src="/my_blog/js/production.min.js?v=1563041188"></script>
 
 </body>
 </html>

@@ -602,7 +602,9 @@ library(tidyverse)
 
 ggplot(gather(as.data.frame(result$output),key = name,value = value),
        aes(x=rep(dataset1$publication,5),y=value,colour=name)) + 
-  geom_line(size=1)
+  geom_line(size=1) +
+  xlab("Date") +
+  ggtitle("5 economic factors")
 
 library(xts)
 X.xts <- xts(result$output,order.by = dataset1$publication)
@@ -633,8 +635,48 @@ summary(rg2)
 ```{r}
 
 ggplot(gather(data.frame(fit=rg$fitted.values,actual=scale(GDP.q$GDP),Date=GDP.q$publication),key,value,-Date),aes(y=value,x=Date,colour=key)) +
-  geom_line()
+  geom_line(size=1) +
+  ggtitle("fit v.s. actual GDP")
 
 ```
 
-いかがでしょうか。個人的にはかなりフィッティングできている印象があります（もはや経済理論など不要なのでしょうか）。ただ、最も新しい値を除いては未来の値が情報量として加味された上で推計されていることになりますから、フェアではありません。正しく予測能力を検証するためには四半期ごとに逐次的に回帰を行う必要があります。この点は時間があるときに更新します。
+いかがでしょうか。個人的にはかなりフィッティングできている印象があります（もはや経済理論など不要なのでしょうか）。ただ、最も新しい値を除いては未来の値が情報量として加味された上で推計されていることになりますから、フェアではありません。正しく予測能力を検証するためには四半期ごとに逐次的に回帰を行う必要があります。
+
+というわけで、アウトサンプルの予測力がどれほどあるのかをテストしてみたいと思います。まず、2005年4月~2007年3月までの月次統計データからファクターを計算し、データ頻度を四半期に集約します。そして、2007年1Qのデータを除いて、GDPに回帰します。回帰したモデルの係数を用いて、2007年1Qのファクターデータで同時点のGDPの予測値を計算し、それを実績値と比較します。次は2005年4月~2007年6月までのデータを用いて･･･という感じでアウトサンプルの予測を行ってみます。
+
+```{r,cache=TRUE}
+library(lubridate)
+test_df <- data.frame()
+for (i in as.list(seq(as.Date("2007-03-01"),as.Date("2019-03-01"),by="quarter"))){
+  day(i) <- days_in_month(i)
+  traindata <- dataset1[dataset1$publication<=i,]
+  X_train <- ESTIMATE_GPLVM(scale(traindata[,-2]),5)
+  X_train.xts <- xts(X_train$output,order.by = traindata$publication)
+  X_train.q.xts <- apply.quarterly(X_train.xts,mean)
+  
+  if (months(index(X_train.q.xts)[NROW(X_train.q.xts)]) %in% c("3月","6月","9月","12月")){
+  } else X_train.q.xts <- X_train.q.xts[-NROW(X_train.q.xts),]
+  
+  colnames(X_train.q.xts) <- c("factor1","factor2","factor3","factor4","factor5") 
+
+  GDP_train.q <- scale(GDP[GDP$publication>=index(X_train.q.xts)[1] & GDP$publication<=index(X_train.q.xts)[NROW(X_train.q.xts)],2])
+
+  rg_train <- lm(GDP_train.q[-NROW(GDP_train.q)]~.,data=X_train.q.xts[-NROW(X_train.q.xts)])
+  summary(rg_train)
+  test_df <- rbind(test_df,data.frame(predict(rg_train,X_train.q.xts[NROW(X_train.q.xts)],interval = "prediction",level=0.90),GDP=GDP_train.q[NROW(GDP_train.q)]))
+}
+
+```
+
+計算できました。グラフにしてみましょう。先ほどのグラフよりは精度が悪くなりました。特にリーマンの後は予測値の信頼区間（90%）が大きく拡大しており、不確実性が増大していることもわかります。2010年以降に関しては実績値は信頼区間にほど入っており、予測モデルとしての性能はまあまあなのかなと思います。ただ、リーマンのような金融危機もズバッと当てるところにロマンがあると思うので元データの改善を図りたいと思います。この記事はいったんここで終了です。
+
+```{r}
+ggplot(gather(data.frame(test_df,Date=as.Date(rownames(test_df))),,,-c(lwr,upr,Date)),aes(y=value,x=Date,colour=key)) +
+  geom_ribbon(aes(ymax=upr,ymin=lwr,fill="band"),alpha=0.1,linetype="blank") +
+  geom_line(size=1) +
+  ggtitle("out-sample test")
+
+```
+
+
+

@@ -12,21 +12,77 @@ tags:
 Draft: True
 ---
 
-```{r}
+```{r,eval=FALSE}
+
+library(Rnightlights)
+library(lubridate)
+library(reshape2)
+
+#(Optional performance enhancement if you have aria2c and gdal installed)
+#pkgOptions(downloadMethod = "aria", cropMaskMethod = "gdal", extractMethod = "gdal", deleteTiles = TRUE)
+
+#Optional performance enhancement. If extractMethod="rast" you can specify the number of
+#CPU cores to use in parallel
+#pkgOptions(extractMethod = "rast", numCores=4)
+
+ctry <- "USA" #replace to run for any other country
+
+#download and process monthly VIIRS stats at the highest admin level
+highestAdmLevelStats <- getCtryNlData(ctryCode = ctry, 
+                                     admLevel = "highest",
+                                     nlType = "VIIRS.M", 
+                                     nlPeriods = nlRange("201401", "201412","VIIRS.M"), 
+                                     nlStats = list("sum",na.rm=TRUE),
+                                     ignoreMissing=FALSE)
+
+  #Optionally plot the data
+library(ggplot2)
+library(plotly)
+
+#melt the stats into key-value format for easy multi-line plotting with ggplot2
+highestAdmLevelStats <- melt(highestAdmLevelStats,
+                              id.vars = grep("NL_", names(highestAdmLevelStats), 
+                                             invert=TRUE), 
+                              variable.name = "nlPeriod", 
+                              value.name = "radiancesum")
+
+#extract date from the NL col names
+highestAdmLevelStats$nlPeriod <- substr(highestAdmLevelStats$nlPeriod, 12, 17)
+
+#format period as date
+highestAdmLevelStats$nlPeriod <- ymd(paste0(substr(highestAdmLevelStats$nlPeriod, 1,4), 
+                                               "-",substr(highestAdmLevelStats$nlPeriod, 5,6), "-01"))
+
+#plot admin level sums for the year
+g <- ggplot(data = highestAdmLevelStats, 
+            aes(x=nlPeriod, y=radiancesum, 
+                color=highestAdmLevelStats[[2]])) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%Y-%m")+
+  geom_line()+geom_point() + labs(color = names(highestAdmLevelStats)[2]) + 
+  xlab("Month") + 
+  ylab("Sum of Radiances") +
+  ggtitle(paste0(unique(names(highestAdmLevelStats)[2]), " sum of radiances for ", ctry))
+
+print(g)
+
+```
+
+
+```{r,eval=FALSE}
 #library(devtools)
 #install_github("JesJehle/earthEngineGrabR")
 
 library(earthEngineGrabR)
 
-#chirps_data <- ee_grab(data = ee_data_collection(datasetID = "UCSB-CHG/CHIRPS/DAILY",
-#                                                 spatialReducer = "mean",
-#                                                 temporalReducer = "sum", 
-#                                                 timeStart = "2017-05-01",
-#                                                 timeEnd = "2017-05-31", 
-#                                                 resolution = 200
-#                                                 ),
-#                       targetArea = system.file("data/territories.shp", package = "earthEngineGrabR")
-#                      )
+chirps_data <- ee_grab(data = ee_data_collection(datasetID = "UCSB-CHG/CHIRPS/DAILY",
+                                                 spatialReducer = "mean",
+                                                 temporalReducer = "sum", 
+                                                 timeStart = "2017-05-01",
+                                                 timeEnd = "2017-05-31", 
+                                                 resolution = 200
+                                                 ),
+                       targetArea = system.file("data/territories.shp", package = "earthEngineGrabR")
+                      )
 
 
 ```
