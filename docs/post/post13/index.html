@@ -26,7 +26,7 @@
         "datePublished": "2019-07-13 00:00:00 \x2b0000 UTC",
         "dateModified" : "2019-07-13 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post13\/",
-        "wordCount" : "1315",
+        "wordCount" : "1030",
         "image" : "/my_blog/img/portfolio/keiba.png"",
         "keywords" : [ ""Webスクレイピング"",""前処理"",""R"",""SQL"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1563110863" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1563111130" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1563110863" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1563111130" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -515,642 +515,63 @@ end.time &lt;-<span class="st"> </span><span class="kw">Sys.time</span>()
 
 <span class="kw">dbDisconnect</span>(con)</code></pre>
 <p>以上です。取れたデータは以下のようになりました。</p>
-<pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span><span class="kw">kable</span>(race_result)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="right">order</th>
-<th align="right">frame_number</th>
-<th align="right">horse_number</th>
-<th align="left">trainer</th>
-<th align="left">passing_rank</th>
-<th align="left">last_3F</th>
-<th align="left">time</th>
-<th align="left">margin</th>
-<th align="left">horse_name</th>
-<th align="left">horse_age</th>
-<th align="left">horse_sex</th>
-<th align="left">horse_weight</th>
-<th align="left">horse_weight_change</th>
-<th align="left">brinker</th>
-<th align="left">jockey</th>
-<th align="left">jockey_weight</th>
-<th align="right">jockey_weight_change</th>
-<th align="left">odds</th>
-<th align="left">popularity</th>
-<th align="left">race_date</th>
-<th align="left">race_course</th>
-<th align="left">race_name</th>
-<th align="left">race_distance</th>
-<th align="left">type</th>
-<th align="left">race_turn</th>
-<th align="left">race_condition</th>
-<th align="left">race_weather</th>
-<th align="left">colour</th>
-<th align="left">owner</th>
-<th align="left">farm</th>
-<th align="left">locality</th>
-<th align="left">horse_birthday</th>
-<th align="left">father</th>
-<th align="left">mother</th>
-<th align="right">prize</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">10</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="left">田中 剛</td>
-<td align="left">09-09</td>
-<td align="left">39.0</td>
-<td align="left">1.14.3</td>
-<td align="left">アタマ</td>
-<td align="left">サトノジョニー</td>
-<td align="left">3</td>
-<td align="left">牡</td>
-<td align="left">512</td>
-<td align="left">+30</td>
-<td align="left">N</td>
-<td align="left">松岡 正海</td>
-<td align="left">56</td>
-<td align="right">0</td>
-<td align="left">40.3</td>
-<td align="left">9</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">栗毛</td>
-<td align="left">株式会社 サトミホースカンパニー</td>
-<td align="left">千代田牧場</td>
-<td align="left">新ひだか町</td>
-<td align="left">2016年1月29日</td>
-<td align="left">オルフェーヴル</td>
-<td align="left">スパークルジュエル</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="right">16</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="left">天間 昭一</td>
-<td align="left">11-11</td>
-<td align="left">40.3</td>
-<td align="left">1.15.7</td>
-<td align="left">3 1/2馬身</td>
-<td align="left">ツギノイッテ</td>
-<td align="left">3</td>
-<td align="left">牡</td>
-<td align="left">464</td>
-<td align="left">+8</td>
-<td align="left">N</td>
-<td align="left">西田 雄一郎</td>
-<td align="left">56</td>
-<td align="right">0</td>
-<td align="left">340.9</td>
-<td align="left">16</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">黒鹿毛</td>
-<td align="left">西村 新一郎</td>
-<td align="left">織笠 時男</td>
-<td align="left">青森県</td>
-<td align="left">2016年4月17日</td>
-<td align="left">スクワートルスクワート</td>
-<td align="left">エプソムアイリス</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="right">15</td>
-<td align="right">2</td>
-<td align="right">3</td>
-<td align="left">田中 清隆</td>
-<td align="left">14-14</td>
-<td align="left">39.4</td>
-<td align="left">1.15.1</td>
-<td align="left">3馬身</td>
-<td align="left">ギュウホ</td>
-<td align="left">3</td>
-<td align="left">牡</td>
-<td align="left">444</td>
-<td align="left">+8</td>
-<td align="left">N</td>
-<td align="left">杉原 誠人</td>
-<td align="left">56</td>
-<td align="right">0</td>
-<td align="left">283.1</td>
-<td align="left">14</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">鹿毛</td>
-<td align="left">有限会社 ミルファーム</td>
-<td align="left">神垣 道弘</td>
-<td align="left">新ひだか町</td>
-<td align="left">2016年4月19日</td>
-<td align="left">ジャングルポケット</td>
-<td align="left">デライトシーン</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="right">9</td>
-<td align="right">2</td>
-<td align="right">4</td>
-<td align="left">中舘 英二</td>
-<td align="left">08-08</td>
-<td align="left">39.1</td>
-<td align="left">1.14.3</td>
-<td align="left">2 1/2馬身</td>
-<td align="left">セイウンメラビリア</td>
-<td align="left">3</td>
-<td align="left">牝</td>
-<td align="left">466</td>
-<td align="left">+10</td>
-<td align="left">N</td>
-<td align="left">村田 一誠</td>
-<td align="left">54</td>
-<td align="right">0</td>
-<td align="left">299.7</td>
-<td align="left">15</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">青鹿毛</td>
-<td align="left">西山 茂行</td>
-<td align="left">石郷岡 雅樹</td>
-<td align="left">新冠町</td>
-<td align="left">2016年4月21日</td>
-<td align="left">キンシャサノキセキ</td>
-<td align="left">ドリームシップ</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="right">12</td>
-<td align="right">3</td>
-<td align="right">5</td>
-<td align="left">根本 康広</td>
-<td align="left">11-11</td>
-<td align="left">39.0</td>
-<td align="left">1.14.4</td>
-<td align="left">クビ</td>
-<td align="left">サバイバルトリック</td>
-<td align="left">3</td>
-<td align="left">牝</td>
-<td align="left">450</td>
-<td align="left">-2</td>
-<td align="left">N</td>
-<td align="left">野中 悠太郎</td>
-<td align="left">51</td>
-<td align="right">0</td>
-<td align="left">26.7</td>
-<td align="left">8</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">黒鹿毛</td>
-<td align="left">福田 光博</td>
-<td align="left">原田牧場</td>
-<td align="left">日高町</td>
-<td align="left">2016年4月30日</td>
-<td align="left">リーチザクラウン</td>
-<td align="left">フリーダムガール</td>
-<td align="right">180</td>
-</tr>
-<tr class="even">
-<td align="right">4</td>
-<td align="right">3</td>
-<td align="right">6</td>
-<td align="left">杉浦 宏昭</td>
-<td align="left">04-04</td>
-<td align="left">38.4</td>
-<td align="left">1.13.2</td>
-<td align="left">アタマ</td>
-<td align="left">ステイホット</td>
-<td align="left">3</td>
-<td align="left">牝</td>
-<td align="left">474</td>
-<td align="left">-2</td>
-<td align="left">N</td>
-<td align="left">大野 拓弥</td>
-<td align="left">54</td>
-<td align="right">0</td>
-<td align="left">2.4</td>
-<td align="left">1</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">栗毛</td>
-<td align="left">小林 善一</td>
-<td align="left">社台ファーム</td>
-<td align="left">千歳市</td>
-<td align="left">2016年3月13日</td>
-<td align="left">キャプテントゥーレ</td>
-<td align="left">ステイアライヴ</td>
-<td align="right">455</td>
-</tr>
-<tr class="odd">
-<td align="right">13</td>
-<td align="right">4</td>
-<td align="right">7</td>
-<td align="left">高橋 義博</td>
-<td align="left">01-02</td>
-<td align="left">40.1</td>
-<td align="left">1.14.5</td>
-<td align="left">クビ</td>
-<td align="left">ボルンタード</td>
-<td align="left">3</td>
-<td align="left">牡</td>
-<td align="left">468</td>
-<td align="left">+4</td>
-<td align="left">N</td>
-<td align="left">戸崎 圭太</td>
-<td align="left">56</td>
-<td align="right">0</td>
-<td align="left">20.1</td>
-<td align="left">6</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">鹿毛</td>
-<td align="left">西森 功</td>
-<td align="left">オリエント牧場</td>
-<td align="left">新冠町</td>
-<td align="left">2016年5月1日</td>
-<td align="left">キンシャサノキセキ</td>
-<td align="left">ゴルフガール</td>
-<td align="right">150</td>
-</tr>
-<tr class="even">
-<td align="right">5</td>
-<td align="right">4</td>
-<td align="right">8</td>
-<td align="left">奥平 雅士</td>
-<td align="left">14-14</td>
-<td align="left">37.7</td>
-<td align="left">1.13.4</td>
-<td align="left">1 1/4馬身</td>
-<td align="left">セイウンクロノス</td>
-<td align="left">3</td>
-<td align="left">牡</td>
-<td align="left">438</td>
-<td align="left">+4</td>
-<td align="left">N</td>
-<td align="left">内田 博幸</td>
-<td align="left">56</td>
-<td align="right">0</td>
-<td align="left">11.8</td>
-<td align="left">5</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">青鹿毛</td>
-<td align="left">西山 茂行</td>
-<td align="left">野島牧場</td>
-<td align="left">日高町</td>
-<td align="left">2016年5月14日</td>
-<td align="left">シニスターミニスター</td>
-<td align="left">プリュムローズ</td>
-<td align="right">325</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">5</td>
-<td align="right">9</td>
-<td align="left">牧 光二</td>
-<td align="left">02-01</td>
-<td align="left">38.5</td>
-<td align="left">1.12.9</td>
-<td align="left">トップ</td>
-<td align="left">サニークラウド</td>
-<td align="left">3</td>
-<td align="left">牡</td>
-<td align="left">500</td>
-<td align="left">+14</td>
-<td align="left">N</td>
-<td align="left">O.マーフィー</td>
-<td align="left">56</td>
-<td align="right">0</td>
-<td align="left">3.9</td>
-<td align="left">2</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">鹿毛</td>
-<td align="left">高嶋 祐子</td>
-<td align="left">有限会社 吉田ファーム</td>
-<td align="left">浦河町</td>
-<td align="left">2016年2月16日</td>
-<td align="left">ゴールドアリュール</td>
-<td align="left">ワインレッド</td>
-<td align="right">180</td>
-</tr>
-<tr class="even">
-<td align="right">3</td>
-<td align="right">5</td>
-<td align="right">10</td>
-<td align="left">相沢 郁</td>
-<td align="left">06-06</td>
-<td align="left">38.2</td>
-<td align="left">1.13.2</td>
-<td align="left">1 1/4馬身</td>
-<td align="left">ジョガールボニート</td>
-<td align="left">3</td>
-<td align="left">牡</td>
-<td align="left">454</td>
-<td align="left">+6</td>
-<td align="left">N</td>
-<td align="left">石川 裕紀人</td>
-<td align="left">56</td>
-<td align="right">0</td>
-<td align="left">5.6</td>
-<td align="left">3</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">青鹿毛</td>
-<td align="left">高瀬 真尚</td>
-<td align="left">本間牧場</td>
-<td align="left">日高町</td>
-<td align="left">2016年3月7日</td>
-<td align="left">ベルシャザール</td>
-<td align="left">ウイッチ</td>
-<td align="right">380</td>
-</tr>
-<tr class="odd">
-<td align="right">14</td>
-<td align="right">6</td>
-<td align="right">11</td>
-<td align="left">南田 美知雄</td>
-<td align="left">16-16</td>
-<td align="left">38.7</td>
-<td align="left">1.14.6</td>
-<td align="left">3/4馬身</td>
-<td align="left">フレンドリボン</td>
-<td align="left">3</td>
-<td align="left">牝</td>
-<td align="left">444</td>
-<td align="left">+12</td>
-<td align="left">N</td>
-<td align="left">藤田 菜七子</td>
-<td align="left">53</td>
-<td align="right">1</td>
-<td align="left">71.3</td>
-<td align="left">10</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">鹿毛</td>
-<td align="left">横尾 晴人</td>
-<td align="left">クリアファーム</td>
-<td align="left">日高町</td>
-<td align="left">2016年3月5日</td>
-<td align="left">トーセンホマレボシ</td>
-<td align="left">セイヴィングス</td>
-<td align="right">325</td>
-</tr>
-<tr class="even">
-<td align="right">11</td>
-<td align="right">6</td>
-<td align="right">12</td>
-<td align="left">柴田 政人</td>
-<td align="left">09-09</td>
-<td align="left">39.1</td>
-<td align="left">1.14.4</td>
-<td align="left">クビ</td>
-<td align="left">コーリンベイダー</td>
-<td align="left">3</td>
-<td align="left">牡</td>
-<td align="left">484</td>
-<td align="left">+6</td>
-<td align="left">N</td>
-<td align="left">丹内 祐次</td>
-<td align="left">56</td>
-<td align="right">0</td>
-<td align="left">271.4</td>
-<td align="left">13</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">黒鹿毛</td>
-<td align="left">伊藤 恵介</td>
-<td align="left">前谷 武志</td>
-<td align="left">新ひだか町</td>
-<td align="left">2016年3月19日</td>
-<td align="left">サウスヴィグラス</td>
-<td align="left">コーリンハッピー</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="right">6</td>
-<td align="right">7</td>
-<td align="right">13</td>
-<td align="left">水野 貴広</td>
-<td align="left">06-06</td>
-<td align="left">38.3</td>
-<td align="left">1.13.4</td>
-<td align="left">クビ</td>
-<td align="left">シゲルホタルイシ</td>
-<td align="left">3</td>
-<td align="left">牡</td>
-<td align="left">482</td>
-<td align="left">0</td>
-<td align="left">B</td>
-<td align="left">武藤 雅</td>
-<td align="left">55</td>
-<td align="right">1</td>
-<td align="left">8</td>
-<td align="left">4</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">栗毛</td>
-<td align="left">森中 蕃</td>
-<td align="left">中村 雅明</td>
-<td align="left">浦河町</td>
-<td align="left">2016年3月15日</td>
-<td align="left">サウスヴィグラス</td>
-<td align="left">シゲルウエンセン</td>
-<td align="right">530</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="right">7</td>
-<td align="right">14</td>
-<td align="left">田中 清隆</td>
-<td align="left">03-03</td>
-<td align="left">38.3</td>
-<td align="left">1.13.0</td>
-<td align="left">1/2馬身</td>
-<td align="left">リゼ</td>
-<td align="left">3</td>
-<td align="left">牝</td>
-<td align="left">448</td>
-<td align="left">+10</td>
-<td align="left">N</td>
-<td align="left">横山 武史</td>
-<td align="left">52</td>
-<td align="right">3</td>
-<td align="left">76.2</td>
-<td align="left">11</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">栗毛</td>
-<td align="left">榊原 浩一</td>
-<td align="left">岡田スタツド</td>
-<td align="left">新ひだか町</td>
-<td align="left">2016年4月10日</td>
-<td align="left">フレンチデピュティ</td>
-<td align="left">キネオソレイユ</td>
-<td align="right">75</td>
-</tr>
-<tr class="odd">
-<td align="right">8</td>
-<td align="right">8</td>
-<td align="right">15</td>
-<td align="left">上原 博之</td>
-<td align="left">04-04</td>
-<td align="left">39.1</td>
-<td align="left">1.13.9</td>
-<td align="left">2 1/2馬身</td>
-<td align="left">ヴォルターウルフ</td>
-<td align="left">3</td>
-<td align="left">牡</td>
-<td align="left">492</td>
-<td align="left">+10</td>
-<td align="left">N</td>
-<td align="left">木幡 巧也</td>
-<td align="left">55</td>
-<td align="right">1</td>
-<td align="left">78.6</td>
-<td align="left">12</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">鹿毛</td>
-<td align="left">Him Rock Racingホールディングス 株式会社</td>
-<td align="left">鮫川 啓一</td>
-<td align="left">浦河町</td>
-<td align="left">2016年4月30日</td>
-<td align="left">ドリームジャーニー</td>
-<td align="left">ティティカカ</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="right">7</td>
-<td align="right">8</td>
-<td align="right">16</td>
-<td align="left">田島 俊明</td>
-<td align="left">11-11</td>
-<td align="left">38.1</td>
-<td align="left">1.13.5</td>
-<td align="left">クビ</td>
-<td align="left">ロンリーウェイ</td>
-<td align="left">3</td>
-<td align="left">牡</td>
-<td align="left">476</td>
-<td align="left">+6</td>
-<td align="left">N</td>
-<td align="left">井上 敏樹</td>
-<td align="left">55</td>
-<td align="right">1</td>
-<td align="left">25.1</td>
-<td align="left">7</td>
-<td align="left">2019-01-05</td>
-<td align="left">中山</td>
-<td align="left">サラ系3歳未勝利</td>
-<td align="left">1200m</td>
-<td align="left">ダート</td>
-<td align="left">右</td>
-<td align="left">良</td>
-<td align="left">晴れ</td>
-<td align="left">青鹿毛</td>
-<td align="left">小原 準一郎</td>
-<td align="left">有限会社 大作ステーブル</td>
-<td align="left">新冠町</td>
-<td align="left">2016年1月25日</td>
-<td align="left">ネオユニヴァース</td>
-<td align="left">プリンセスメーカー</td>
-<td align="right">125</td>
-</tr>
-</tbody>
-</table>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(race_result)</code></pre>
+<pre><code>##   order frame_number horse_number   trainer passing_rank last_3F   time
+## 1    10            1            1   田中 剛        09-09    39.0 1.14.3
+## 2    16            1            2 天間 昭一        11-11    40.3 1.15.7
+## 3    15            2            3 田中 清隆        14-14    39.4 1.15.1
+## 4     9            2            4 中舘 英二        08-08    39.1 1.14.3
+## 5    12            3            5 根本 康広        11-11    39.0 1.14.4
+## 6     4            3            6 杉浦 宏昭        04-04    38.4 1.13.2
+##      margin         horse_name horse_age horse_sex horse_weight
+## 1    アタマ     サトノジョニー         3        牡          512
+## 2 3 1/2馬身       ツギノイッテ         3        牡          464
+## 3     3馬身           ギュウホ         3        牡          444
+## 4 2 1/2馬身 セイウンメラビリア         3        牝          466
+## 5      クビ サバイバルトリック         3        牝          450
+## 6    アタマ       ステイホット         3        牝          474
+##   horse_weight_change brinker      jockey jockey_weight
+## 1                 +30       N   松岡 正海            56
+## 2                  +8       N 西田 雄一郎            56
+## 3                  +8       N   杉原 誠人            56
+## 4                 +10       N   村田 一誠            54
+## 5                  -2       N 野中 悠太郎            51
+## 6                  -2       N   大野 拓弥            54
+##   jockey_weight_change  odds popularity  race_date race_course
+## 1                    0  40.3         9  2019-01-05        中山
+## 2                    0 340.9        16  2019-01-05        中山
+## 3                    0 283.1        14  2019-01-05        中山
+## 4                    0 299.7        15  2019-01-05        中山
+## 5                    0  26.7         8  2019-01-05        中山
+## 6                    0   2.4         1  2019-01-05        中山
+##         race_name race_distance   type race_turn race_condition
+## 1 サラ系3歳未勝利         1200m ダート        右             良
+## 2 サラ系3歳未勝利         1200m ダート        右             良
+## 3 サラ系3歳未勝利         1200m ダート        右             良
+## 4 サラ系3歳未勝利         1200m ダート        右             良
+## 5 サラ系3歳未勝利         1200m ダート        右             良
+## 6 サラ系3歳未勝利         1200m ダート        右             良
+##   race_weather colour                           owner         farm
+## 1         晴れ   栗毛 株式会社 サトミホースカンパニー   千代田牧場
+## 2         晴れ 黒鹿毛                     西村 新一郎    織笠 時男
+## 3         晴れ   鹿毛           有限会社 ミルファーム    神垣 道弘
+## 4         晴れ 青鹿毛                       西山 茂行  石郷岡 雅樹
+## 5         晴れ 黒鹿毛                       福田 光博     原田牧場
+## 6         晴れ   栗毛                       小林 善一 社台ファーム
+##     locality horse_birthday                 father             mother
+## 1 新ひだか町  2016年1月29日         オルフェーヴル スパークルジュエル
+## 2     青森県  2016年4月17日 スクワートルスクワート   エプソムアイリス
+## 3 新ひだか町  2016年4月19日     ジャングルポケット     デライトシーン
+## 4     新冠町  2016年4月21日     キンシャサノキセキ     ドリームシップ
+## 5     日高町  2016年4月30日       リーチザクラウン   フリーダムガール
+## 6     千歳市  2016年3月13日     キャプテントゥーレ     ステイアライヴ
+##   prize
+## 1     0
+## 2     0
+## 3     0
+## 4     0
+## 5   180
+## 6   455</code></pre>
 </div>
 
             </article>
@@ -1362,7 +783,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1563110863"></script>
+<script src="/my_blog/js/production.min.js?v=1563111130"></script>
 
 </body>
 </html>

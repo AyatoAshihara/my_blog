@@ -543,7 +543,7 @@ dbDisconnect(con)
 以上です。取れたデータは以下のようになりました。
 
 ```{r}
-knitr::kable(race_result)
+head(race_result)
 ```
 
 
