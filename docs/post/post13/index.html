@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/xcode.min.css" rel="stylesheet">
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<script type="application/ld+json">
+    {
+        "@context" : "http://schema.org",
+        "@type" : "BlogPosting",
+        "mainEntityOfPage": {
+             "@type": "WebPage",
+             "@id": "\/my_blog\/"
+        },
+        "articleSection" : "post",
+        "name" : "【競馬】rvestでyahoo競馬にある過去のレース結果をスクレイピングしてみた（2回目）。",
+        "headline" : "【競馬】rvestでyahoo競馬にある過去のレース結果をスクレイピングしてみた（2回目）。",
+        "description" : "\r\n\x3cstyle type=\x22text\/css\x22\x3e\r\na.sourceLine { display: inline-block; line-height: 1.25; }\r\na.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }\r\na.sourceLine:empty { height: 1.2em; }\r\n.sourceCode { overflow: visible; }\r\ncode.sourceCode { white-space: pre; position: relative; }\r\ndiv.sourceCode { margin: 1em 0; }\r\npre.sourceCode { margin: 0; }\r\n@media screen {\r\ndiv.sourceCode { overflow: auto; }\r\n}\r\n@media print {\r\ncode.sourceCode { white-space: pre-wrap; }\r\na.sourceLine { text-indent: -1em; padding-left: 1em; }\r\n}\r\npre.numberSource a.sourceLine\r\n  { position: relative; left: -4em; }\r\npre.numberSource a.sourceLine::before\r\n  { content: attr(title);\r\n    position: relative; left: -1em; text-align: right; vertical-align: baseline;\r\n    border: none; pointer-events: all; display: inline-block;\r\n    -webkit-touch-callout: none; -webkit-user-select: none;\r\n    -khtml-user-select: none; -moz-user-select: none;\r\n    -ms-user-select: none; user-select: none;\r\n    padding: 0 4px; width: 4em;\r\n    color: #aaaaaa;\r\n  }\r\npre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }\r\ndiv.sourceCode\r\n  { background-color: #f8f8f8; }\r\n@media screen {\r\na.sourceLine::before { text-decoration: underline; }\r\n}\r\ncode span.al { color: #ef2929; } \/* Alert *\/\r\ncode span.an { color: #8f5902; font-weight: bold; font-style: italic; } \/* Annotation *\/\r\ncode span.at { color: #c4a000; } \/* Attribute *\/\r\ncode span.bn { color: #0000cf; } \/* BaseN *\/\r\ncode span.cf { color: #204a87; font-weight: bold; } \/* ControlFlow *\/\r\ncode span.ch { color: #4e9a06; } \/* Char *\/\r\ncode span.cn { color: #000000; } \/* Constant *\/\r\ncode span.co { color: #8f5902; font-style: italic; } \/* Comment *\/\r\ncode span.cv { color: #8f5902; font-weight: bold; font-style: italic; } \/* CommentVar *\/\r\ncode span.do { color: #8f5902; font-weight: bold; font-style: italic; } \/* Documentation *\/\r\ncode span.dt { color: #204a87; } \/* DataType *\/\r\ncode span.dv { color: #0000cf; } \/* DecVal *\/\r\ncode span.er { color: #a40000; font-weight: bold; } \/* Error *\/\r\ncode span.ex { } \/* Extension *\/\r\ncode span.fl { color: #0000cf; } \/* Float *\/\r\ncode span.fu { color: #000000; } \/* Function *\/\r\ncode span.im { } \/* Import *\/\r\ncode span.in { color: #8f5902; font-weight: bold; font-style: italic; } \/* Information *\/\r\ncode span.kw { color: #204a87; font-weight: bold; } \/* Keyword *\/\r\ncode span.op { color: #ce5c00; font-weight: bold; } \/* Operator *\/\r\ncode span.ot { color: #8f5902; } \/* Other *\/\r\ncode span.pp { color: #8f5902; font-style: italic; } \/* Preprocessor *\/\r\ncode span.sc { color: #000000; } \/* SpecialChar *\/\r\ncode span.ss { color: #4e9a06; } \/* SpecialString *\/\r\ncode span.st { color: #4e9a06; } \/* String *\/\r\ncode span.va { color: #000000; } \/* Variable *\/\r\ncode span.vs { color: #4e9a06; } \/* VerbatimString *\/\r\ncode span.wa { color: #8f5902; font-weight: bold; font-style: italic; } \/* Warning *\/\r\n\x3c\/style\x3e\r\n\r\n\r\n",
+        "inLanguage" : "en",
+        "author" : "Ayato Ashihara",
+        "creator" : "Ayato Ashihara",
+        "publisher": "Ayato Ashihara",
+        "accountablePerson" : "Ayato Ashihara",
+        "copyrightHolder" : "Ayato Ashihara",
+        "copyrightYear" : "2019",
+        "datePublished": "2019-07-13 00:00:00 \x2b0000 UTC",
+        "dateModified" : "2019-07-13 00:00:00 \x2b0000 UTC",
+        "url" : "\/my_blog\/post\/post13\/",
+        "wordCount" : "1315",
+        "image" : "/my_blog/img/portfolio/keiba.png"",
+        "keywords" : [ ""Webスクレイピング"",""前処理"",""R"",""SQL"","Blog" ]   
+    }
+    </script>
+
+
+ <title>【競馬】rvestでyahoo競馬にある過去のレース結果をスクレイピングしてみた（2回目）。 </title>
+
+
+<meta name="description" content="マクロ経済、機械学習系の記事を投稿しています。" />
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="all,follow">
+<meta name="googlebot" content="index,follow,snippet,archive">
+<link rel="stylesheet" id="ct-tracks-google-fonts-css" href="//fonts.googleapis.com/css?family=Raleway%3A400%2C700&amp;subset=latin%2Clatin-ext&amp;ver=4.7.2" type="text/css" media="all">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+<link href="/my_blog/css/style.css?v=1563110863" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+
+<link href="/my_blog/css/custom.css?v=1563110863" rel="stylesheet" type='text/css' media='all'>
+<link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-140804055-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+
+<body class="post-template-default single single-post single-format-standard ct-body singular singular-post not-front standard">
+
+  <div id="overflow-container" class="overflow-container">
+    <a class="skip-content" href="#main">Skip to content</a>
+    <header id="site-header" class="site-header" role="banner">
+      <div class='top-navigation'>
+        <div class='container'>
+
+  <div id="menu-secondary" class="menu-container menu-secondary" role="navigation">
+    <button id="toggle-secondary-navigation" class="toggle-secondary-navigation"><i class="fas fa-plus"></i></button>
+
+    <div class="menu">
+
+      <ul id="menu-secondary-items" class="menu-secondary-items">
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E4%BB%95%E4%BA%8B%E9%96%A2%E9%80%A3">仕事関連</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E6%97%A5%E6%AC%A1gdp">日次gdp</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E7%AB%B6%E9%A6%AC">競馬</a>
+        </li>
+        
+
+      </ul>
+
+    </div>
+
+  </div>
+
+
+  <ul class="social-media-icons">
+
+
+    
+    <li>
+      <a href="https://www.facebook.com/ASSIY" data-animate-hover="pulse" class="facebook" target="_blank">
+        <i class="fab fa-facebook-square" title="facebook"></i>
+        <span class="screen-reader-text">facebook</span>
+      </a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+    <li>
+      <a href="mailto:assiy119@yahoo.co.jp" data-animate-hover="pulse" class="email">
+        <i class="fas fa-envelope" title="email"></i>
+        <span class="screen-reader-text">email</span>
+      </a>
+    </li>
+    
+
+    
+
+    
+
+
+    
+    <li>
+      <a href="https://github.com/AyatoAshihara/my_blog" data-animate-hover="pulse" class="github" target="_blank">
+        <i class="fab fa-github" title="github"></i>
+        <span class="screen-reader-text">github</span>
+      </a>
+    </li>
+    
+
+
+    
+
+    
+    <li>
+      <a href="/my_blog/index.xml" data-animate-hover="pulse" class="rss" target="_blank">
+        <i class="fas fa-rss" title="rss"></i>
+        <span class="screen-reader-text">rss</span>
+      </a>
+    </li>
+    
+
+
+  </ul></div>
+
+      </div>
+
+      <div class="container">
+        
+
+
+<div id="title-info" class="title-info">
+  <div id='site-title' class='site-title'>
+    
+    <a href="/my_blog"> 東京の資産運用会社で働く社会人が研究に没頭するブログ </a>
+    </div>
+  </div>
+  <button id="toggle-navigation" class="toggle-navigation">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div id="menu-primary-tracks" class="menu-primary-tracks"></div>
+  <div id="menu-primary" class="menu-container menu-primary" role="navigation">
+    
+    <p class="site-description">院卒2年目の社会人が夜な夜な更新中。本ブログの内容は筆者が所属する組織の公式見解とは全く関係ありません。</p>
+    
+
+    <div class="menu">
+      <ul id="menu-primary-items" class="menu-primary-items">
+        
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/">Home</a>
+          
+        </li>
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/about/">About</a>
+          
+        </li>
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/contact/">Get in touch</a>
+          
+        </li>
+        
+      </ul>
+    </div>
+
+  </div>
+
+      </div>
+    </header>
+
+    <div id="main" class="main" role="main">
+
+      
+  
+  
+    
+  
+  
+  <div id="loop-container" class="loop-container">
+    
+    <div class="post type-post status-publish format-standard has-post-thumbnail hentry category-design tag-design tag-standard-2 tag-tagalicious tag-travel entry full-without-featured odd excerpt-1">
+
+      <div class='featured-image lazy lazy-bg-image'  data-background="/my_blog/img/portfolio/keiba.png">
+      </div>
+      
+        <div class="entry-meta">
+          <span class="date">13 July</span>	<span> / </span>
+
+          <span class="author">
+            <a href="/my_blog/" title="Posts by " rel="author"></a>
+          </span>
+
+
+          
+          <span class="category">
+            <span> / </span>
+
+            <a href="/categories/%E7%AB%B6%E9%A6%AC">競馬</a>
+          </span>
+          
+
+
+        </div>
+        <div class='entry-header'>
+          <h1 class='entry-title'> 【競馬】rvestでyahoo競馬にある過去のレース結果をスクレイピングしてみた（2回目）。</h1>
+        </div>
+        <div class="entry-container">
+          <div class="entry-content">
+            <article>
+              <p>2回目になりますが、またrvestで過去のレース結果を落としてみたいと思います。過去の記事を見てないという人は先にそちらをご覧になられることをお勧めします。</p>
+<p>今回データを取り直そうと思ったのは、競馬の分析をした際により多くの項目を説明変数に加えて、分析をしたいと思ったからです。なので、今回は前回のRスクリプトに追記を行う形でプログラムを作成しました。新たに追加したデータ項目は以下の14個です。</p>
+<ol style="list-style-type: decimal">
+<li>芝かダートか</li>
+<li>右回りか左回りか</li>
+<li>レースコンディション（良や稍重など）</li>
+<li>天候</li>
+<li>馬の毛色（栗毛、鹿毛など）</li>
+<li>馬主</li>
+<li>生産者</li>
+<li>産地</li>
+<li>生年月日</li>
+<li>父馬</li>
+<li>母馬</li>
+<li>そのレースまでの獲得賞金（2003年から入手可能）</li>
+<li>ジョッキーの体重</li>
+<li>ジョッキーの体重の増減</li>
+</ol>
+<p>実はまだデータ収集は終わっていなくて、Rのプログラムがずっと実行中になっています（3日くらい回しています）。しかし、プログラム自体はきっちり回っているのでスクリプトの紹介をしていこうと思います。もしかしたら追記で結果を書くかもしれません。</p>
+<div id="section" class="section level4">
+<h4>スクリプトの中身</h4>
+<p>まずはパッケージの呼び出しです。</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># rvestによる競馬データのwebスクレイピング</span>
+
+<span class="co">#install.packages(&quot;rvest&quot;)</span>
+<span class="co">#if (!require(&quot;pacman&quot;)) install.packages(&quot;pacman&quot;)</span>
+<span class="co">#install.packages(&quot;beepr&quot;)</span>
+<span class="co">#install.packages(&quot;RSQLite&quot;)</span>
+pacman<span class="op">::</span><span class="kw">p_load</span>(qdapRegex)
+<span class="kw">library</span>(rvest)
+<span class="kw">library</span>(stringr)
+<span class="kw">library</span>(dplyr)
+<span class="kw">library</span>(beepr)
+<span class="kw">library</span>(RSQLite)</code></pre>
+<p>かなりwarnningが出るのでそれを禁止し、SQLiteに接続しています</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># warnning禁止</span>
+<span class="kw">options</span>(<span class="dt">warn=</span><span class="op">-</span><span class="dv">1</span>)
+
+<span class="co"># SQLiteへの接続</span>
+con =<span class="st"> </span><span class="kw">dbConnect</span>(<span class="kw">SQLite</span>(), <span class="st">&quot;horse_data.db&quot;</span>, <span class="dt">synchronous=</span><span class="st">&quot;off&quot;</span>)</code></pre>
+<p>1994年からしかオッズが取れないので、1994年から直近までのデータを取得します。yahoo競馬では月ごとにレースがまとめられているので、それを変数として使用しながらデータをとっていきます。基本的には、<a href="https://keiba.yahoo.co.jp/schedule/list/2018/?month=7">該当年、該当月のレース結果一覧</a>へアクセスし、そのページ上の各日の<a href="https://keiba.yahoo.co.jp/race/list/18020106/">個々の競馬場ごとのタイムテーブル</a>へのリンクを取得します。個々の競馬場でレースはだいたい12ほどあるので、そのリンクを取得し、各レースの<a href="https://keiba.yahoo.co.jp/race/result/1802010601/">レース結果ページ</a>にアクセスします。そして、レース結果を取得していきます。まず、各日の個々の競馬場ごとのタイムテーブルへのリンクの取得方法です。</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="cf">for</span>(year <span class="cf">in</span> <span class="dv">1994</span><span class="op">:</span><span class="dv">2019</span>){
+  start.time &lt;-<span class="st"> </span><span class="kw">Sys.time</span>() <span class="co"># 計算時間を図る</span>
+  <span class="co"># yahoo競馬のレース結果一覧ページの取得</span>
+  <span class="cf">for</span> (k <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">12</span>){ <span class="co"># kは月を表す</span>
+    
+    <span class="kw">tryCatch</span>(
+      {
+        keiba.yahoo &lt;-<span class="st"> </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp/schedule/list/&quot;</span>, year,<span class="st">&quot;/?month=&quot;</span>,k)) <span class="co"># 該当年、該当月のレース結果一覧にアクセス</span>
+        <span class="kw">Sys.sleep</span>(<span class="dv">2</span>)
+        race_lists &lt;-<span class="st"> </span>keiba.yahoo <span class="op">%&gt;%</span>
+<span class="st">          </span><span class="kw">html_nodes</span>(<span class="st">&quot;a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">          </span><span class="kw">html_attr</span>(<span class="st">&quot;href&quot;</span>) <span class="co"># 全urlを取得</span>
+        
+        <span class="co"># 競馬場ごとの各日のレースリストを取得</span>
+        race_lists &lt;-<span class="st"> </span>race_lists[<span class="kw">str_detect</span>(race_lists, <span class="dt">pattern=</span><span class="st">&quot;race/list/</span><span class="ch">\\</span><span class="st">d+/&quot;</span>)<span class="op">==</span><span class="dv">1</span>] <span class="co"># 「result」が含まれるurlを抽出</span>
+      }
+      , <span class="dt">error =</span> <span class="cf">function</span>(e){signal &lt;-<span class="st"> </span><span class="dv">1</span>}
+    )</code></pre>
+<p>ここでは、取得したリンクのurlにresultという文字が含まれているものだけを抽出しています。要はそれが各競馬場のレーステーブルへのリンクとなります。ここからは取得した競馬場のレーステーブルのリンクを用いて、そのページにアクセスし、全12レースそれぞれのレース結果が掲載されているページのリンクを取得していきます。</p>
+<pre class="sourceCode r"><code class="sourceCode r">    <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(race_lists)){ <span class="co"># jは当該年月にあったレーステーブルへのリンクを表す</span>
+      
+      <span class="kw">tryCatch</span>(
+        {
+          race_list &lt;-<span class="st"> </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp&quot;</span>,race_lists[j]))
+          race_url &lt;-<span class="st"> </span>race_list <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_attr</span>(<span class="st">&quot;href&quot;</span>) <span class="co"># 全urlを取得</span>
+          
+          <span class="co"># レース結果のurlを取得</span>
+          race_url &lt;-<span class="st"> </span>race_url[<span class="kw">str_detect</span>(race_url, <span class="dt">pattern=</span><span class="st">&quot;result&quot;</span>)<span class="op">==</span><span class="dv">1</span>] <span class="co"># 「result」が含まれるurlを抽出</span>
+        }
+        , <span class="dt">error =</span> <span class="cf">function</span>(e){signal &lt;-<span class="st"> </span><span class="dv">1</span>}
+      )</code></pre>
+<p>各レース結果へのリンクが取得できたので、ここからはいよいよレース結果の取得とその整形パートに入ります。かなり長ったらしく複雑なコードになってしまいました。レース結果は以下のようなテーブル属性に格納されているので、まずそれを単純に引っ張ってきます。</p>
+<pre class="sourceCode r"><code class="sourceCode r">      <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(race_url)){ <span class="co"># iは当該年月当該競馬場で開催されたレースを表す</span>
+        
+        <span class="kw">print</span>(<span class="kw">str_c</span>(<span class="st">&quot;現在、&quot;</span>, year, <span class="st">&quot;年&quot;</span>, k, <span class="st">&quot;月&quot;</span>,j, <span class="st">&quot;グループ、&quot;</span>, i,<span class="st">&quot;番目のレースの保存中です&quot;</span>))
+        
+        <span class="kw">tryCatch</span>(
+          {
+            race1 &lt;-<span class="st">  </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp&quot;</span>,race_url[i])) <span class="co"># レース結果のurlを取得</span>
+            signal &lt;-<span class="st"> </span><span class="dv">0</span>
+            <span class="kw">Sys.sleep</span>(<span class="dv">2</span>)
+          }
+          , <span class="dt">error =</span> <span class="cf">function</span>(e){signal &lt;-<span class="st"> </span><span class="dv">1</span>}
+        )
+        
+        <span class="co"># レースが中止orこれまでの過程でエラーでなければ処理を実行</span>
+        <span class="cf">if</span> (<span class="kw">identical</span>(race1 <span class="op">%&gt;%</span>
+<span class="st">                      </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@class = &#39;resultAtt mgnBL fntSS&#39;]&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">                      </span><span class="kw">html_text</span>(),<span class="kw">character</span>(<span class="dv">0</span>)) <span class="op">==</span><span class="st"> </span><span class="ot">TRUE</span> <span class="op">&amp;&amp;</span><span class="st"> </span>signal <span class="op">==</span><span class="st"> </span><span class="dv">0</span>){
+          
+          <span class="co"># レース結果をスクレイピング</span>
+          race_result &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//table[@id = &#39;raceScore&#39;]&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">            </span><span class="kw">html_table</span>()
+          race_result &lt;-<span class="st"> </span><span class="kw">do.call</span>(<span class="st">&quot;data.frame&quot;</span>,race_result) <span class="co"># リストをデータフレームに変更</span>
+          
+          <span class="kw">colnames</span>(race_result) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;order&quot;</span>,<span class="st">&quot;frame_number&quot;</span>,<span class="st">&quot;horse_number&quot;</span>,<span class="st">&quot;horse_name/age&quot;</span>,<span class="st">&quot;time/margin&quot;</span>,<span class="st">&quot;passing_rank/last_3F&quot;</span>,<span class="st">&quot;jockey/weight&quot;</span>,<span class="st">&quot;popularity/odds&quot;</span>,<span class="st">&quot;trainer&quot;</span>) <span class="co">#　列名変更</span></code></pre>
+<p>tableをただ取得しただけでは以下のように、一つのセルに複数の情報が入っていたりと分析には使えないデータとなっています。なので、これを成型する必要が出てきます。</p>
+<pre class="sourceCode r"><code class="sourceCode r">          <span class="co"># 通過順位と上り3Fのタイム</span>
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">passing_rank=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">passing_rank/last_3F</span><span class="st">`</span>,<span class="st">&quot;(</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2})|(</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2})|(</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2})&quot;</span>)))
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">last_3F=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">passing_rank/last_3F</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d{2}</span><span class="ch">\\</span><span class="st">.</span><span class="ch">\\</span><span class="st">d&quot;</span>)))
+          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">6</span>]
+          
+          <span class="co"># タイムと着差</span>
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">time=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">time/margin</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d</span><span class="ch">\\</span><span class="st">.</span><span class="ch">\\</span><span class="st">d{2}</span><span class="ch">\\</span><span class="st">.</span><span class="ch">\\</span><span class="st">d|</span><span class="ch">\\</span><span class="st">d{2}</span><span class="ch">\\</span><span class="st">.</span><span class="ch">\\</span><span class="st">d&quot;</span>)))
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">margin=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">time/margin</span><span class="st">`</span>,<span class="st">&quot;./.馬身|.馬身|.[:space:]./.馬身|[ア-ン-]+&quot;</span>)))
+          race_result<span class="op">$</span>margin[race_result<span class="op">$</span>order<span class="op">==</span><span class="dv">1</span>] &lt;-<span class="st"> &quot;トップ&quot;</span>
+          race_result<span class="op">$</span>margin[race_result<span class="op">$</span>margin<span class="op">==</span><span class="st">&quot;character(0)&quot;</span>] &lt;-<span class="st"> &quot;大差&quot;</span>
+          race_result<span class="op">$</span>margin[race_result<span class="op">$</span>order<span class="op">==</span><span class="dv">0</span>] &lt;-<span class="st"> </span><span class="ot">NA</span>
+          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">5</span>]
+          
+          <span class="co"># 馬名、馬齢、馬体重</span>
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">horse_name=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;[ァ-ヴー・]+&quot;</span>)))
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">horse_age=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;牡</span><span class="ch">\\</span><span class="st">d+|牝</span><span class="ch">\\</span><span class="st">d+|せん</span><span class="ch">\\</span><span class="st">d+&quot;</span>)))
+          race_result<span class="op">$</span>horse_sex &lt;-<span class="st"> </span><span class="kw">str_extract</span>(race_result<span class="op">$</span>horse_age, <span class="dt">pattern =</span> <span class="st">&quot;牡|牝|せん&quot;</span>)
+          race_result<span class="op">$</span>horse_age &lt;-<span class="st"> </span><span class="kw">str_extract</span>(race_result<span class="op">$</span>horse_age, <span class="dt">pattern =</span> <span class="st">&quot;</span><span class="ch">\\</span><span class="st">d&quot;</span>)
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">horse_weight=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d{3}&quot;</span>)))
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">horse_weight_change=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">([</span><span class="ch">\\</span><span class="st">+|</span><span class="ch">\\</span><span class="st">-]</span><span class="ch">\\</span><span class="st">d+</span><span class="ch">\\</span><span class="st">)|</span><span class="ch">\\</span><span class="st">([</span><span class="ch">\\</span><span class="st">d+]</span><span class="ch">\\</span><span class="st">)&quot;</span>)))
+          race_result<span class="op">$</span>horse_weight_change &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">rm_round</span>(race_result<span class="op">$</span>horse_weight_change, <span class="dt">extract=</span><span class="ot">TRUE</span>), paste, <span class="dt">collapse=</span><span class="st">&quot;&quot;</span>)
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">brinker=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;B&quot;</span>)))
+          race_result<span class="op">$</span>brinker[race_result<span class="op">$</span>brinker<span class="op">!=</span><span class="st">&quot;B&quot;</span>] &lt;-<span class="st"> &quot;N&quot;</span>
+          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">4</span>]
+          
+          <span class="co"># ジョッキー</span>
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">jockey=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;[ぁ-ん一-龠]+</span><span class="ch">\\</span><span class="st">s[ぁ-ん一-龠]+|[:upper:].[ァ-ヶー]+&quot;</span>)))
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">jockey_weight=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d{2}&quot;</span>)))
+          race_result<span class="op">$</span>jockey_weight_change &lt;-<span class="st"> </span><span class="dv">0</span>
+          race_result<span class="op">$</span>jockey_weight_change[<span class="kw">str_detect</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;☆&quot;</span>)<span class="op">==</span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">1</span>
+          race_result<span class="op">$</span>jockey_weight_change[<span class="kw">str_detect</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;△&quot;</span>)<span class="op">==</span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">2</span>
+          race_result<span class="op">$</span>jockey_weight_change[<span class="kw">str_detect</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;△&quot;</span>)<span class="op">==</span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">3</span>
+          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">4</span>]
+          
+          <span class="co"># オッズと人気</span>
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">odds=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">popularity/odds</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">(.+</span><span class="ch">\\</span><span class="st">)&quot;</span>)))
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">popularity=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">popularity/odds</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+[^(</span><span class="ch">\\</span><span class="st">d+.</span><span class="ch">\\</span><span class="st">d)]&quot;</span>)))
+          race_result<span class="op">$</span>odds &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">rm_round</span>(race_result<span class="op">$</span>odds, <span class="dt">extract=</span><span class="ot">TRUE</span>), paste, <span class="dt">collapse=</span><span class="st">&quot;&quot;</span>)
+          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">4</span>]</code></pre>
+<p>次に、今取得したtable以外の情報も取り込むことにします。具体的には、レース名や天候、馬場状態、日付、競馬場などです。これらの情報はレース結果ページの上部に掲載されています。</p>
+<pre class="sourceCode r"><code class="sourceCode r">          <span class="co"># レース情報</span>
+          race_date &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@id = &#39;raceTitName&#39;]/p[@id = &#39;raceTitDay&#39;]&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">            </span><span class="kw">html_text</span>()
+          race_name &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@id = &#39;raceTitName&#39;]/h1[@class = &#39;fntB&#39;]&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">            </span><span class="kw">html_text</span>()
+          race_distance &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//p[@id = &#39;raceTitMeta&#39;]&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">            </span><span class="kw">html_text</span>()
+        
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">race_date=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_date,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+年</span><span class="ch">\\</span><span class="st">d+月</span><span class="ch">\\</span><span class="st">d+日&quot;</span>)))
+          race_result<span class="op">$</span>race_date &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>race_date,<span class="st">&quot;年&quot;</span>,<span class="st">&quot;/&quot;</span>)
+          race_result<span class="op">$</span>race_date &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>race_date,<span class="st">&quot;月&quot;</span>,<span class="st">&quot;/&quot;</span>)
+          race_result<span class="op">$</span>race_date &lt;-<span class="st"> </span><span class="kw">as.Date</span>(race_result<span class="op">$</span>race_date)
+          race_course &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_date,<span class="dt">pattern =</span> <span class="st">&quot;札幌|函館|福島|新潟|東京|中山|中京|京都|阪神|小倉&quot;</span>))
+          race_result<span class="op">$</span>race_course &lt;-<span class="st"> </span>race_course
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">race_name=</span><span class="kw">as.character</span>(<span class="kw">str_replace_all</span>(race_name,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">s&quot;</span>,<span class="st">&quot;&quot;</span>)))
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">race_distance=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_distance,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+m&quot;</span>)))
+          race_type=<span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_distance,<span class="dt">pattern =</span> <span class="st">&quot;芝|ダート&quot;</span>))
+          race_result<span class="op">$</span>type &lt;-<span class="st"> </span>race_type
+          race_turn &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_distance,<span class="dt">pattern =</span> <span class="st">&quot;右|左&quot;</span>))
+          race_result<span class="op">$</span>race_turn &lt;-<span class="st"> </span>race_turn
+          
+          <span class="cf">if</span>(<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg ryou&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
+            race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;良&quot;</span>
+          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">                            </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg yayaomo&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
+            race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;稍重&quot;</span>
+          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span>
+<span class="st">                            </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg omo&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
+            race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;重&quot;</span>
+          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">                            </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg furyou&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
+            race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;不良&quot;</span>
+          } <span class="cf">else</span> race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;NA&quot;</span>
+          
+          <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg hare&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
+            race_result<span class="op">$</span>race_weather &lt;-<span class="st"> &quot;晴れ&quot;</span>
+          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg ame&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
+            race_result<span class="op">$</span>race_weather &lt;-<span class="st"> &quot;曇り&quot;</span>
+          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg kumori&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
+            race_result<span class="op">$</span>race_weather &lt;-<span class="st"> &quot;雨&quot;</span>
+          } <span class="cf">else</span> race_result<span class="op">$</span>race_weather &lt;-<span class="st"> &quot;その他&quot;</span></code></pre>
+<p>次は各馬の情報です。 実はさきほど取得したtableの馬名はリンクになっており、そのリンクをたどると<a href="https://keiba.yahoo.co.jp/directory/horse/2015105508/">各馬の情報</a>が取得できます（毛色や生年月日など）。</p>
+<pre class="sourceCode r"><code class="sourceCode r">          horse_url &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_attr</span>(<span class="st">&quot;href&quot;</span>) 
+          horse_url &lt;-<span class="st"> </span>horse_url[<span class="kw">str_detect</span>(horse_url, <span class="dt">pattern=</span><span class="st">&quot;directory/horse&quot;</span>)<span class="op">==</span><span class="dv">1</span>] <span class="co"># 馬情報のリンクだけ抽出する</span>
+          
+          <span class="cf">for</span> (l <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(horse_url)){
+            <span class="kw">tryCatch</span>(
+              {
+                horse1 &lt;-<span class="st">  </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp&quot;</span>,horse_url[l]))
+                <span class="kw">Sys.sleep</span>(<span class="fl">0.5</span>)
+                horse_name &lt;-<span class="st"> </span>horse1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@id = &#39;dirTitName&#39;]/h1[@class = &#39;fntB&#39;]&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">                  </span><span class="kw">html_text</span>()
+                horse &lt;-<span class="st"> </span>horse1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@id = &#39;dirTitName&#39;]/ul&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">                  </span><span class="kw">html_text</span>()
+                race_result<span class="op">$</span>colour[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;毛色：.+&quot;</span>)) 
+                race_result<span class="op">$</span>owner[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;馬主：.+&quot;</span>))
+                race_result<span class="op">$</span>farm[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;生産者：.+&quot;</span>))
+                race_result<span class="op">$</span>locality[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;産地：.+&quot;</span>))
+                race_result<span class="op">$</span>horse_birthday[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+年</span><span class="ch">\\</span><span class="st">d+月</span><span class="ch">\\</span><span class="st">d+日&quot;</span>))
+                race_result<span class="op">$</span>father[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span>horse1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//td[@class = &#39;bloodM&#39;][@rowspan = &#39;4&#39;]&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_text</span>()
+                race_result<span class="op">$</span>mother[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span>horse1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//td[@class = &#39;bloodF&#39;][@rowspan = &#39;4&#39;]&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_text</span>()
+              }
+              , <span class="dt">error =</span> <span class="cf">function</span>(e){
+                race_result<span class="op">$</span>colour[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span> 
+                race_result<span class="op">$</span>owner[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span>
+                race_result<span class="op">$</span>farm[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span>
+                race_result<span class="op">$</span>locality[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span>
+                race_result<span class="op">$</span>horse_birthday[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span>
+                race_result<span class="op">$</span>father[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span>
+                race_result<span class="op">$</span>mother[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span>
+                }
+            )
+          }
+          
+          race_result<span class="op">$</span>colour &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>colour,<span class="st">&quot;毛色：&quot;</span>,<span class="st">&quot;&quot;</span>)
+          race_result<span class="op">$</span>owner &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>owner,<span class="st">&quot;馬主：&quot;</span>,<span class="st">&quot;&quot;</span>)
+          race_result<span class="op">$</span>farm &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>farm,<span class="st">&quot;生産者：&quot;</span>,<span class="st">&quot;&quot;</span>)
+          race_result<span class="op">$</span>locality &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>locality,<span class="st">&quot;産地：&quot;</span>,<span class="st">&quot;&quot;</span>)
+          <span class="co">#race_result$horse_birthday &lt;- str_replace_all(race_result$horse_birthday,&quot;年&quot;,&quot;/&quot;)</span>
+          <span class="co">#race_result$horse_birthday &lt;- str_replace_all(race_result$horse_birthday,&quot;月&quot;,&quot;/&quot;)</span>
+          <span class="co">#race_result$horse_birthday &lt;- as.Date(race_result$horse_birthday)</span>
+          
+          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(race_result,horse_number) <span class="co"># 馬番順に並べる</span></code></pre>
+<p>次にそのレースまでに獲得した賞金額を落としに行きます。これはレース結果のページの<a href="https://keiba.yahoo.co.jp/race/denma/1802010601/">出馬表</a>と書かれたリンクをたどるとアクセスできます。ここに賞金があるのでそれを取得します。</p>
+<pre class="sourceCode r"><code class="sourceCode r">          yosou_url &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_attr</span>(<span class="st">&quot;href&quot;</span>) 
+          yosou_url &lt;-<span class="st"> </span>yosou_url[<span class="kw">str_detect</span>(yosou_url, <span class="dt">pattern=</span><span class="st">&quot;denma&quot;</span>)<span class="op">==</span><span class="dv">1</span>]
+          
+          <span class="cf">if</span> (<span class="kw">length</span>(yosou_url)<span class="op">==</span><span class="dv">1</span>){
+          yosou1 &lt;-<span class="st">  </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp&quot;</span>,yosou_url)) 
+          <span class="kw">Sys.sleep</span>(<span class="dv">2</span>)
+          yosou &lt;-<span class="st"> </span>yosou1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//td[@class = &#39;txC&#39;]&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.character</span>()
+          prize &lt;-<span class="st"> </span>yosou[<span class="kw">grepl</span>(<span class="st">&quot;万&quot;</span>,yosou)<span class="op">==</span><span class="ot">TRUE</span>] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">str_extract_all</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+万&quot;</span>)
+          prize &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">do.call</span>(<span class="st">&quot;data.frame&quot;</span>,prize)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.character</span>()
+          race_result<span class="op">$</span>prize &lt;-<span class="st"> </span>prize
+          race_result<span class="op">$</span>prize &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>prize,<span class="st">&quot;万&quot;</span>,<span class="st">&quot;&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.numeric</span>()
+          } <span class="cf">else</span> race_result<span class="op">$</span>prize &lt;-<span class="st"> </span><span class="ot">NA</span></code></pre>
+<p>取得した各レース結果を格納するdatasetというデータフレームを作成し、データを格納していきます。1年ごとにそれをSQLite
+へ保存していきます。</p>
+<pre class="sourceCode r"><code class="sourceCode r">          <span class="co">## ファイル貯めるのかく</span>
+          <span class="cf">if</span> (k <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;&amp;</span><span class="st"> </span>i <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;&amp;</span><span class="st"> </span>j <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
+            dataset &lt;-<span class="st"> </span>race_result
+          } <span class="cf">else</span> {
+            dataset &lt;-<span class="st"> </span><span class="kw">rbind</span>(dataset,race_result)
+          } <span class="co"># if文2の終わり</span>
+        <span class="er">}</span><span class="cf">else</span>
+        {
+          <span class="kw">print</span>(<span class="st">&quot;保存できませんでした&quot;</span>) 
+        }<span class="co"># if文1の終わり</span>
+      <span class="er">}</span> <span class="co"># iループの終わり</span>
+    <span class="er">}</span> <span class="co"># jループ終わり</span>
+  <span class="er">}</span> <span class="co"># kループの終わり</span>
+  <span class="kw">beep</span>(<span class="dv">3</span>)
+  <span class="kw">write.csv</span>(dataset,<span class="st">&quot;race_result2.csv&quot;</span>, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)
+  
+  <span class="cf">if</span> (year <span class="op">==</span><span class="st"> </span><span class="dv">1994</span>){
+    <span class="kw">dbWriteTable</span>(con, <span class="st">&quot;race_result&quot;</span>, dataset)
+  } <span class="cf">else</span> {
+    <span class="kw">dbWriteTable</span>(con, <span class="st">&quot;temp&quot;</span>, dataset)
+    <span class="kw">dbSendQuery</span>(con, <span class="st">&quot;INSERT INTO race_result select * from temp&quot;</span>)
+    <span class="kw">dbSendQuery</span>(con, <span class="st">&quot;DROP TABLE temp&quot;</span>)
+  } <span class="co"># ifの終わり</span>
+<span class="er">}</span> <span class="co"># yearループの終わり</span>
+end.time &lt;-<span class="st"> </span><span class="kw">Sys.time</span>()
+<span class="kw">print</span>(<span class="kw">str_c</span>(<span class="st">&quot;処理時間は&quot;</span>,end.time<span class="op">-</span>start.time,<span class="st">&quot;です。&quot;</span>))
+<span class="kw">beep</span>(<span class="dv">5</span>)
+
+<span class="kw">options</span>(<span class="dt">warn =</span> <span class="dv">1</span>)
+
+<span class="kw">dbDisconnect</span>(con)</code></pre>
+<p>以上です。取れたデータは以下のようになりました。</p>
+<pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span><span class="kw">kable</span>(race_result)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">order</th>
+<th align="right">frame_number</th>
+<th align="right">horse_number</th>
+<th align="left">trainer</th>
+<th align="left">passing_rank</th>
+<th align="left">last_3F</th>
+<th align="left">time</th>
+<th align="left">margin</th>
+<th align="left">horse_name</th>
+<th align="left">horse_age</th>
+<th align="left">horse_sex</th>
+<th align="left">horse_weight</th>
+<th align="left">horse_weight_change</th>
+<th align="left">brinker</th>
+<th align="left">jockey</th>
+<th align="left">jockey_weight</th>
+<th align="right">jockey_weight_change</th>
+<th align="left">odds</th>
+<th align="left">popularity</th>
+<th align="left">race_date</th>
+<th align="left">race_course</th>
+<th align="left">race_name</th>
+<th align="left">race_distance</th>
+<th align="left">type</th>
+<th align="left">race_turn</th>
+<th align="left">race_condition</th>
+<th align="left">race_weather</th>
+<th align="left">colour</th>
+<th align="left">owner</th>
+<th align="left">farm</th>
+<th align="left">locality</th>
+<th align="left">horse_birthday</th>
+<th align="left">father</th>
+<th align="left">mother</th>
+<th align="right">prize</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="left">田中 剛</td>
+<td align="left">09-09</td>
+<td align="left">39.0</td>
+<td align="left">1.14.3</td>
+<td align="left">アタマ</td>
+<td align="left">サトノジョニー</td>
+<td align="left">3</td>
+<td align="left">牡</td>
+<td align="left">512</td>
+<td align="left">+30</td>
+<td align="left">N</td>
+<td align="left">松岡 正海</td>
+<td align="left">56</td>
+<td align="right">0</td>
+<td align="left">40.3</td>
+<td align="left">9</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">栗毛</td>
+<td align="left">株式会社 サトミホースカンパニー</td>
+<td align="left">千代田牧場</td>
+<td align="left">新ひだか町</td>
+<td align="left">2016年1月29日</td>
+<td align="left">オルフェーヴル</td>
+<td align="left">スパークルジュエル</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">16</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="left">天間 昭一</td>
+<td align="left">11-11</td>
+<td align="left">40.3</td>
+<td align="left">1.15.7</td>
+<td align="left">3 1/2馬身</td>
+<td align="left">ツギノイッテ</td>
+<td align="left">3</td>
+<td align="left">牡</td>
+<td align="left">464</td>
+<td align="left">+8</td>
+<td align="left">N</td>
+<td align="left">西田 雄一郎</td>
+<td align="left">56</td>
+<td align="right">0</td>
+<td align="left">340.9</td>
+<td align="left">16</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">黒鹿毛</td>
+<td align="left">西村 新一郎</td>
+<td align="left">織笠 時男</td>
+<td align="left">青森県</td>
+<td align="left">2016年4月17日</td>
+<td align="left">スクワートルスクワート</td>
+<td align="left">エプソムアイリス</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">15</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="left">田中 清隆</td>
+<td align="left">14-14</td>
+<td align="left">39.4</td>
+<td align="left">1.15.1</td>
+<td align="left">3馬身</td>
+<td align="left">ギュウホ</td>
+<td align="left">3</td>
+<td align="left">牡</td>
+<td align="left">444</td>
+<td align="left">+8</td>
+<td align="left">N</td>
+<td align="left">杉原 誠人</td>
+<td align="left">56</td>
+<td align="right">0</td>
+<td align="left">283.1</td>
+<td align="left">14</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">鹿毛</td>
+<td align="left">有限会社 ミルファーム</td>
+<td align="left">神垣 道弘</td>
+<td align="left">新ひだか町</td>
+<td align="left">2016年4月19日</td>
+<td align="left">ジャングルポケット</td>
+<td align="left">デライトシーン</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">9</td>
+<td align="right">2</td>
+<td align="right">4</td>
+<td align="left">中舘 英二</td>
+<td align="left">08-08</td>
+<td align="left">39.1</td>
+<td align="left">1.14.3</td>
+<td align="left">2 1/2馬身</td>
+<td align="left">セイウンメラビリア</td>
+<td align="left">3</td>
+<td align="left">牝</td>
+<td align="left">466</td>
+<td align="left">+10</td>
+<td align="left">N</td>
+<td align="left">村田 一誠</td>
+<td align="left">54</td>
+<td align="right">0</td>
+<td align="left">299.7</td>
+<td align="left">15</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">青鹿毛</td>
+<td align="left">西山 茂行</td>
+<td align="left">石郷岡 雅樹</td>
+<td align="left">新冠町</td>
+<td align="left">2016年4月21日</td>
+<td align="left">キンシャサノキセキ</td>
+<td align="left">ドリームシップ</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">12</td>
+<td align="right">3</td>
+<td align="right">5</td>
+<td align="left">根本 康広</td>
+<td align="left">11-11</td>
+<td align="left">39.0</td>
+<td align="left">1.14.4</td>
+<td align="left">クビ</td>
+<td align="left">サバイバルトリック</td>
+<td align="left">3</td>
+<td align="left">牝</td>
+<td align="left">450</td>
+<td align="left">-2</td>
+<td align="left">N</td>
+<td align="left">野中 悠太郎</td>
+<td align="left">51</td>
+<td align="right">0</td>
+<td align="left">26.7</td>
+<td align="left">8</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">黒鹿毛</td>
+<td align="left">福田 光博</td>
+<td align="left">原田牧場</td>
+<td align="left">日高町</td>
+<td align="left">2016年4月30日</td>
+<td align="left">リーチザクラウン</td>
+<td align="left">フリーダムガール</td>
+<td align="right">180</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="right">3</td>
+<td align="right">6</td>
+<td align="left">杉浦 宏昭</td>
+<td align="left">04-04</td>
+<td align="left">38.4</td>
+<td align="left">1.13.2</td>
+<td align="left">アタマ</td>
+<td align="left">ステイホット</td>
+<td align="left">3</td>
+<td align="left">牝</td>
+<td align="left">474</td>
+<td align="left">-2</td>
+<td align="left">N</td>
+<td align="left">大野 拓弥</td>
+<td align="left">54</td>
+<td align="right">0</td>
+<td align="left">2.4</td>
+<td align="left">1</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">栗毛</td>
+<td align="left">小林 善一</td>
+<td align="left">社台ファーム</td>
+<td align="left">千歳市</td>
+<td align="left">2016年3月13日</td>
+<td align="left">キャプテントゥーレ</td>
+<td align="left">ステイアライヴ</td>
+<td align="right">455</td>
+</tr>
+<tr class="odd">
+<td align="right">13</td>
+<td align="right">4</td>
+<td align="right">7</td>
+<td align="left">高橋 義博</td>
+<td align="left">01-02</td>
+<td align="left">40.1</td>
+<td align="left">1.14.5</td>
+<td align="left">クビ</td>
+<td align="left">ボルンタード</td>
+<td align="left">3</td>
+<td align="left">牡</td>
+<td align="left">468</td>
+<td align="left">+4</td>
+<td align="left">N</td>
+<td align="left">戸崎 圭太</td>
+<td align="left">56</td>
+<td align="right">0</td>
+<td align="left">20.1</td>
+<td align="left">6</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">鹿毛</td>
+<td align="left">西森 功</td>
+<td align="left">オリエント牧場</td>
+<td align="left">新冠町</td>
+<td align="left">2016年5月1日</td>
+<td align="left">キンシャサノキセキ</td>
+<td align="left">ゴルフガール</td>
+<td align="right">150</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">4</td>
+<td align="right">8</td>
+<td align="left">奥平 雅士</td>
+<td align="left">14-14</td>
+<td align="left">37.7</td>
+<td align="left">1.13.4</td>
+<td align="left">1 1/4馬身</td>
+<td align="left">セイウンクロノス</td>
+<td align="left">3</td>
+<td align="left">牡</td>
+<td align="left">438</td>
+<td align="left">+4</td>
+<td align="left">N</td>
+<td align="left">内田 博幸</td>
+<td align="left">56</td>
+<td align="right">0</td>
+<td align="left">11.8</td>
+<td align="left">5</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">青鹿毛</td>
+<td align="left">西山 茂行</td>
+<td align="left">野島牧場</td>
+<td align="left">日高町</td>
+<td align="left">2016年5月14日</td>
+<td align="left">シニスターミニスター</td>
+<td align="left">プリュムローズ</td>
+<td align="right">325</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">9</td>
+<td align="left">牧 光二</td>
+<td align="left">02-01</td>
+<td align="left">38.5</td>
+<td align="left">1.12.9</td>
+<td align="left">トップ</td>
+<td align="left">サニークラウド</td>
+<td align="left">3</td>
+<td align="left">牡</td>
+<td align="left">500</td>
+<td align="left">+14</td>
+<td align="left">N</td>
+<td align="left">O.マーフィー</td>
+<td align="left">56</td>
+<td align="right">0</td>
+<td align="left">3.9</td>
+<td align="left">2</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">鹿毛</td>
+<td align="left">高嶋 祐子</td>
+<td align="left">有限会社 吉田ファーム</td>
+<td align="left">浦河町</td>
+<td align="left">2016年2月16日</td>
+<td align="left">ゴールドアリュール</td>
+<td align="left">ワインレッド</td>
+<td align="right">180</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">5</td>
+<td align="right">10</td>
+<td align="left">相沢 郁</td>
+<td align="left">06-06</td>
+<td align="left">38.2</td>
+<td align="left">1.13.2</td>
+<td align="left">1 1/4馬身</td>
+<td align="left">ジョガールボニート</td>
+<td align="left">3</td>
+<td align="left">牡</td>
+<td align="left">454</td>
+<td align="left">+6</td>
+<td align="left">N</td>
+<td align="left">石川 裕紀人</td>
+<td align="left">56</td>
+<td align="right">0</td>
+<td align="left">5.6</td>
+<td align="left">3</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">青鹿毛</td>
+<td align="left">高瀬 真尚</td>
+<td align="left">本間牧場</td>
+<td align="left">日高町</td>
+<td align="left">2016年3月7日</td>
+<td align="left">ベルシャザール</td>
+<td align="left">ウイッチ</td>
+<td align="right">380</td>
+</tr>
+<tr class="odd">
+<td align="right">14</td>
+<td align="right">6</td>
+<td align="right">11</td>
+<td align="left">南田 美知雄</td>
+<td align="left">16-16</td>
+<td align="left">38.7</td>
+<td align="left">1.14.6</td>
+<td align="left">3/4馬身</td>
+<td align="left">フレンドリボン</td>
+<td align="left">3</td>
+<td align="left">牝</td>
+<td align="left">444</td>
+<td align="left">+12</td>
+<td align="left">N</td>
+<td align="left">藤田 菜七子</td>
+<td align="left">53</td>
+<td align="right">1</td>
+<td align="left">71.3</td>
+<td align="left">10</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">鹿毛</td>
+<td align="left">横尾 晴人</td>
+<td align="left">クリアファーム</td>
+<td align="left">日高町</td>
+<td align="left">2016年3月5日</td>
+<td align="left">トーセンホマレボシ</td>
+<td align="left">セイヴィングス</td>
+<td align="right">325</td>
+</tr>
+<tr class="even">
+<td align="right">11</td>
+<td align="right">6</td>
+<td align="right">12</td>
+<td align="left">柴田 政人</td>
+<td align="left">09-09</td>
+<td align="left">39.1</td>
+<td align="left">1.14.4</td>
+<td align="left">クビ</td>
+<td align="left">コーリンベイダー</td>
+<td align="left">3</td>
+<td align="left">牡</td>
+<td align="left">484</td>
+<td align="left">+6</td>
+<td align="left">N</td>
+<td align="left">丹内 祐次</td>
+<td align="left">56</td>
+<td align="right">0</td>
+<td align="left">271.4</td>
+<td align="left">13</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">黒鹿毛</td>
+<td align="left">伊藤 恵介</td>
+<td align="left">前谷 武志</td>
+<td align="left">新ひだか町</td>
+<td align="left">2016年3月19日</td>
+<td align="left">サウスヴィグラス</td>
+<td align="left">コーリンハッピー</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">6</td>
+<td align="right">7</td>
+<td align="right">13</td>
+<td align="left">水野 貴広</td>
+<td align="left">06-06</td>
+<td align="left">38.3</td>
+<td align="left">1.13.4</td>
+<td align="left">クビ</td>
+<td align="left">シゲルホタルイシ</td>
+<td align="left">3</td>
+<td align="left">牡</td>
+<td align="left">482</td>
+<td align="left">0</td>
+<td align="left">B</td>
+<td align="left">武藤 雅</td>
+<td align="left">55</td>
+<td align="right">1</td>
+<td align="left">8</td>
+<td align="left">4</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">栗毛</td>
+<td align="left">森中 蕃</td>
+<td align="left">中村 雅明</td>
+<td align="left">浦河町</td>
+<td align="left">2016年3月15日</td>
+<td align="left">サウスヴィグラス</td>
+<td align="left">シゲルウエンセン</td>
+<td align="right">530</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">14</td>
+<td align="left">田中 清隆</td>
+<td align="left">03-03</td>
+<td align="left">38.3</td>
+<td align="left">1.13.0</td>
+<td align="left">1/2馬身</td>
+<td align="left">リゼ</td>
+<td align="left">3</td>
+<td align="left">牝</td>
+<td align="left">448</td>
+<td align="left">+10</td>
+<td align="left">N</td>
+<td align="left">横山 武史</td>
+<td align="left">52</td>
+<td align="right">3</td>
+<td align="left">76.2</td>
+<td align="left">11</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">栗毛</td>
+<td align="left">榊原 浩一</td>
+<td align="left">岡田スタツド</td>
+<td align="left">新ひだか町</td>
+<td align="left">2016年4月10日</td>
+<td align="left">フレンチデピュティ</td>
+<td align="left">キネオソレイユ</td>
+<td align="right">75</td>
+</tr>
+<tr class="odd">
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right">15</td>
+<td align="left">上原 博之</td>
+<td align="left">04-04</td>
+<td align="left">39.1</td>
+<td align="left">1.13.9</td>
+<td align="left">2 1/2馬身</td>
+<td align="left">ヴォルターウルフ</td>
+<td align="left">3</td>
+<td align="left">牡</td>
+<td align="left">492</td>
+<td align="left">+10</td>
+<td align="left">N</td>
+<td align="left">木幡 巧也</td>
+<td align="left">55</td>
+<td align="right">1</td>
+<td align="left">78.6</td>
+<td align="left">12</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">鹿毛</td>
+<td align="left">Him Rock Racingホールディングス 株式会社</td>
+<td align="left">鮫川 啓一</td>
+<td align="left">浦河町</td>
+<td align="left">2016年4月30日</td>
+<td align="left">ドリームジャーニー</td>
+<td align="left">ティティカカ</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">7</td>
+<td align="right">8</td>
+<td align="right">16</td>
+<td align="left">田島 俊明</td>
+<td align="left">11-11</td>
+<td align="left">38.1</td>
+<td align="left">1.13.5</td>
+<td align="left">クビ</td>
+<td align="left">ロンリーウェイ</td>
+<td align="left">3</td>
+<td align="left">牡</td>
+<td align="left">476</td>
+<td align="left">+6</td>
+<td align="left">N</td>
+<td align="left">井上 敏樹</td>
+<td align="left">55</td>
+<td align="right">1</td>
+<td align="left">25.1</td>
+<td align="left">7</td>
+<td align="left">2019-01-05</td>
+<td align="left">中山</td>
+<td align="left">サラ系3歳未勝利</td>
+<td align="left">1200m</td>
+<td align="left">ダート</td>
+<td align="left">右</td>
+<td align="left">良</td>
+<td align="left">晴れ</td>
+<td align="left">青鹿毛</td>
+<td align="left">小原 準一郎</td>
+<td align="left">有限会社 大作ステーブル</td>
+<td align="left">新冠町</td>
+<td align="left">2016年1月25日</td>
+<td align="left">ネオユニヴァース</td>
+<td align="left">プリンセスメーカー</td>
+<td align="right">125</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+            </article>
+          </div>
+          
+      <div class='entry-meta-bottom'>
+        
+
+  <div class="entry-categories"><p><span>Categories</span>
+    
+    <a href="/my_blog/categories/%E7%AB%B6%E9%A6%AC" title="View all posts in 競馬">競馬</a>
+  </p>
+</div>
+
+
+
+<div class="entry-tags"><p><span>Tags</span>
+  
+  <a href="/my_blog/tags/web%E3%82%B9%E3%82%AF%E3%83%AC%E3%82%A4%E3%83%94%E3%83%B3%E3%82%B0" title="View all posts tagged Webスクレイピング">Webスクレイピング</a>
+  
+  <a href="/my_blog/tags/%E5%89%8D%E5%87%A6%E7%90%86" title="View all posts tagged 前処理">前処理</a>
+  
+  <a href="/my_blog/tags/r" title="View all posts tagged R">R</a>
+  
+  <a href="/my_blog/tags/sql" title="View all posts tagged SQL">SQL</a>
+  
+
+</p></div>	</div>
+
+	
+<div class="author-meta">
+
+  <div class="author">
+    	
+      <img alt='Ayato Ashihara' src="https://www.gravatar.com/avatar/0334adec0ab8bf709927e209f83de319?s=100&d=identicon" class='avatar avatar-72 photo' height='72' width='72'>
+    
+    <span>
+      Written by:<a href="https://ayatoashihara.github.io/my_blog/about/" title="Posts by Ayato Ashihara" rel="author">Ayato Ashihara</a> </span>
+    </div>
+    <div class="bio">
+      
+      
+      <p></p>
+      
+      
+	
+
+<a class="facebook" target="_blank"
+href="https://www.facebook.com/ASSIY">
+<i class="fab fa-facebook-f"
+title="facebook icon"></i>
+</a>
+
+
+
+
+
+
+
+
+
+<a class="email" target="_blank"
+href="mailto:assiy119@yahoo.co.jp">
+<i class="fas fa-envelope"
+title="email icon"></i>
+</a>
+
+
+
+
+
+
+
+<a class="github" target="_blank"
+href="https://github.com/AyatoAshihara/my_blog">
+<i class="fab fa-github"
+title="github icon"></i>
+</a>
+
+
+
+
+
+
+
+</div>
+</div>
+
+</div>
+</div>
+
+<section id="comments" class="comments">
+  
+
+  
+
+
+
+
+</section>
+</div>
+
+ 
+
+
+
+    </div>
+
+    <footer id="site-footer" class="site-footer" role="contentinfo">
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\\(","\\)"]] } });
+</script>
+<script async
+src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/r.min.js"></script>
+
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+
+	<h1>
+    
+    <a href=""> 東京の資産運用会社で働く社会人が研究に没頭するブログ </a>
+    
+	</h1>
+
+			
+			<p class="site-description">院卒2年目の社会人が夜な夜な更新中。本ブログの内容は筆者が所属する組織の公式見解とは全く関係ありません。</p>
+			
+
+		<div id="menu-footer" class="menu-container menu-footer" role="navigation">
+		<div class="menu">
+
+      <ul id="menu-footer-items" class="menu-footer-items">
+        
+</ul>
+
+</div>	</div>
+
+<ul class="social-media-icons">
+
+        
+				<li>
+					<a class="facebook" target="_blank"
+					   href="https://www.facebook.com/ASSIY" >
+						<i class="fab fa-facebook-f" title="facebook"></i>
+						<span class="screen-reader-text">facebook</span>
+					</a>
+				</li>
+        
+
+        
+
+
+        
+
+        
+
+        
+        <li>
+        <a href="mailto:assiy119@yahoo.co.jp"  class="email">
+            <i class="fas fa-envelope" title="email"></i>
+            <span class="screen-reader-text">email</span>
+        </a>
+        </li>
+        
+
+        
+
+        
+
+
+        
+        <li>
+        <a href="https://github.com/AyatoAshihara/my_blog"  class="github" target="_blank">
+            <i class="fab fa-github" title="github"></i>
+            <span class="screen-reader-text">github</span>
+        </a>
+        </li>
+        
+
+
+        
+
+        
+        <li>
+        <a href="/my_blog/index.xml" data-animate-hover="pulse" class="rss" target="_blank">
+            <i class="fas fa-rss" title="rss"></i>
+            <span class="screen-reader-text">rss</span>
+        </a>
+        </li>
+        
+
+				</ul>	<div class="design-credit">
+		
+		<p>&copy; 2018 Göran Svensson</p>
+		
+		<p>Nederburg Hugo Theme by <a href="https://appernetic.io">Appernetic</a>.</p>
+		
+		<p>A port of Tracks by Compete Themes.</p>
+		
+	</div>
+</footer>
+
+  </div>
+  <script src="/my_blog/js/jquery.min.js"></script>
+<script src="/my_blog/js/jquerymigrate.js"></script>
+<script src="/my_blog/js/production.min.js?v=1563110863"></script>
+
+</body>
+</html>
