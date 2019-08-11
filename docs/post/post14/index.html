@@ -26,7 +26,7 @@
         "datePublished": "2019-07-16 00:00:00 \x2b0000 UTC",
         "dateModified" : "2019-07-16 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post14\/",
-        "wordCount" : "96",
+        "wordCount" : "111",
         "image" : "/my_blog/%!s(\u003cnil\u003e)"",
         "keywords" : [ ""R"",""前処理"",""Earth Engine"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1565531091" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1565533835" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1565531091" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1565533835" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -266,6 +266,15 @@ if (!doNotTrack) {
 <p>今回はそんなEath Engineのpython APIを用いて衛星画像データを取得し、解析していきたいと思います。</p>
 <div id="earth-engine" class="section level3">
 <h3>1. Earth Engineを使うための事前準備</h3>
+<p>Earth Engineを使用するためには、Google Accountを使って申請を行う必要があります。先ほどの画像の右上の「Sign Up」からできます。申請を行って、Gmailに以下のようなメールが来るととりあえずEarth Engineは使用できるようになります。</p>
+<p><img src="\img\portfolio\earthengine4.jpg" /></p>
+<p>とりあえずというのはWEB上のEarth Engine コードエディタは使用できるということです。コードエディタというのは以下のようなもので、ブラウザ上でデータを取得したり、解析をしたり、解析結果をMAPに投影したりすることができる便利ツールです。Earth Engineの本体はむしろこいつで、APIは副次的なものと考えています。</p>
+<p><img src="\img\portfolio\earthengine5.jpg" /></p>
+<p>真ん中のコードエディタにコードを打っていきますが、言語はjavascriptです(APIはpythonとjavascript両方あるんですけどね)。解析結果をMAPに投影したり、reference（左）を参照したり、Consoleに吐き出したデータを確認することができるのでかなり便利です。が、データを落とした後で高度な解析を行いたい場合はpythonを使ったほうが慣れているので今回はAPIを使用しています。
+話が脱線しました。さて、Earth Engineの承認を得たら、pipでearthengine-apiをインストールしておきます。そして、コマンドプロンプト上で、「earthengine authenticate」と打ちます。そうすると、勝手にブラウザが立ち上がり、以下のようにpython apiのauthenticationを行う画面がでますので「次へ」を押下します。</p>
+<p><img src="\img\portfolio\earthengine1.jpg" /></p>
+<p>次に以下のような画面にいきますので、そのまま承認します。これでauthenticationの完成です。pythonからAPIが使えます。</p>
+<p><img src="\img\portfolio\earthengine2.jpg" /></p>
 </div>
 <div id="python-api" class="section level3">
 <h3>2. Python APIを用いた衛星画像データの取得</h3>
@@ -296,7 +305,7 @@ nightjp = dataset.filter(ee.Filter.date(&#39;2014-02-01&#39;,&#39;2019-01-01&#39
 # get url to download
 ee.FeatureCollection(nightjp).getDownloadURL(filetype=&#39;csv&#39;,selectors=ee.FeatureCollection(nightjp).first().propertyNames().getInfo())
 </code></pre>
-<pre><code>## &#39;https://earthengine.googleapis.com/api/table?docid=9618f2ec6104eed5c5061a27d1398e78&amp;token=d36b3d4d38cd1a1ec17a79251a7471e9&#39;</code></pre>
+<pre><code>## &#39;https://earthengine.googleapis.com/api/table?docid=9618f2ec6104eed5c5061a27d1398e78&amp;token=0feaa3b5f49148bd5db1b7c3b3517a70&#39;</code></pre>
 </div>
 
             </article>
@@ -506,7 +515,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1565531091"></script>
+<script src="/my_blog/js/production.min.js?v=1565533835"></script>
 
 </body>
 </html>

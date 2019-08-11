@@ -17,6 +17,14 @@ output:
 
 <!--more-->
 
+```{r,include=FALSE}
+
+library(reticulate)
+conda_path <- "C:\\Users\\aashi\\Anaconda3"
+use_condaenv(conda_path)
+
+```
+
 皆さんおはこんばんにちわ。前回、GPLVMモデルを用いたGDP予測モデルを構築しました。ただ、ナウキャスティングというからにはオルタナティブデータを用いた解析を行いたいところではあります。ふと、以下の記事を見つけました。
 
 https://jp.reuters.com/article/gdp-u-tokyo-idJPKBN15M0NH
@@ -43,16 +51,24 @@ https://earthengine.google.com/
 
 ### 1. Earth Engineを使うための事前準備
 
+Earth Engineを使用するためには、Google Accountを使って申請を行う必要があります。先ほどの画像の右上の「Sign Up」からできます。申請を行って、Gmailに以下のようなメールが来るととりあえずEarth Engineは使用できるようになります。
+
+![](\img\portfolio\earthengine4.jpg)
+
+とりあえずというのはWEB上のEarth Engine コードエディタは使用できるということです。コードエディタというのは以下のようなもので、ブラウザ上でデータを取得したり、解析をしたり、解析結果をMAPに投影したりすることができる便利ツールです。Earth Engineの本体はむしろこいつで、APIは副次的なものと考えています。
+
+![](\img\portfolio\earthengine5.jpg)
+
+真ん中のコードエディタにコードを打っていきますが、言語はjavascriptです(APIはpythonとjavascript両方あるんですけどね)。解析結果をMAPに投影したり、reference（左）を参照したり、Consoleに吐き出したデータを確認することができるのでかなり便利です。が、データを落とした後で高度な解析を行いたい場合はpythonを使ったほうが慣れているので今回はAPIを使用しています。
+話が脱線しました。さて、Earth Engineの承認を得たら、pipでearthengine-apiをインストールしておきます。そして、コマンドプロンプト上で、「earthengine authenticate」と打ちます。そうすると、勝手にブラウザが立ち上がり、以下のようにpython apiのauthenticationを行う画面がでますので「次へ」を押下します。
+
+![](\img\portfolio\earthengine1.jpg)
+
+次に以下のような画面にいきますので、そのまま承認します。これでauthenticationの完成です。pythonからAPIが使えます。
+
+![](\img\portfolio\earthengine2.jpg)
 
 ### 2. Python APIを用いた衛星画像データの取得
-
-```{r,include=FALSE}
-
-library(reticulate)
-conda_path <- "C:\\Users\\aashi\\Anaconda3"
-use_condaenv(conda_path)
-
-```
 
 ```{python}
 
