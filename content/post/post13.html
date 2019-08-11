@@ -103,253 +103,253 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="section" class="section level4">
 <h4>スクリプトの中身</h4>
 <p>まずはパッケージの呼び出しです。</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># rvestによる競馬データのwebスクレイピング</span>
-
-<span class="co">#install.packages(&quot;rvest&quot;)</span>
-<span class="co">#if (!require(&quot;pacman&quot;)) install.packages(&quot;pacman&quot;)</span>
-<span class="co">#install.packages(&quot;beepr&quot;)</span>
-<span class="co">#install.packages(&quot;RSQLite&quot;)</span>
-pacman<span class="op">::</span><span class="kw">p_load</span>(qdapRegex)
-<span class="kw">library</span>(rvest)
-<span class="kw">library</span>(stringr)
-<span class="kw">library</span>(dplyr)
-<span class="kw">library</span>(beepr)
-<span class="kw">library</span>(RSQLite)</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># rvestによる競馬データのwebスクレイピング</span></a>
+<a class="sourceLine" id="cb1-2" title="2"></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="co">#install.packages(&quot;rvest&quot;)</span></a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="co">#if (!require(&quot;pacman&quot;)) install.packages(&quot;pacman&quot;)</span></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="co">#install.packages(&quot;beepr&quot;)</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="co">#install.packages(&quot;RSQLite&quot;)</span></a>
+<a class="sourceLine" id="cb1-7" title="7">pacman<span class="op">::</span><span class="kw">p_load</span>(qdapRegex)</a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="kw">library</span>(rvest)</a>
+<a class="sourceLine" id="cb1-9" title="9"><span class="kw">library</span>(stringr)</a>
+<a class="sourceLine" id="cb1-10" title="10"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb1-11" title="11"><span class="kw">library</span>(beepr)</a>
+<a class="sourceLine" id="cb1-12" title="12"><span class="kw">library</span>(RSQLite)</a></code></pre></div>
 <p>かなりwarnningが出るのでそれを禁止し、SQLiteに接続しています</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># warnning禁止</span>
-<span class="kw">options</span>(<span class="dt">warn=</span><span class="op">-</span><span class="dv">1</span>)
-
-<span class="co"># SQLiteへの接続</span>
-con =<span class="st"> </span><span class="kw">dbConnect</span>(<span class="kw">SQLite</span>(), <span class="st">&quot;horse_data.db&quot;</span>, <span class="dt">synchronous=</span><span class="st">&quot;off&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="co"># warnning禁止</span></a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="kw">options</span>(<span class="dt">warn=</span><span class="op">-</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb2-3" title="3"></a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="co"># SQLiteへの接続</span></a>
+<a class="sourceLine" id="cb2-5" title="5">con =<span class="st"> </span><span class="kw">dbConnect</span>(<span class="kw">SQLite</span>(), <span class="st">&quot;horse_data.db&quot;</span>, <span class="dt">synchronous=</span><span class="st">&quot;off&quot;</span>)</a></code></pre></div>
 <p>1994年からしかオッズが取れないので、1994年から直近までのデータを取得します。yahoo競馬では月ごとにレースがまとめられているので、それを変数として使用しながらデータをとっていきます。基本的には、<a href="https://keiba.yahoo.co.jp/schedule/list/2018/?month=7">該当年、該当月のレース結果一覧</a>へアクセスし、そのページ上の各日の<a href="https://keiba.yahoo.co.jp/race/list/18020106/">個々の競馬場ごとのタイムテーブル</a>へのリンクを取得します。個々の競馬場でレースはだいたい12ほどあるので、そのリンクを取得し、各レースの<a href="https://keiba.yahoo.co.jp/race/result/1802010601/">レース結果ページ</a>にアクセスします。そして、レース結果を取得していきます。まず、各日の個々の競馬場ごとのタイムテーブルへのリンクの取得方法です。</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="cf">for</span>(year <span class="cf">in</span> <span class="dv">1994</span><span class="op">:</span><span class="dv">2019</span>){
-  start.time &lt;-<span class="st"> </span><span class="kw">Sys.time</span>() <span class="co"># 計算時間を図る</span>
-  <span class="co"># yahoo競馬のレース結果一覧ページの取得</span>
-  <span class="cf">for</span> (k <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">12</span>){ <span class="co"># kは月を表す</span>
-    
-    <span class="kw">tryCatch</span>(
-      {
-        keiba.yahoo &lt;-<span class="st"> </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp/schedule/list/&quot;</span>, year,<span class="st">&quot;/?month=&quot;</span>,k)) <span class="co"># 該当年、該当月のレース結果一覧にアクセス</span>
-        <span class="kw">Sys.sleep</span>(<span class="dv">2</span>)
-        race_lists &lt;-<span class="st"> </span>keiba.yahoo <span class="op">%&gt;%</span>
-<span class="st">          </span><span class="kw">html_nodes</span>(<span class="st">&quot;a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">          </span><span class="kw">html_attr</span>(<span class="st">&quot;href&quot;</span>) <span class="co"># 全urlを取得</span>
-        
-        <span class="co"># 競馬場ごとの各日のレースリストを取得</span>
-        race_lists &lt;-<span class="st"> </span>race_lists[<span class="kw">str_detect</span>(race_lists, <span class="dt">pattern=</span><span class="st">&quot;race/list/</span><span class="ch">\\</span><span class="st">d+/&quot;</span>)<span class="op">==</span><span class="dv">1</span>] <span class="co"># 「result」が含まれるurlを抽出</span>
-      }
-      , <span class="dt">error =</span> <span class="cf">function</span>(e){signal &lt;-<span class="st"> </span><span class="dv">1</span>}
-    )</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="cf">for</span>(year <span class="cf">in</span> <span class="dv">1994</span><span class="op">:</span><span class="dv">2019</span>){</a>
+<a class="sourceLine" id="cb3-2" title="2">  start.time &lt;-<span class="st"> </span><span class="kw">Sys.time</span>() <span class="co"># 計算時間を図る</span></a>
+<a class="sourceLine" id="cb3-3" title="3">  <span class="co"># yahoo競馬のレース結果一覧ページの取得</span></a>
+<a class="sourceLine" id="cb3-4" title="4">  <span class="cf">for</span> (k <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">12</span>){ <span class="co"># kは月を表す</span></a>
+<a class="sourceLine" id="cb3-5" title="5">    </a>
+<a class="sourceLine" id="cb3-6" title="6">    <span class="kw">tryCatch</span>(</a>
+<a class="sourceLine" id="cb3-7" title="7">      {</a>
+<a class="sourceLine" id="cb3-8" title="8">        keiba.yahoo &lt;-<span class="st"> </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp/schedule/list/&quot;</span>, year,<span class="st">&quot;/?month=&quot;</span>,k)) <span class="co"># 該当年、該当月のレース結果一覧にアクセス</span></a>
+<a class="sourceLine" id="cb3-9" title="9">        <span class="kw">Sys.sleep</span>(<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb3-10" title="10">        race_lists &lt;-<span class="st"> </span>keiba.yahoo <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-11" title="11"><span class="st">          </span><span class="kw">html_nodes</span>(<span class="st">&quot;a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-12" title="12"><span class="st">          </span><span class="kw">html_attr</span>(<span class="st">&quot;href&quot;</span>) <span class="co"># 全urlを取得</span></a>
+<a class="sourceLine" id="cb3-13" title="13">        </a>
+<a class="sourceLine" id="cb3-14" title="14">        <span class="co"># 競馬場ごとの各日のレースリストを取得</span></a>
+<a class="sourceLine" id="cb3-15" title="15">        race_lists &lt;-<span class="st"> </span>race_lists[<span class="kw">str_detect</span>(race_lists, <span class="dt">pattern=</span><span class="st">&quot;race/list/</span><span class="ch">\\</span><span class="st">d+/&quot;</span>)<span class="op">==</span><span class="dv">1</span>] <span class="co"># 「result」が含まれるurlを抽出</span></a>
+<a class="sourceLine" id="cb3-16" title="16">      }</a>
+<a class="sourceLine" id="cb3-17" title="17">      , <span class="dt">error =</span> <span class="cf">function</span>(e){signal &lt;-<span class="st"> </span><span class="dv">1</span>}</a>
+<a class="sourceLine" id="cb3-18" title="18">    )</a></code></pre></div>
 <p>ここでは、取得したリンクのurlにresultという文字が含まれているものだけを抽出しています。要はそれが各競馬場のレーステーブルへのリンクとなります。ここからは取得した競馬場のレーステーブルのリンクを用いて、そのページにアクセスし、全12レースそれぞれのレース結果が掲載されているページのリンクを取得していきます。</p>
-<pre class="sourceCode r"><code class="sourceCode r">    <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(race_lists)){ <span class="co"># jは当該年月にあったレーステーブルへのリンクを表す</span>
-      
-      <span class="kw">tryCatch</span>(
-        {
-          race_list &lt;-<span class="st"> </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp&quot;</span>,race_lists[j]))
-          race_url &lt;-<span class="st"> </span>race_list <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_attr</span>(<span class="st">&quot;href&quot;</span>) <span class="co"># 全urlを取得</span>
-          
-          <span class="co"># レース結果のurlを取得</span>
-          race_url &lt;-<span class="st"> </span>race_url[<span class="kw">str_detect</span>(race_url, <span class="dt">pattern=</span><span class="st">&quot;result&quot;</span>)<span class="op">==</span><span class="dv">1</span>] <span class="co"># 「result」が含まれるurlを抽出</span>
-        }
-        , <span class="dt">error =</span> <span class="cf">function</span>(e){signal &lt;-<span class="st"> </span><span class="dv">1</span>}
-      )</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">    <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(race_lists)){ <span class="co"># jは当該年月にあったレーステーブルへのリンクを表す</span></a>
+<a class="sourceLine" id="cb4-2" title="2">      </a>
+<a class="sourceLine" id="cb4-3" title="3">      <span class="kw">tryCatch</span>(</a>
+<a class="sourceLine" id="cb4-4" title="4">        {</a>
+<a class="sourceLine" id="cb4-5" title="5">          race_list &lt;-<span class="st"> </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp&quot;</span>,race_lists[j]))</a>
+<a class="sourceLine" id="cb4-6" title="6">          race_url &lt;-<span class="st"> </span>race_list <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_attr</span>(<span class="st">&quot;href&quot;</span>) <span class="co"># 全urlを取得</span></a>
+<a class="sourceLine" id="cb4-7" title="7">          </a>
+<a class="sourceLine" id="cb4-8" title="8">          <span class="co"># レース結果のurlを取得</span></a>
+<a class="sourceLine" id="cb4-9" title="9">          race_url &lt;-<span class="st"> </span>race_url[<span class="kw">str_detect</span>(race_url, <span class="dt">pattern=</span><span class="st">&quot;result&quot;</span>)<span class="op">==</span><span class="dv">1</span>] <span class="co"># 「result」が含まれるurlを抽出</span></a>
+<a class="sourceLine" id="cb4-10" title="10">        }</a>
+<a class="sourceLine" id="cb4-11" title="11">        , <span class="dt">error =</span> <span class="cf">function</span>(e){signal &lt;-<span class="st"> </span><span class="dv">1</span>}</a>
+<a class="sourceLine" id="cb4-12" title="12">      )</a></code></pre></div>
 <p>各レース結果へのリンクが取得できたので、ここからはいよいよレース結果の取得とその整形パートに入ります。かなり長ったらしく複雑なコードになってしまいました。レース結果は以下のようなテーブル属性に格納されているので、まずそれを単純に引っ張ってきます。</p>
-<pre class="sourceCode r"><code class="sourceCode r">      <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(race_url)){ <span class="co"># iは当該年月当該競馬場で開催されたレースを表す</span>
-        
-        <span class="kw">print</span>(<span class="kw">str_c</span>(<span class="st">&quot;現在、&quot;</span>, year, <span class="st">&quot;年&quot;</span>, k, <span class="st">&quot;月&quot;</span>,j, <span class="st">&quot;グループ、&quot;</span>, i,<span class="st">&quot;番目のレースの保存中です&quot;</span>))
-        
-        <span class="kw">tryCatch</span>(
-          {
-            race1 &lt;-<span class="st">  </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp&quot;</span>,race_url[i])) <span class="co"># レース結果のurlを取得</span>
-            signal &lt;-<span class="st"> </span><span class="dv">0</span>
-            <span class="kw">Sys.sleep</span>(<span class="dv">2</span>)
-          }
-          , <span class="dt">error =</span> <span class="cf">function</span>(e){signal &lt;-<span class="st"> </span><span class="dv">1</span>}
-        )
-        
-        <span class="co"># レースが中止orこれまでの過程でエラーでなければ処理を実行</span>
-        <span class="cf">if</span> (<span class="kw">identical</span>(race1 <span class="op">%&gt;%</span>
-<span class="st">                      </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@class = &#39;resultAtt mgnBL fntSS&#39;]&quot;</span>) <span class="op">%&gt;%</span>
-<span class="st">                      </span><span class="kw">html_text</span>(),<span class="kw">character</span>(<span class="dv">0</span>)) <span class="op">==</span><span class="st"> </span><span class="ot">TRUE</span> <span class="op">&amp;&amp;</span><span class="st"> </span>signal <span class="op">==</span><span class="st"> </span><span class="dv">0</span>){
-          
-          <span class="co"># レース結果をスクレイピング</span>
-          race_result &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//table[@id = &#39;raceScore&#39;]&quot;</span>) <span class="op">%&gt;%</span>
-<span class="st">            </span><span class="kw">html_table</span>()
-          race_result &lt;-<span class="st"> </span><span class="kw">do.call</span>(<span class="st">&quot;data.frame&quot;</span>,race_result) <span class="co"># リストをデータフレームに変更</span>
-          
-          <span class="kw">colnames</span>(race_result) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;order&quot;</span>,<span class="st">&quot;frame_number&quot;</span>,<span class="st">&quot;horse_number&quot;</span>,<span class="st">&quot;horse_name/age&quot;</span>,<span class="st">&quot;time/margin&quot;</span>,<span class="st">&quot;passing_rank/last_3F&quot;</span>,<span class="st">&quot;jockey/weight&quot;</span>,<span class="st">&quot;popularity/odds&quot;</span>,<span class="st">&quot;trainer&quot;</span>) <span class="co">#　列名変更</span></code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">      <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(race_url)){ <span class="co"># iは当該年月当該競馬場で開催されたレースを表す</span></a>
+<a class="sourceLine" id="cb5-2" title="2">        </a>
+<a class="sourceLine" id="cb5-3" title="3">        <span class="kw">print</span>(<span class="kw">str_c</span>(<span class="st">&quot;現在、&quot;</span>, year, <span class="st">&quot;年&quot;</span>, k, <span class="st">&quot;月&quot;</span>,j, <span class="st">&quot;グループ、&quot;</span>, i,<span class="st">&quot;番目のレースの保存中です&quot;</span>))</a>
+<a class="sourceLine" id="cb5-4" title="4">        </a>
+<a class="sourceLine" id="cb5-5" title="5">        <span class="kw">tryCatch</span>(</a>
+<a class="sourceLine" id="cb5-6" title="6">          {</a>
+<a class="sourceLine" id="cb5-7" title="7">            race1 &lt;-<span class="st">  </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp&quot;</span>,race_url[i])) <span class="co"># レース結果のurlを取得</span></a>
+<a class="sourceLine" id="cb5-8" title="8">            signal &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb5-9" title="9">            <span class="kw">Sys.sleep</span>(<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb5-10" title="10">          }</a>
+<a class="sourceLine" id="cb5-11" title="11">          , <span class="dt">error =</span> <span class="cf">function</span>(e){signal &lt;-<span class="st"> </span><span class="dv">1</span>}</a>
+<a class="sourceLine" id="cb5-12" title="12">        )</a>
+<a class="sourceLine" id="cb5-13" title="13">        </a>
+<a class="sourceLine" id="cb5-14" title="14">        <span class="co"># レースが中止orこれまでの過程でエラーでなければ処理を実行</span></a>
+<a class="sourceLine" id="cb5-15" title="15">        <span class="cf">if</span> (<span class="kw">identical</span>(race1 <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-16" title="16"><span class="st">                      </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@class = &#39;resultAtt mgnBL fntSS&#39;]&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-17" title="17"><span class="st">                      </span><span class="kw">html_text</span>(),<span class="kw">character</span>(<span class="dv">0</span>)) <span class="op">==</span><span class="st"> </span><span class="ot">TRUE</span> <span class="op">&amp;&amp;</span><span class="st"> </span>signal <span class="op">==</span><span class="st"> </span><span class="dv">0</span>){</a>
+<a class="sourceLine" id="cb5-18" title="18">          </a>
+<a class="sourceLine" id="cb5-19" title="19">          <span class="co"># レース結果をスクレイピング</span></a>
+<a class="sourceLine" id="cb5-20" title="20">          race_result &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//table[@id = &#39;raceScore&#39;]&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-21" title="21"><span class="st">            </span><span class="kw">html_table</span>()</a>
+<a class="sourceLine" id="cb5-22" title="22">          race_result &lt;-<span class="st"> </span><span class="kw">do.call</span>(<span class="st">&quot;data.frame&quot;</span>,race_result) <span class="co"># リストをデータフレームに変更</span></a>
+<a class="sourceLine" id="cb5-23" title="23">          </a>
+<a class="sourceLine" id="cb5-24" title="24">          <span class="kw">colnames</span>(race_result) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;order&quot;</span>,<span class="st">&quot;frame_number&quot;</span>,<span class="st">&quot;horse_number&quot;</span>,<span class="st">&quot;horse_name/age&quot;</span>,<span class="st">&quot;time/margin&quot;</span>,<span class="st">&quot;passing_rank/last_3F&quot;</span>,<span class="st">&quot;jockey/weight&quot;</span>,<span class="st">&quot;popularity/odds&quot;</span>,<span class="st">&quot;trainer&quot;</span>) <span class="co">#　列名変更</span></a></code></pre></div>
 <p>tableをただ取得しただけでは以下のように、一つのセルに複数の情報が入っていたりと分析には使えないデータとなっています。なので、これを成型する必要が出てきます。</p>
-<pre class="sourceCode r"><code class="sourceCode r">          <span class="co"># 通過順位と上り3Fのタイム</span>
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">passing_rank=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">passing_rank/last_3F</span><span class="st">`</span>,<span class="st">&quot;(</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2})|(</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2})|(</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2})&quot;</span>)))
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">last_3F=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">passing_rank/last_3F</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d{2}</span><span class="ch">\\</span><span class="st">.</span><span class="ch">\\</span><span class="st">d&quot;</span>)))
-          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">6</span>]
-          
-          <span class="co"># タイムと着差</span>
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">time=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">time/margin</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d</span><span class="ch">\\</span><span class="st">.</span><span class="ch">\\</span><span class="st">d{2}</span><span class="ch">\\</span><span class="st">.</span><span class="ch">\\</span><span class="st">d|</span><span class="ch">\\</span><span class="st">d{2}</span><span class="ch">\\</span><span class="st">.</span><span class="ch">\\</span><span class="st">d&quot;</span>)))
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">margin=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">time/margin</span><span class="st">`</span>,<span class="st">&quot;./.馬身|.馬身|.[:space:]./.馬身|[ア-ン-]+&quot;</span>)))
-          race_result<span class="op">$</span>margin[race_result<span class="op">$</span>order<span class="op">==</span><span class="dv">1</span>] &lt;-<span class="st"> &quot;トップ&quot;</span>
-          race_result<span class="op">$</span>margin[race_result<span class="op">$</span>margin<span class="op">==</span><span class="st">&quot;character(0)&quot;</span>] &lt;-<span class="st"> &quot;大差&quot;</span>
-          race_result<span class="op">$</span>margin[race_result<span class="op">$</span>order<span class="op">==</span><span class="dv">0</span>] &lt;-<span class="st"> </span><span class="ot">NA</span>
-          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">5</span>]
-          
-          <span class="co"># 馬名、馬齢、馬体重</span>
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">horse_name=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;[ァ-ヴー・]+&quot;</span>)))
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">horse_age=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;牡</span><span class="ch">\\</span><span class="st">d+|牝</span><span class="ch">\\</span><span class="st">d+|せん</span><span class="ch">\\</span><span class="st">d+&quot;</span>)))
-          race_result<span class="op">$</span>horse_sex &lt;-<span class="st"> </span><span class="kw">str_extract</span>(race_result<span class="op">$</span>horse_age, <span class="dt">pattern =</span> <span class="st">&quot;牡|牝|せん&quot;</span>)
-          race_result<span class="op">$</span>horse_age &lt;-<span class="st"> </span><span class="kw">str_extract</span>(race_result<span class="op">$</span>horse_age, <span class="dt">pattern =</span> <span class="st">&quot;</span><span class="ch">\\</span><span class="st">d&quot;</span>)
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">horse_weight=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d{3}&quot;</span>)))
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">horse_weight_change=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">([</span><span class="ch">\\</span><span class="st">+|</span><span class="ch">\\</span><span class="st">-]</span><span class="ch">\\</span><span class="st">d+</span><span class="ch">\\</span><span class="st">)|</span><span class="ch">\\</span><span class="st">([</span><span class="ch">\\</span><span class="st">d+]</span><span class="ch">\\</span><span class="st">)&quot;</span>)))
-          race_result<span class="op">$</span>horse_weight_change &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">rm_round</span>(race_result<span class="op">$</span>horse_weight_change, <span class="dt">extract=</span><span class="ot">TRUE</span>), paste, <span class="dt">collapse=</span><span class="st">&quot;&quot;</span>)
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">brinker=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;B&quot;</span>)))
-          race_result<span class="op">$</span>brinker[race_result<span class="op">$</span>brinker<span class="op">!=</span><span class="st">&quot;B&quot;</span>] &lt;-<span class="st"> &quot;N&quot;</span>
-          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">4</span>]
-          
-          <span class="co"># ジョッキー</span>
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">jockey=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;[ぁ-ん一-龠]+</span><span class="ch">\\</span><span class="st">s[ぁ-ん一-龠]+|[:upper:].[ァ-ヶー]+&quot;</span>)))
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">jockey_weight=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d{2}&quot;</span>)))
-          race_result<span class="op">$</span>jockey_weight_change &lt;-<span class="st"> </span><span class="dv">0</span>
-          race_result<span class="op">$</span>jockey_weight_change[<span class="kw">str_detect</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;☆&quot;</span>)<span class="op">==</span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">1</span>
-          race_result<span class="op">$</span>jockey_weight_change[<span class="kw">str_detect</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;△&quot;</span>)<span class="op">==</span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">2</span>
-          race_result<span class="op">$</span>jockey_weight_change[<span class="kw">str_detect</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;△&quot;</span>)<span class="op">==</span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">3</span>
-          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">4</span>]
-          
-          <span class="co"># オッズと人気</span>
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">odds=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">popularity/odds</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">(.+</span><span class="ch">\\</span><span class="st">)&quot;</span>)))
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">popularity=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">popularity/odds</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+[^(</span><span class="ch">\\</span><span class="st">d+.</span><span class="ch">\\</span><span class="st">d)]&quot;</span>)))
-          race_result<span class="op">$</span>odds &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">rm_round</span>(race_result<span class="op">$</span>odds, <span class="dt">extract=</span><span class="ot">TRUE</span>), paste, <span class="dt">collapse=</span><span class="st">&quot;&quot;</span>)
-          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">4</span>]</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">          <span class="co"># 通過順位と上り3Fのタイム</span></a>
+<a class="sourceLine" id="cb6-2" title="2">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">passing_rank=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">passing_rank/last_3F</span><span class="st">`</span>,<span class="st">&quot;(</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2})|(</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2})|(</span><span class="ch">\\</span><span class="st">d{2}-</span><span class="ch">\\</span><span class="st">d{2})&quot;</span>)))</a>
+<a class="sourceLine" id="cb6-3" title="3">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">last_3F=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">passing_rank/last_3F</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d{2}</span><span class="ch">\\</span><span class="st">.</span><span class="ch">\\</span><span class="st">d&quot;</span>)))</a>
+<a class="sourceLine" id="cb6-4" title="4">          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">6</span>]</a>
+<a class="sourceLine" id="cb6-5" title="5">          </a>
+<a class="sourceLine" id="cb6-6" title="6">          <span class="co"># タイムと着差</span></a>
+<a class="sourceLine" id="cb6-7" title="7">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">time=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">time/margin</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d</span><span class="ch">\\</span><span class="st">.</span><span class="ch">\\</span><span class="st">d{2}</span><span class="ch">\\</span><span class="st">.</span><span class="ch">\\</span><span class="st">d|</span><span class="ch">\\</span><span class="st">d{2}</span><span class="ch">\\</span><span class="st">.</span><span class="ch">\\</span><span class="st">d&quot;</span>)))</a>
+<a class="sourceLine" id="cb6-8" title="8">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">margin=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">time/margin</span><span class="st">`</span>,<span class="st">&quot;./.馬身|.馬身|.[:space:]./.馬身|[ア-ン-]+&quot;</span>)))</a>
+<a class="sourceLine" id="cb6-9" title="9">          race_result<span class="op">$</span>margin[race_result<span class="op">$</span>order<span class="op">==</span><span class="dv">1</span>] &lt;-<span class="st"> &quot;トップ&quot;</span></a>
+<a class="sourceLine" id="cb6-10" title="10">          race_result<span class="op">$</span>margin[race_result<span class="op">$</span>margin<span class="op">==</span><span class="st">&quot;character(0)&quot;</span>] &lt;-<span class="st"> &quot;大差&quot;</span></a>
+<a class="sourceLine" id="cb6-11" title="11">          race_result<span class="op">$</span>margin[race_result<span class="op">$</span>order<span class="op">==</span><span class="dv">0</span>] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb6-12" title="12">          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">5</span>]</a>
+<a class="sourceLine" id="cb6-13" title="13">          </a>
+<a class="sourceLine" id="cb6-14" title="14">          <span class="co"># 馬名、馬齢、馬体重</span></a>
+<a class="sourceLine" id="cb6-15" title="15">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">horse_name=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;[ァ-ヴー・]+&quot;</span>)))</a>
+<a class="sourceLine" id="cb6-16" title="16">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">horse_age=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;牡</span><span class="ch">\\</span><span class="st">d+|牝</span><span class="ch">\\</span><span class="st">d+|せん</span><span class="ch">\\</span><span class="st">d+&quot;</span>)))</a>
+<a class="sourceLine" id="cb6-17" title="17">          race_result<span class="op">$</span>horse_sex &lt;-<span class="st"> </span><span class="kw">str_extract</span>(race_result<span class="op">$</span>horse_age, <span class="dt">pattern =</span> <span class="st">&quot;牡|牝|せん&quot;</span>)</a>
+<a class="sourceLine" id="cb6-18" title="18">          race_result<span class="op">$</span>horse_age &lt;-<span class="st"> </span><span class="kw">str_extract</span>(race_result<span class="op">$</span>horse_age, <span class="dt">pattern =</span> <span class="st">&quot;</span><span class="ch">\\</span><span class="st">d&quot;</span>)</a>
+<a class="sourceLine" id="cb6-19" title="19">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">horse_weight=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d{3}&quot;</span>)))</a>
+<a class="sourceLine" id="cb6-20" title="20">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">horse_weight_change=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">([</span><span class="ch">\\</span><span class="st">+|</span><span class="ch">\\</span><span class="st">-]</span><span class="ch">\\</span><span class="st">d+</span><span class="ch">\\</span><span class="st">)|</span><span class="ch">\\</span><span class="st">([</span><span class="ch">\\</span><span class="st">d+]</span><span class="ch">\\</span><span class="st">)&quot;</span>)))</a>
+<a class="sourceLine" id="cb6-21" title="21">          race_result<span class="op">$</span>horse_weight_change &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">rm_round</span>(race_result<span class="op">$</span>horse_weight_change, <span class="dt">extract=</span><span class="ot">TRUE</span>), paste, <span class="dt">collapse=</span><span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb6-22" title="22">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">brinker=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">horse_name/age</span><span class="st">`</span>,<span class="st">&quot;B&quot;</span>)))</a>
+<a class="sourceLine" id="cb6-23" title="23">          race_result<span class="op">$</span>brinker[race_result<span class="op">$</span>brinker<span class="op">!=</span><span class="st">&quot;B&quot;</span>] &lt;-<span class="st"> &quot;N&quot;</span></a>
+<a class="sourceLine" id="cb6-24" title="24">          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">4</span>]</a>
+<a class="sourceLine" id="cb6-25" title="25">          </a>
+<a class="sourceLine" id="cb6-26" title="26">          <span class="co"># ジョッキー</span></a>
+<a class="sourceLine" id="cb6-27" title="27">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">jockey=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;[ぁ-ん一-龠]+</span><span class="ch">\\</span><span class="st">s[ぁ-ん一-龠]+|[:upper:].[ァ-ヶー]+&quot;</span>)))</a>
+<a class="sourceLine" id="cb6-28" title="28">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">jockey_weight=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d{2}&quot;</span>)))</a>
+<a class="sourceLine" id="cb6-29" title="29">          race_result<span class="op">$</span>jockey_weight_change &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb6-30" title="30">          race_result<span class="op">$</span>jockey_weight_change[<span class="kw">str_detect</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;☆&quot;</span>)<span class="op">==</span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb6-31" title="31">          race_result<span class="op">$</span>jockey_weight_change[<span class="kw">str_detect</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;△&quot;</span>)<span class="op">==</span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">2</span></a>
+<a class="sourceLine" id="cb6-32" title="32">          race_result<span class="op">$</span>jockey_weight_change[<span class="kw">str_detect</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">jockey/weight</span><span class="st">`</span>,<span class="st">&quot;△&quot;</span>)<span class="op">==</span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">3</span></a>
+<a class="sourceLine" id="cb6-33" title="33">          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">4</span>]</a>
+<a class="sourceLine" id="cb6-34" title="34">          </a>
+<a class="sourceLine" id="cb6-35" title="35">          <span class="co"># オッズと人気</span></a>
+<a class="sourceLine" id="cb6-36" title="36">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">odds=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">popularity/odds</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">(.+</span><span class="ch">\\</span><span class="st">)&quot;</span>)))</a>
+<a class="sourceLine" id="cb6-37" title="37">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">popularity=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_result<span class="op">$</span><span class="st">`</span><span class="dt">popularity/odds</span><span class="st">`</span>,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+[^(</span><span class="ch">\\</span><span class="st">d+.</span><span class="ch">\\</span><span class="st">d)]&quot;</span>)))</a>
+<a class="sourceLine" id="cb6-38" title="38">          race_result<span class="op">$</span>odds &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">rm_round</span>(race_result<span class="op">$</span>odds, <span class="dt">extract=</span><span class="ot">TRUE</span>), paste, <span class="dt">collapse=</span><span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb6-39" title="39">          race_result &lt;-<span class="st"> </span>race_result[<span class="op">-</span><span class="dv">4</span>]</a></code></pre></div>
 <p>次に、今取得したtable以外の情報も取り込むことにします。具体的には、レース名や天候、馬場状態、日付、競馬場などです。これらの情報はレース結果ページの上部に掲載されています。</p>
-<pre class="sourceCode r"><code class="sourceCode r">          <span class="co"># レース情報</span>
-          race_date &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@id = &#39;raceTitName&#39;]/p[@id = &#39;raceTitDay&#39;]&quot;</span>) <span class="op">%&gt;%</span>
-<span class="st">            </span><span class="kw">html_text</span>()
-          race_name &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@id = &#39;raceTitName&#39;]/h1[@class = &#39;fntB&#39;]&quot;</span>) <span class="op">%&gt;%</span>
-<span class="st">            </span><span class="kw">html_text</span>()
-          race_distance &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//p[@id = &#39;raceTitMeta&#39;]&quot;</span>) <span class="op">%&gt;%</span>
-<span class="st">            </span><span class="kw">html_text</span>()
-        
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">race_date=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_date,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+年</span><span class="ch">\\</span><span class="st">d+月</span><span class="ch">\\</span><span class="st">d+日&quot;</span>)))
-          race_result<span class="op">$</span>race_date &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>race_date,<span class="st">&quot;年&quot;</span>,<span class="st">&quot;/&quot;</span>)
-          race_result<span class="op">$</span>race_date &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>race_date,<span class="st">&quot;月&quot;</span>,<span class="st">&quot;/&quot;</span>)
-          race_result<span class="op">$</span>race_date &lt;-<span class="st"> </span><span class="kw">as.Date</span>(race_result<span class="op">$</span>race_date)
-          race_course &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_date,<span class="dt">pattern =</span> <span class="st">&quot;札幌|函館|福島|新潟|東京|中山|中京|京都|阪神|小倉&quot;</span>))
-          race_result<span class="op">$</span>race_course &lt;-<span class="st"> </span>race_course
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">race_name=</span><span class="kw">as.character</span>(<span class="kw">str_replace_all</span>(race_name,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">s&quot;</span>,<span class="st">&quot;&quot;</span>)))
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">race_distance=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_distance,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+m&quot;</span>)))
-          race_type=<span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_distance,<span class="dt">pattern =</span> <span class="st">&quot;芝|ダート&quot;</span>))
-          race_result<span class="op">$</span>type &lt;-<span class="st"> </span>race_type
-          race_turn &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_distance,<span class="dt">pattern =</span> <span class="st">&quot;右|左&quot;</span>))
-          race_result<span class="op">$</span>race_turn &lt;-<span class="st"> </span>race_turn
-          
-          <span class="cf">if</span>(<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg ryou&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
-            race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;良&quot;</span>
-          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">                            </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg yayaomo&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
-            race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;稍重&quot;</span>
-          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span>
-<span class="st">                            </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg omo&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
-            race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;重&quot;</span>
-          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">                            </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg furyou&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
-            race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;不良&quot;</span>
-          } <span class="cf">else</span> race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;NA&quot;</span>
-          
-          <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg hare&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
-            race_result<span class="op">$</span>race_weather &lt;-<span class="st"> &quot;晴れ&quot;</span>
-          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg ame&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
-            race_result<span class="op">$</span>race_weather &lt;-<span class="st"> &quot;曇り&quot;</span>
-          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg kumori&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
-            race_result<span class="op">$</span>race_weather &lt;-<span class="st"> &quot;雨&quot;</span>
-          } <span class="cf">else</span> race_result<span class="op">$</span>race_weather &lt;-<span class="st"> &quot;その他&quot;</span></code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">          <span class="co"># レース情報</span></a>
+<a class="sourceLine" id="cb7-2" title="2">          race_date &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@id = &#39;raceTitName&#39;]/p[@id = &#39;raceTitDay&#39;]&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="st">            </span><span class="kw">html_text</span>()</a>
+<a class="sourceLine" id="cb7-4" title="4">          race_name &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@id = &#39;raceTitName&#39;]/h1[@class = &#39;fntB&#39;]&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="st">            </span><span class="kw">html_text</span>()</a>
+<a class="sourceLine" id="cb7-6" title="6">          race_distance &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//p[@id = &#39;raceTitMeta&#39;]&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-7" title="7"><span class="st">            </span><span class="kw">html_text</span>()</a>
+<a class="sourceLine" id="cb7-8" title="8">        </a>
+<a class="sourceLine" id="cb7-9" title="9">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">race_date=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_date,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+年</span><span class="ch">\\</span><span class="st">d+月</span><span class="ch">\\</span><span class="st">d+日&quot;</span>)))</a>
+<a class="sourceLine" id="cb7-10" title="10">          race_result<span class="op">$</span>race_date &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>race_date,<span class="st">&quot;年&quot;</span>,<span class="st">&quot;/&quot;</span>)</a>
+<a class="sourceLine" id="cb7-11" title="11">          race_result<span class="op">$</span>race_date &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>race_date,<span class="st">&quot;月&quot;</span>,<span class="st">&quot;/&quot;</span>)</a>
+<a class="sourceLine" id="cb7-12" title="12">          race_result<span class="op">$</span>race_date &lt;-<span class="st"> </span><span class="kw">as.Date</span>(race_result<span class="op">$</span>race_date)</a>
+<a class="sourceLine" id="cb7-13" title="13">          race_course &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_date,<span class="dt">pattern =</span> <span class="st">&quot;札幌|函館|福島|新潟|東京|中山|中京|京都|阪神|小倉&quot;</span>))</a>
+<a class="sourceLine" id="cb7-14" title="14">          race_result<span class="op">$</span>race_course &lt;-<span class="st"> </span>race_course</a>
+<a class="sourceLine" id="cb7-15" title="15">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">race_name=</span><span class="kw">as.character</span>(<span class="kw">str_replace_all</span>(race_name,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">s&quot;</span>,<span class="st">&quot;&quot;</span>)))</a>
+<a class="sourceLine" id="cb7-16" title="16">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(race_result,<span class="dt">race_distance=</span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_distance,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+m&quot;</span>)))</a>
+<a class="sourceLine" id="cb7-17" title="17">          race_type=<span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_distance,<span class="dt">pattern =</span> <span class="st">&quot;芝|ダート&quot;</span>))</a>
+<a class="sourceLine" id="cb7-18" title="18">          race_result<span class="op">$</span>type &lt;-<span class="st"> </span>race_type</a>
+<a class="sourceLine" id="cb7-19" title="19">          race_turn &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(race_distance,<span class="dt">pattern =</span> <span class="st">&quot;右|左&quot;</span>))</a>
+<a class="sourceLine" id="cb7-20" title="20">          race_result<span class="op">$</span>race_turn &lt;-<span class="st"> </span>race_turn</a>
+<a class="sourceLine" id="cb7-21" title="21">          </a>
+<a class="sourceLine" id="cb7-22" title="22">          <span class="cf">if</span>(<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg ryou&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){</a>
+<a class="sourceLine" id="cb7-23" title="23">            race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;良&quot;</span></a>
+<a class="sourceLine" id="cb7-24" title="24">          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-25" title="25"><span class="st">                            </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg yayaomo&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){</a>
+<a class="sourceLine" id="cb7-26" title="26">            race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;稍重&quot;</span></a>
+<a class="sourceLine" id="cb7-27" title="27">          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-28" title="28"><span class="st">                            </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg omo&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){</a>
+<a class="sourceLine" id="cb7-29" title="29">            race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;重&quot;</span></a>
+<a class="sourceLine" id="cb7-30" title="30">          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-31" title="31"><span class="st">                            </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg furyou&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){</a>
+<a class="sourceLine" id="cb7-32" title="32">            race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;不良&quot;</span></a>
+<a class="sourceLine" id="cb7-33" title="33">          } <span class="cf">else</span> race_result<span class="op">$</span>race_condition &lt;-<span class="st"> &quot;NA&quot;</span></a>
+<a class="sourceLine" id="cb7-34" title="34">          </a>
+<a class="sourceLine" id="cb7-35" title="35">          <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg hare&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){</a>
+<a class="sourceLine" id="cb7-36" title="36">            race_result<span class="op">$</span>race_weather &lt;-<span class="st"> &quot;晴れ&quot;</span></a>
+<a class="sourceLine" id="cb7-37" title="37">          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg ame&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){</a>
+<a class="sourceLine" id="cb7-38" title="38">            race_result<span class="op">$</span>race_weather &lt;-<span class="st"> &quot;曇り&quot;</span></a>
+<a class="sourceLine" id="cb7-39" title="39">          } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">length</span>(race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//img[@class = &#39;spBg kumori&#39;]&quot;</span>)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){</a>
+<a class="sourceLine" id="cb7-40" title="40">            race_result<span class="op">$</span>race_weather &lt;-<span class="st"> &quot;雨&quot;</span></a>
+<a class="sourceLine" id="cb7-41" title="41">          } <span class="cf">else</span> race_result<span class="op">$</span>race_weather &lt;-<span class="st"> &quot;その他&quot;</span></a></code></pre></div>
 <p>次は各馬の情報です。 実はさきほど取得したtableの馬名はリンクになっており、そのリンクをたどると<a href="https://keiba.yahoo.co.jp/directory/horse/2015105508/">各馬の情報</a>が取得できます（毛色や生年月日など）。</p>
-<pre class="sourceCode r"><code class="sourceCode r">          horse_url &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_attr</span>(<span class="st">&quot;href&quot;</span>) 
-          horse_url &lt;-<span class="st"> </span>horse_url[<span class="kw">str_detect</span>(horse_url, <span class="dt">pattern=</span><span class="st">&quot;directory/horse&quot;</span>)<span class="op">==</span><span class="dv">1</span>] <span class="co"># 馬情報のリンクだけ抽出する</span>
-          
-          <span class="cf">for</span> (l <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(horse_url)){
-            <span class="kw">tryCatch</span>(
-              {
-                horse1 &lt;-<span class="st">  </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp&quot;</span>,horse_url[l]))
-                <span class="kw">Sys.sleep</span>(<span class="fl">0.5</span>)
-                horse_name &lt;-<span class="st"> </span>horse1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@id = &#39;dirTitName&#39;]/h1[@class = &#39;fntB&#39;]&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">                  </span><span class="kw">html_text</span>()
-                horse &lt;-<span class="st"> </span>horse1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@id = &#39;dirTitName&#39;]/ul&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">                  </span><span class="kw">html_text</span>()
-                race_result<span class="op">$</span>colour[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;毛色：.+&quot;</span>)) 
-                race_result<span class="op">$</span>owner[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;馬主：.+&quot;</span>))
-                race_result<span class="op">$</span>farm[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;生産者：.+&quot;</span>))
-                race_result<span class="op">$</span>locality[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;産地：.+&quot;</span>))
-                race_result<span class="op">$</span>horse_birthday[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+年</span><span class="ch">\\</span><span class="st">d+月</span><span class="ch">\\</span><span class="st">d+日&quot;</span>))
-                race_result<span class="op">$</span>father[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span>horse1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//td[@class = &#39;bloodM&#39;][@rowspan = &#39;4&#39;]&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_text</span>()
-                race_result<span class="op">$</span>mother[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span>horse1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//td[@class = &#39;bloodF&#39;][@rowspan = &#39;4&#39;]&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_text</span>()
-              }
-              , <span class="dt">error =</span> <span class="cf">function</span>(e){
-                race_result<span class="op">$</span>colour[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span> 
-                race_result<span class="op">$</span>owner[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span>
-                race_result<span class="op">$</span>farm[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span>
-                race_result<span class="op">$</span>locality[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span>
-                race_result<span class="op">$</span>horse_birthday[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span>
-                race_result<span class="op">$</span>father[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span>
-                race_result<span class="op">$</span>mother[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span>
-                }
-            )
-          }
-          
-          race_result<span class="op">$</span>colour &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>colour,<span class="st">&quot;毛色：&quot;</span>,<span class="st">&quot;&quot;</span>)
-          race_result<span class="op">$</span>owner &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>owner,<span class="st">&quot;馬主：&quot;</span>,<span class="st">&quot;&quot;</span>)
-          race_result<span class="op">$</span>farm &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>farm,<span class="st">&quot;生産者：&quot;</span>,<span class="st">&quot;&quot;</span>)
-          race_result<span class="op">$</span>locality &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>locality,<span class="st">&quot;産地：&quot;</span>,<span class="st">&quot;&quot;</span>)
-          <span class="co">#race_result$horse_birthday &lt;- str_replace_all(race_result$horse_birthday,&quot;年&quot;,&quot;/&quot;)</span>
-          <span class="co">#race_result$horse_birthday &lt;- str_replace_all(race_result$horse_birthday,&quot;月&quot;,&quot;/&quot;)</span>
-          <span class="co">#race_result$horse_birthday &lt;- as.Date(race_result$horse_birthday)</span>
-          
-          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(race_result,horse_number) <span class="co"># 馬番順に並べる</span></code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">          horse_url &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_attr</span>(<span class="st">&quot;href&quot;</span>) </a>
+<a class="sourceLine" id="cb8-2" title="2">          horse_url &lt;-<span class="st"> </span>horse_url[<span class="kw">str_detect</span>(horse_url, <span class="dt">pattern=</span><span class="st">&quot;directory/horse&quot;</span>)<span class="op">==</span><span class="dv">1</span>] <span class="co"># 馬情報のリンクだけ抽出する</span></a>
+<a class="sourceLine" id="cb8-3" title="3">          </a>
+<a class="sourceLine" id="cb8-4" title="4">          <span class="cf">for</span> (l <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(horse_url)){</a>
+<a class="sourceLine" id="cb8-5" title="5">            <span class="kw">tryCatch</span>(</a>
+<a class="sourceLine" id="cb8-6" title="6">              {</a>
+<a class="sourceLine" id="cb8-7" title="7">                horse1 &lt;-<span class="st">  </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp&quot;</span>,horse_url[l]))</a>
+<a class="sourceLine" id="cb8-8" title="8">                <span class="kw">Sys.sleep</span>(<span class="fl">0.5</span>)</a>
+<a class="sourceLine" id="cb8-9" title="9">                horse_name &lt;-<span class="st"> </span>horse1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@id = &#39;dirTitName&#39;]/h1[@class = &#39;fntB&#39;]&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-10" title="10"><span class="st">                  </span><span class="kw">html_text</span>()</a>
+<a class="sourceLine" id="cb8-11" title="11">                horse &lt;-<span class="st"> </span>horse1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//div[@id = &#39;dirTitName&#39;]/ul&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-12" title="12"><span class="st">                  </span><span class="kw">html_text</span>()</a>
+<a class="sourceLine" id="cb8-13" title="13">                race_result<span class="op">$</span>colour[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;毛色：.+&quot;</span>)) </a>
+<a class="sourceLine" id="cb8-14" title="14">                race_result<span class="op">$</span>owner[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;馬主：.+&quot;</span>))</a>
+<a class="sourceLine" id="cb8-15" title="15">                race_result<span class="op">$</span>farm[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;生産者：.+&quot;</span>))</a>
+<a class="sourceLine" id="cb8-16" title="16">                race_result<span class="op">$</span>locality[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;産地：.+&quot;</span>))</a>
+<a class="sourceLine" id="cb8-17" title="17">                race_result<span class="op">$</span>horse_birthday[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">str_extract_all</span>(horse,<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+年</span><span class="ch">\\</span><span class="st">d+月</span><span class="ch">\\</span><span class="st">d+日&quot;</span>))</a>
+<a class="sourceLine" id="cb8-18" title="18">                race_result<span class="op">$</span>father[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span>horse1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//td[@class = &#39;bloodM&#39;][@rowspan = &#39;4&#39;]&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_text</span>()</a>
+<a class="sourceLine" id="cb8-19" title="19">                race_result<span class="op">$</span>mother[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span>horse1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//td[@class = &#39;bloodF&#39;][@rowspan = &#39;4&#39;]&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_text</span>()</a>
+<a class="sourceLine" id="cb8-20" title="20">              }</a>
+<a class="sourceLine" id="cb8-21" title="21">              , <span class="dt">error =</span> <span class="cf">function</span>(e){</a>
+<a class="sourceLine" id="cb8-22" title="22">                race_result<span class="op">$</span>colour[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span> </a>
+<a class="sourceLine" id="cb8-23" title="23">                race_result<span class="op">$</span>owner[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb8-24" title="24">                race_result<span class="op">$</span>farm[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb8-25" title="25">                race_result<span class="op">$</span>locality[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb8-26" title="26">                race_result<span class="op">$</span>horse_birthday[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb8-27" title="27">                race_result<span class="op">$</span>father[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb8-28" title="28">                race_result<span class="op">$</span>mother[race_result<span class="op">$</span>horse_name<span class="op">==</span>horse_name] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb8-29" title="29">                }</a>
+<a class="sourceLine" id="cb8-30" title="30">            )</a>
+<a class="sourceLine" id="cb8-31" title="31">          }</a>
+<a class="sourceLine" id="cb8-32" title="32">          </a>
+<a class="sourceLine" id="cb8-33" title="33">          race_result<span class="op">$</span>colour &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>colour,<span class="st">&quot;毛色：&quot;</span>,<span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb8-34" title="34">          race_result<span class="op">$</span>owner &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>owner,<span class="st">&quot;馬主：&quot;</span>,<span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb8-35" title="35">          race_result<span class="op">$</span>farm &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>farm,<span class="st">&quot;生産者：&quot;</span>,<span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb8-36" title="36">          race_result<span class="op">$</span>locality &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>locality,<span class="st">&quot;産地：&quot;</span>,<span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb8-37" title="37">          <span class="co">#race_result$horse_birthday &lt;- str_replace_all(race_result$horse_birthday,&quot;年&quot;,&quot;/&quot;)</span></a>
+<a class="sourceLine" id="cb8-38" title="38">          <span class="co">#race_result$horse_birthday &lt;- str_replace_all(race_result$horse_birthday,&quot;月&quot;,&quot;/&quot;)</span></a>
+<a class="sourceLine" id="cb8-39" title="39">          <span class="co">#race_result$horse_birthday &lt;- as.Date(race_result$horse_birthday)</span></a>
+<a class="sourceLine" id="cb8-40" title="40">          </a>
+<a class="sourceLine" id="cb8-41" title="41">          race_result &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(race_result,horse_number) <span class="co"># 馬番順に並べる</span></a></code></pre></div>
 <p>次にそのレースまでに獲得した賞金額を落としに行きます。これはレース結果のページの<a href="https://keiba.yahoo.co.jp/race/denma/1802010601/">出馬表</a>と書かれたリンクをたどるとアクセスできます。ここに賞金があるのでそれを取得します。</p>
-<pre class="sourceCode r"><code class="sourceCode r">          yosou_url &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_attr</span>(<span class="st">&quot;href&quot;</span>) 
-          yosou_url &lt;-<span class="st"> </span>yosou_url[<span class="kw">str_detect</span>(yosou_url, <span class="dt">pattern=</span><span class="st">&quot;denma&quot;</span>)<span class="op">==</span><span class="dv">1</span>]
-          
-          <span class="cf">if</span> (<span class="kw">length</span>(yosou_url)<span class="op">==</span><span class="dv">1</span>){
-          yosou1 &lt;-<span class="st">  </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp&quot;</span>,yosou_url)) 
-          <span class="kw">Sys.sleep</span>(<span class="dv">2</span>)
-          yosou &lt;-<span class="st"> </span>yosou1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//td[@class = &#39;txC&#39;]&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.character</span>()
-          prize &lt;-<span class="st"> </span>yosou[<span class="kw">grepl</span>(<span class="st">&quot;万&quot;</span>,yosou)<span class="op">==</span><span class="ot">TRUE</span>] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">str_extract_all</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+万&quot;</span>)
-          prize &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">do.call</span>(<span class="st">&quot;data.frame&quot;</span>,prize)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.character</span>()
-          race_result<span class="op">$</span>prize &lt;-<span class="st"> </span>prize
-          race_result<span class="op">$</span>prize &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>prize,<span class="st">&quot;万&quot;</span>,<span class="st">&quot;&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.numeric</span>()
-          } <span class="cf">else</span> race_result<span class="op">$</span>prize &lt;-<span class="st"> </span><span class="ot">NA</span></code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">          yosou_url &lt;-<span class="st"> </span>race1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_attr</span>(<span class="st">&quot;href&quot;</span>) </a>
+<a class="sourceLine" id="cb9-2" title="2">          yosou_url &lt;-<span class="st"> </span>yosou_url[<span class="kw">str_detect</span>(yosou_url, <span class="dt">pattern=</span><span class="st">&quot;denma&quot;</span>)<span class="op">==</span><span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb9-3" title="3">          </a>
+<a class="sourceLine" id="cb9-4" title="4">          <span class="cf">if</span> (<span class="kw">length</span>(yosou_url)<span class="op">==</span><span class="dv">1</span>){</a>
+<a class="sourceLine" id="cb9-5" title="5">          yosou1 &lt;-<span class="st">  </span><span class="kw">read_html</span>(<span class="kw">str_c</span>(<span class="st">&quot;https://keiba.yahoo.co.jp&quot;</span>,yosou_url)) </a>
+<a class="sourceLine" id="cb9-6" title="6">          <span class="kw">Sys.sleep</span>(<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb9-7" title="7">          yosou &lt;-<span class="st"> </span>yosou1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="dt">xpath =</span> <span class="st">&quot;//td[@class = &#39;txC&#39;]&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.character</span>()</a>
+<a class="sourceLine" id="cb9-8" title="8">          prize &lt;-<span class="st"> </span>yosou[<span class="kw">grepl</span>(<span class="st">&quot;万&quot;</span>,yosou)<span class="op">==</span><span class="ot">TRUE</span>] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">str_extract_all</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+万&quot;</span>)</a>
+<a class="sourceLine" id="cb9-9" title="9">          prize &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">do.call</span>(<span class="st">&quot;data.frame&quot;</span>,prize)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.character</span>()</a>
+<a class="sourceLine" id="cb9-10" title="10">          race_result<span class="op">$</span>prize &lt;-<span class="st"> </span>prize</a>
+<a class="sourceLine" id="cb9-11" title="11">          race_result<span class="op">$</span>prize &lt;-<span class="st"> </span><span class="kw">str_replace_all</span>(race_result<span class="op">$</span>prize,<span class="st">&quot;万&quot;</span>,<span class="st">&quot;&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.numeric</span>()</a>
+<a class="sourceLine" id="cb9-12" title="12">          } <span class="cf">else</span> race_result<span class="op">$</span>prize &lt;-<span class="st"> </span><span class="ot">NA</span></a></code></pre></div>
 <p>取得した各レース結果を格納するdatasetというデータフレームを作成し、データを格納していきます。1年ごとにそれをSQLite
 へ保存していきます。</p>
-<pre class="sourceCode r"><code class="sourceCode r">          <span class="co">## ファイル貯めるのかく</span>
-          <span class="cf">if</span> (k <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;&amp;</span><span class="st"> </span>i <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;&amp;</span><span class="st"> </span>j <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
-            dataset &lt;-<span class="st"> </span>race_result
-          } <span class="cf">else</span> {
-            dataset &lt;-<span class="st"> </span><span class="kw">rbind</span>(dataset,race_result)
-          } <span class="co"># if文2の終わり</span>
-        <span class="er">}</span><span class="cf">else</span>
-        {
-          <span class="kw">print</span>(<span class="st">&quot;保存できませんでした&quot;</span>) 
-        }<span class="co"># if文1の終わり</span>
-      <span class="er">}</span> <span class="co"># iループの終わり</span>
-    <span class="er">}</span> <span class="co"># jループ終わり</span>
-  <span class="er">}</span> <span class="co"># kループの終わり</span>
-  <span class="kw">beep</span>(<span class="dv">3</span>)
-  <span class="kw">write.csv</span>(dataset,<span class="st">&quot;race_result2.csv&quot;</span>, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)
-  
-  <span class="cf">if</span> (year <span class="op">==</span><span class="st"> </span><span class="dv">1994</span>){
-    <span class="kw">dbWriteTable</span>(con, <span class="st">&quot;race_result&quot;</span>, dataset)
-  } <span class="cf">else</span> {
-    <span class="kw">dbWriteTable</span>(con, <span class="st">&quot;temp&quot;</span>, dataset)
-    <span class="kw">dbSendQuery</span>(con, <span class="st">&quot;INSERT INTO race_result select * from temp&quot;</span>)
-    <span class="kw">dbSendQuery</span>(con, <span class="st">&quot;DROP TABLE temp&quot;</span>)
-  } <span class="co"># ifの終わり</span>
-<span class="er">}</span> <span class="co"># yearループの終わり</span>
-end.time &lt;-<span class="st"> </span><span class="kw">Sys.time</span>()
-<span class="kw">print</span>(<span class="kw">str_c</span>(<span class="st">&quot;処理時間は&quot;</span>,end.time<span class="op">-</span>start.time,<span class="st">&quot;です。&quot;</span>))
-<span class="kw">beep</span>(<span class="dv">5</span>)
-
-<span class="kw">options</span>(<span class="dt">warn =</span> <span class="dv">1</span>)
-
-<span class="kw">dbDisconnect</span>(con)</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">          <span class="co">## ファイル貯めるのかく</span></a>
+<a class="sourceLine" id="cb10-2" title="2">          <span class="cf">if</span> (k <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;&amp;</span><span class="st"> </span>i <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;&amp;</span><span class="st"> </span>j <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){</a>
+<a class="sourceLine" id="cb10-3" title="3">            dataset &lt;-<span class="st"> </span>race_result</a>
+<a class="sourceLine" id="cb10-4" title="4">          } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb10-5" title="5">            dataset &lt;-<span class="st"> </span><span class="kw">rbind</span>(dataset,race_result)</a>
+<a class="sourceLine" id="cb10-6" title="6">          } <span class="co"># if文2の終わり</span></a>
+<a class="sourceLine" id="cb10-7" title="7">        <span class="er">}</span><span class="cf">else</span></a>
+<a class="sourceLine" id="cb10-8" title="8">        {</a>
+<a class="sourceLine" id="cb10-9" title="9">          <span class="kw">print</span>(<span class="st">&quot;保存できませんでした&quot;</span>) </a>
+<a class="sourceLine" id="cb10-10" title="10">        }<span class="co"># if文1の終わり</span></a>
+<a class="sourceLine" id="cb10-11" title="11">      <span class="er">}</span> <span class="co"># iループの終わり</span></a>
+<a class="sourceLine" id="cb10-12" title="12">    <span class="er">}</span> <span class="co"># jループ終わり</span></a>
+<a class="sourceLine" id="cb10-13" title="13">  <span class="er">}</span> <span class="co"># kループの終わり</span></a>
+<a class="sourceLine" id="cb10-14" title="14">  <span class="kw">beep</span>(<span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb10-15" title="15">  <span class="kw">write.csv</span>(dataset,<span class="st">&quot;race_result2.csv&quot;</span>, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb10-16" title="16">  </a>
+<a class="sourceLine" id="cb10-17" title="17">  <span class="cf">if</span> (year <span class="op">==</span><span class="st"> </span><span class="dv">1994</span>){</a>
+<a class="sourceLine" id="cb10-18" title="18">    <span class="kw">dbWriteTable</span>(con, <span class="st">&quot;race_result&quot;</span>, dataset)</a>
+<a class="sourceLine" id="cb10-19" title="19">  } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb10-20" title="20">    <span class="kw">dbWriteTable</span>(con, <span class="st">&quot;temp&quot;</span>, dataset)</a>
+<a class="sourceLine" id="cb10-21" title="21">    <span class="kw">dbSendQuery</span>(con, <span class="st">&quot;INSERT INTO race_result select * from temp&quot;</span>)</a>
+<a class="sourceLine" id="cb10-22" title="22">    <span class="kw">dbSendQuery</span>(con, <span class="st">&quot;DROP TABLE temp&quot;</span>)</a>
+<a class="sourceLine" id="cb10-23" title="23">  } <span class="co"># ifの終わり</span></a>
+<a class="sourceLine" id="cb10-24" title="24"><span class="er">}</span> <span class="co"># yearループの終わり</span></a>
+<a class="sourceLine" id="cb10-25" title="25">end.time &lt;-<span class="st"> </span><span class="kw">Sys.time</span>()</a>
+<a class="sourceLine" id="cb10-26" title="26"><span class="kw">print</span>(<span class="kw">str_c</span>(<span class="st">&quot;処理時間は&quot;</span>,end.time<span class="op">-</span>start.time,<span class="st">&quot;です。&quot;</span>))</a>
+<a class="sourceLine" id="cb10-27" title="27"><span class="kw">beep</span>(<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb10-28" title="28"></a>
+<a class="sourceLine" id="cb10-29" title="29"><span class="kw">options</span>(<span class="dt">warn =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb10-30" title="30"></a>
+<a class="sourceLine" id="cb10-31" title="31"><span class="kw">dbDisconnect</span>(con)</a></code></pre></div>
 <p>以上です。取れたデータは以下のようになりました。</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(race_result)</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">head</span>(race_result)</a></code></pre></div>
 <pre><code>##   order frame_number horse_number   trainer passing_rank last_3F   time
 ## 1    10            1            1   田中 剛        09-09    39.0 1.14.3
 ## 2    16            1            2 天間 昭一        11-11    40.3 1.15.7

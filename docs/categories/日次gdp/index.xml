@@ -24,15 +24,6 @@
     </item>
     
     <item>
-      <title>（執筆中）【日次GDP】Earth Engineの衛星写真を使って景況感をナウキャスティングしてみる</title>
-      <link>/my_blog/post/post12/</link>
-      <pubDate>Mon, 08 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/my_blog/post/post12/</guid>
-      <description>library(Rnightlights)library(lubridate)library(reshape2)#(Optional performance enhancement if you have aria2c and gdal installed)#pkgOptions(downloadMethod = &amp;quot;aria&amp;quot;, cropMaskMethod = &amp;quot;gdal&amp;quot;, extractMethod = &amp;quot;gdal&amp;quot;, deleteTiles = TRUE)#Optional performance enhancement. If extractMethod=&amp;quot;rast&amp;quot; you can specify the number of#CPU cores to use in parallel#pkgOptions(extractMethod = &amp;quot;rast&amp;quot;, numCores=4)ctry &amp;lt;- &amp;quot;USA&amp;quot; #replace to run for any other country#download and process monthly VIIRS stats at the highest admin levelhighestAdmLevelStats &amp;lt;- getCtryNlData(ctryCode = ctry, admLevel = &amp;quot;highest&amp;quot;,nlType = &amp;quot;VIIRS.</description>
-    </item>
-    
-    <item>
       <title>【日次GDP】GPLVMでマルチファクターモデルを構築してみた</title>
       <link>/my_blog/post/post9/</link>
       <pubDate>Sun, 26 May 2019 00:00:00 +0000</pubDate>
