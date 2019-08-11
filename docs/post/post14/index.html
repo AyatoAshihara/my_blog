@@ -26,7 +26,7 @@
         "datePublished": "2019-07-16 00:00:00 \x2b0000 UTC",
         "dateModified" : "2019-07-16 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post14\/",
-        "wordCount" : "111",
+        "wordCount" : "126",
         "image" : "/my_blog/%!s(\u003cnil\u003e)"",
         "keywords" : [ ""R"",""前処理"",""Earth Engine"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1565533835" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1565536086" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1565533835" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1565536086" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -278,6 +278,9 @@ if (!doNotTrack) {
 </div>
 <div id="python-api" class="section level3">
 <h3>2. Python APIを用いた衛星画像データの取得</h3>
+<p>Python APIを使用する準備ができました。ここからは衛星画像データを取得していきます。以下にあるようにEarth Engineにはたくさんのデータセットが存在します。</p>
+<p><a href="https://developers.google.com/earth-engine/datasets/" class="uri">https://developers.google.com/earth-engine/datasets/</a></p>
+<p>今回は「VIIRS Stray Light Corrected Nighttime Day/Night Band Composites Version 1」というデータセットを使用します。このデータセットは月次の夜間光画像を提供するものです。</p>
 <pre class="python"><code>
 import ee
 from dateutil.parser import parse
@@ -305,7 +308,8 @@ nightjp = dataset.filter(ee.Filter.date(&#39;2014-02-01&#39;,&#39;2019-01-01&#39
 # get url to download
 ee.FeatureCollection(nightjp).getDownloadURL(filetype=&#39;csv&#39;,selectors=ee.FeatureCollection(nightjp).first().propertyNames().getInfo())
 </code></pre>
-<pre><code>## &#39;https://earthengine.googleapis.com/api/table?docid=9618f2ec6104eed5c5061a27d1398e78&amp;token=0feaa3b5f49148bd5db1b7c3b3517a70&#39;</code></pre>
+<pre><code>## &#39;https://earthengine.googleapis.com/api/table?docid=9618f2ec6104eed5c5061a27d1398e78&amp;token=ec6b3306013bc5aa8791eb6098f4e792&#39;</code></pre>
+<p>CSVファイルのurlが取得できました。今日はここまで。</p>
 </div>
 
             </article>
@@ -515,7 +519,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1565533835"></script>
+<script src="/my_blog/js/production.min.js?v=1565536086"></script>
 
 </body>
 </html>

@@ -70,6 +70,12 @@ Earth Engineを使用するためには、Google Accountを使って申請を行
 
 ### 2. Python APIを用いた衛星画像データの取得
 
+Python APIを使用する準備ができました。ここからは衛星画像データを取得していきます。以下にあるようにEarth Engineにはたくさんのデータセットが存在します。
+
+https://developers.google.com/earth-engine/datasets/
+
+今回は「VIIRS Stray Light Corrected Nighttime Day/Night Band Composites Version 1」というデータセットを使用します。このデータセットは月次の夜間光画像を提供するものです。
+
 ```{python}
 
 import ee
@@ -101,3 +107,4 @@ ee.FeatureCollection(nightjp).getDownloadURL(filetype='csv',selectors=ee.Feature
 
 ```
 
+CSVファイルのurlが取得できました。今日はここまで。

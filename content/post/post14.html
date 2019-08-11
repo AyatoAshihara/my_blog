@@ -50,6 +50,9 @@ output:
 </div>
 <div id="python-api" class="section level3">
 <h3>2. Python APIを用いた衛星画像データの取得</h3>
+<p>Python APIを使用する準備ができました。ここからは衛星画像データを取得していきます。以下にあるようにEarth Engineにはたくさんのデータセットが存在します。</p>
+<p><a href="https://developers.google.com/earth-engine/datasets/" class="uri">https://developers.google.com/earth-engine/datasets/</a></p>
+<p>今回は「VIIRS Stray Light Corrected Nighttime Day/Night Band Composites Version 1」というデータセットを使用します。このデータセットは月次の夜間光画像を提供するものです。</p>
 <pre class="python"><code>
 import ee
 from dateutil.parser import parse
@@ -77,5 +80,6 @@ nightjp = dataset.filter(ee.Filter.date(&#39;2014-02-01&#39;,&#39;2019-01-01&#39
 # get url to download
 ee.FeatureCollection(nightjp).getDownloadURL(filetype=&#39;csv&#39;,selectors=ee.FeatureCollection(nightjp).first().propertyNames().getInfo())
 </code></pre>
-<pre><code>## &#39;https://earthengine.googleapis.com/api/table?docid=9618f2ec6104eed5c5061a27d1398e78&amp;token=0feaa3b5f49148bd5db1b7c3b3517a70&#39;</code></pre>
+<pre><code>## &#39;https://earthengine.googleapis.com/api/table?docid=9618f2ec6104eed5c5061a27d1398e78&amp;token=ec6b3306013bc5aa8791eb6098f4e792&#39;</code></pre>
+<p>CSVファイルのurlが取得できました。今日はここまで。</p>
 </div>
