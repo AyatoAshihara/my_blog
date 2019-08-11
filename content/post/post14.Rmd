@@ -35,7 +35,6 @@ https://earthengine.google.com/
 
 >（拙訳）Google Earth Engineは、数ペタバイトの衛星画像群と地理空間データセットを惑星規模の解析機能と組み合わせ、科学者、研究者、開発者が変化を検出し、傾向を射影し、地球の変容を定量化することを可能にします。
 
-
 研究・教育・非営利目的ならば、なんと**無料**で衛星写真データを解析することができます。具体的に何ができるのかは以下の動画を見てください。
 
 <iframe src="//www.youtube.com/embed/gKGOeTFHnKY" width="100%" height="50" seamless frameborder="0" allowfullscreen></iframe>
