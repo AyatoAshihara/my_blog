@@ -29,7 +29,7 @@ https://jp.reuters.com/article/gdp-u-tokyo-idJPKBN15M0NH
 と書かれており、衛星写真を用いた分析に興味を惹かれました。 衛星写真って誰でも利用可能か？というところですが、GoogleがEarth Engineというサービスを提供していることがわかりました
 。
 
-![](\img\portfolio\earthengine3.png)
+![](\img\portfolio\earthengine3.jpg)
 
 https://earthengine.google.com/
 
