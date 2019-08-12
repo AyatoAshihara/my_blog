@@ -9,7 +9,8 @@ tags:
   - R
   - 前処理
   - Earth Engine
-output:
+image: img/portfolio/earthengine6.jpg
+output: 
   html_document:
     toc: true
     toc_depth: 3
@@ -80,6 +81,6 @@ nightjp = dataset.filter(ee.Filter.date(&#39;2014-02-01&#39;,&#39;2019-01-01&#39
 # get url to download
 ee.FeatureCollection(nightjp).getDownloadURL(filetype=&#39;csv&#39;,selectors=ee.FeatureCollection(nightjp).first().propertyNames().getInfo())
 </code></pre>
-<pre><code>## &#39;https://earthengine.googleapis.com/api/table?docid=9618f2ec6104eed5c5061a27d1398e78&amp;token=ec6b3306013bc5aa8791eb6098f4e792&#39;</code></pre>
+<pre><code>## &#39;https://earthengine.googleapis.com/api/table?docid=9618f2ec6104eed5c5061a27d1398e78&amp;token=6051ba5b3047dc23da04d2661e452d85&#39;</code></pre>
 <p>CSVファイルのurlが取得できました。今日はここまで。</p>
 </div>

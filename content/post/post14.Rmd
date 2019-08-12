@@ -9,7 +9,8 @@ tags:
   - R
   - 前処理
   - Earth Engine
-output:
+image: img/portfolio/earthengine6.jpg
+output: 
   html_document:
     toc: true
     toc_depth: 3
