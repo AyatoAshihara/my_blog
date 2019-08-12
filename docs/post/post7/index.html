@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1565610397" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1565610687" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1565610397" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1565610687" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -323,7 +323,7 @@ if (!doNotTrack) {
 <a class="sourceLine" id="cb2-5" title="5">  <span class="kw">return</span>(c)</a>
 <a class="sourceLine" id="cb2-6" title="6">}</a></code></pre></div>
 <p>では、実際にデータを取得していきます。今回取得するデータは月次データとなっています。これは統計dashboardが月次以下のデータがとれないからです。なので、例えば日経平均などは月末の終値を引っ張っています。ただし、GDPは四半期データとなっています。さきほど定義したget_dashboardの使用方法は簡単で、引数に統計ダッシュボードで公開されている統計IDを入力するだけでデータが取れます。今回使用するデータを以下の表にまとめました。</p>
-<p><img src="../img/portfolio/20180714212330.png" /></p>
+<p><img src="/myblog/img/portfolio/20180714212330.png" /></p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># データを取得</span></a>
 <a class="sourceLine" id="cb3-2" title="2">Nikkei &lt;-<span class="st"> </span><span class="kw">get_dashboard</span>(<span class="st">&quot;0702020501000010010&quot;</span>)</a>
 <a class="sourceLine" id="cb3-3" title="3">callrate &lt;-<span class="st"> </span><span class="kw">get_dashboard</span>(<span class="st">&quot;0702020300000010010&quot;</span>)</a>
@@ -699,7 +699,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1565610397"></script>
+<script src="/my_blog/js/production.min.js?v=1565610687"></script>
 
 </body>
 </html>
