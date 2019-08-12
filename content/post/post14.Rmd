@@ -81,12 +81,14 @@ Earth Engineにはいくつかの固有なデータ型が存在します。覚�
 
 ・Image
 ある１時点におけるrasterデータです。imageオブジェクトはいくつかのbandで構成されています。このbandはデータによって異なりますが、おおよそのデータはbandそれぞれがRGB値を表していたりします。Earth Engineを使用する上で最も基本的なデータです。
+
 ・ImageCollection
 Imageオブジェクトを時系列に並べたオブジェクトです。今回は時系列解析をするのでこのデータを使用します。
+
 ・FeatureCollection
 GeoJSON Featureです。地理情報を表すGeometryオブジェクトやそのデータのプロパティ（国名等）が格納されています。今回は日本の位置情報を取得する際に使用しています。
 
-ではコーディングしていきます。まず、日本の地理情報を表すFeatureCollectionオブジェクトを取得します。地理情報はFusion Tablesに格納されていますので、IDで引っ張りCountryがJapanのものを抽出します。ee.FeatureCollection()の引数にIDを入力すれば簡単に取得できます。
+ではコーディングしていきます。まず、日本の地理情報のFeatureCollectionオブジェクトを取得します。地理情報はFusion Tablesに格納されていますので、IDで引っ張りCountryがJapanのものを抽出します。ee.FeatureCollection()の引数にIDを入力すれば簡単に取得できます。
 
 ```{python}
 import ee
@@ -107,7 +109,7 @@ dataset = ee.ImageCollection('NOAA/VIIRS/DNB/MONTHLY_V1/VCMSLCFG').filter(ee.Fil
 
 ```
 
-取得した衛星画像を日本周辺に切り出し、画像ファイルとして出力してみましょう。画像ファイルの出力はimageオブジェクトで可能です（そうでないと画像がたくさん出てきてしますからね。。。）。今取得したのはImageCollectionオブジェクトですからImageオブジェクトへ圧縮してやる必要があります。ここでは、ImageCollectionオブジェクトの中にあるのImageオブジェクトの平均値をとってサンプル期間の平均的な画像を出力してみたいと思います。ImageCollection.mean()ｄできます。その後、データをダウンロードするurlをgetDownloadURL関数で取得しています。regionで切り出す範囲をポリゴン値で指定し、scaleでデータの解像度を指定しています（scaleが小さすぎるとエラーが出て処理できません）。
+取得した衛星画像を日本周辺に切り出し、画像ファイルとして出力してみましょう。画像ファイルの出力はimageオブジェクトで可能です（そうでないと画像がたくさん出てきてしまいますからね。。。）。今取得したのはImageCollectionオブジェクトですからImageオブジェクトへ圧縮してやる必要があります。ここでは、ImageCollectionオブジェクトの中にあるのImageオブジェクトの平均値をとってサンプル期間の平均的な画像を出力してみたいと思います。ImageCollection.mean()できます。その後、データをダウンロードするurlをgetDownloadURL関数で取得しています。regionで切り出す範囲をポリゴン値で指定し、scaleでデータの解像度を指定しています（scaleが小さすぎるとエラーが出て処理できません）。
 
 ```{python}
 dataset.mean().getDownloadURL(dict(name='thumbnail',region=[[[120.3345348936478, 46.853488838010854],[119.8071911436478, 24.598157870729043],[148.6353161436478, 24.75788466523463],[149.3384411436478, 46.61252884462868]]],scale=5000))
