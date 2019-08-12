@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1565614042" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1565614375" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1565614042" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1565614375" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -256,7 +256,7 @@ if (!doNotTrack) {
 </blockquote>
 <p>と書かれており、衛星写真を用いた分析に興味を惹かれました。 衛星写真って誰でも利用可能か？というところですが、GoogleがEarth Engineというサービスを提供していることがわかりました
 。</p>
-<p><img src="\img\portfolio\earthengine3.jpg" /></p>
+<p><img src="/my_blog/img/portfolio/earthengine3.jpg" /></p>
 <p><a href="https://earthengine.google.com/" class="uri">https://earthengine.google.com/</a></p>
 <blockquote>
 <p>（拙訳）Google Earth Engineは、数ペタバイトの衛星画像群と地理空間データセットを惑星規模の解析機能と組み合わせ、科学者、研究者、開発者が変化を検出し、傾向を射影し、地球の変容を定量化することを可能にします。</p>
@@ -268,14 +268,14 @@ if (!doNotTrack) {
 <div id="earth-engine" class="section level3">
 <h3>1. Earth Engineを使うための事前準備</h3>
 <p>Earth Engineを使用するためには、Google Accountを使って申請を行う必要があります。先ほどの画像の右上の「Sign Up」からできます。申請を行って、Gmailに以下のようなメールが来るととりあえずEarth Engineは使用できるようになります。</p>
-<p><img src="\img\portfolio\earthengine4.jpg" /></p>
+<p><img src="/my_blog/img/portfolio/earthengine4.jpg" /></p>
 <p>とりあえずというのはWEB上のEarth Engine コードエディタは使用できるということです。コードエディタというのは以下のようなもので、ブラウザ上でデータを取得したり、解析をしたり、解析結果をMAPに投影したりすることができる便利ツールです。Earth Engineの本体はむしろこいつで、APIは副次的なものと考えています。</p>
-<p><img src="\img\portfolio\earthengine5.jpg" /></p>
+<p><img src="/my_blog/img/portfolio/earthengine5.jpg" /></p>
 <p>真ん中のコードエディタにコードを打っていきますが、言語はjavascriptです(APIはpythonとjavascript両方あるんですけどね)。解析結果をMAPに投影したり、reference（左）を参照したり、Consoleに吐き出したデータを確認することができるのでかなり便利です。が、データを落とした後で高度な解析を行いたい場合はpythonを使ったほうが慣れているので今回はAPIを使用しています。
 話が脱線しました。さて、Earth Engineの承認を得たら、pipでearthengine-apiをインストールしておきます。そして、コマンドプロンプト上で、「earthengine authenticate」と打ちます。そうすると、勝手にブラウザが立ち上がり、以下のようにpython apiのauthenticationを行う画面がでますので「次へ」を押下します。</p>
-<p><img src="\img\portfolio\earthengine1.jpg" /></p>
+<p><img src="/my_blog/img/portfolio/earthengine1.jpg" /></p>
 <p>次に以下のような画面にいきますので、そのまま承認します。これでauthenticationの完成です。pythonからAPIが使えます。</p>
-<p><img src="\img\portfolio\earthengine2.jpg" /></p>
+<p><img src="/my_blog/img/portfolio/earthengine2.jpg" /></p>
 </div>
 <div id="python-api" class="section level3">
 <h3>2. Python APIを用いた衛星画像データの取得</h3>
@@ -302,9 +302,9 @@ japan = ee.FeatureCollection(&#39;ft:1tdSwUL7MVpOauSgRzqVTOwdfy17KDbw-1d9omPw&#3
 dataset = ee.ImageCollection(&#39;NOAA/VIIRS/DNB/MONTHLY_V1/VCMSLCFG&#39;).filter(ee.Filter.date(&#39;2014-01-01&#39;,&#39;2019-01-01&#39;)).select(&#39;avg_rad&#39;)</code></pre>
 <p>取得した衛星画像を日本周辺に切り出し、画像ファイルとして出力してみましょう。画像ファイルの出力はimageオブジェクトで可能です（そうでないと画像がたくさん出てきてしまいますからね。。。）。今取得したのはImageCollectionオブジェクトですからImageオブジェクトへ圧縮してやる必要があります。ここでは、ImageCollectionオブジェクトの中にあるのImageオブジェクトの平均値をとってサンプル期間の平均的な画像を出力してみたいと思います。ImageCollection.mean()できます。その後、データをダウンロードするurlをgetDownloadURL関数で取得しています。regionで切り出す範囲をポリゴン値で指定し、scaleでデータの解像度を指定しています（scaleが小さすぎるとエラーが出て処理できません）。</p>
 <pre class="python"><code>dataset.mean().getDownloadURL(dict(name=&#39;thumbnail&#39;,region=[[[120.3345348936478, 46.853488838010854],[119.8071911436478, 24.598157870729043],[148.6353161436478, 24.75788466523463],[149.3384411436478, 46.61252884462868]]],scale=5000))</code></pre>
-<pre><code>## &#39;https://earthengine.googleapis.com/api/download?docid=ea7bbf9c8b115821899b3a1c56b149f8&amp;token=1313f8c2a970f0d79f23c57a8b5ea152&#39;</code></pre>
+<pre><code>## &#39;https://earthengine.googleapis.com/api/download?docid=ea7bbf9c8b115821899b3a1c56b149f8&amp;token=6ea73d560076ec2ff0ae33a03c5f6a2a&#39;</code></pre>
 <p>取得した画像が以下です。</p>
-<p><img src="\img\portfolio\earthengine6.jpg" /></p>
+<p><img src="/my_blog/img/portfolio/earthengine6.jpg" /></p>
 <pre class="python"><code>
 # initialize output box
 time0 = dataset.first().get(&#39;system:time_start&#39;);
@@ -321,7 +321,7 @@ nightjp = dataset.filter(ee.Filter.date(&#39;2014-02-01&#39;,&#39;2019-01-01&#39
 # get url to download
 ee.FeatureCollection(nightjp).getDownloadURL(filetype=&#39;csv&#39;,selectors=ee.FeatureCollection(nightjp).first().propertyNames().getInfo())
 </code></pre>
-<pre><code>## &#39;https://earthengine.googleapis.com/api/table?docid=9618f2ec6104eed5c5061a27d1398e78&amp;token=8c78f8711575b25c429d4da1f9e92f00&#39;</code></pre>
+<pre><code>## &#39;https://earthengine.googleapis.com/api/table?docid=9618f2ec6104eed5c5061a27d1398e78&amp;token=d946d03434465e787f13c713e9d70a5b&#39;</code></pre>
 <p>CSVファイルのurlが取得できました。今日はここまで。</p>
 </div>
 
@@ -532,7 +532,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1565614042"></script>
+<script src="/my_blog/js/production.min.js?v=1565614376"></script>
 
 </body>
 </html>
