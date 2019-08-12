@@ -94,7 +94,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h3>統計ダッシュボードからのデータの収集</h3>
 <p>政府や日銀が公表しているデータの一部は統計ダッシュボードから落とすことができます。これは総務省統計局が提供しているもので、これまで利用しにくかった経済統計をより身近に使用してもらおうというのが一応のコンセプトとなっています。似たものに総務省統計局が提供しているestatがありますが、日銀の公表データがなかったり、メールアドレスの登録が必要だったりと非常に使い勝手が悪いです(個人的感想)。ただ、estatにはestatapiというRパッケージがあり、データを整形するのは比較的容易であると言えます。今回、統計ダッシュボードを選択した理由はそうは言っても日銀のデータがないのはダメだろうという理由で、データの整形に関しては関数を組みました。
 そもそも統計ダッシュボードは経済統計をグラフなどで見て楽しむ？ものですが、私のような研究をしたい者を対象にAPIを提供してくれています。取得できるデータは大きく分けて6つあります。</p>
-<p><img src="static/img/portfolio/20180714160029.png" /></p>
+<p><img src="/img/portfolio/20180714160029.png" /></p>
 <p>やり方は簡単で、ベースのurlと欲しい統計のIDをGET関数で渡すことによって、データを取得することができます。公式にも以下のように書かれています。</p>
 <blockquote>
 <p>基本的な使い方としては、まず①「統計メタ情報（系列）取得」で取得したいデータの[系列コード]を検索し、 その後⑥「統計データ取得」で[系列コード]を検索条件に指定し、その系列の情報を取得します。
@@ -156,7 +156,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb2-5" title="5">  <span class="kw">return</span>(c)</a>
 <a class="sourceLine" id="cb2-6" title="6">}</a></code></pre></div>
 <p>では、実際にデータを取得していきます。今回取得するデータは月次データとなっています。これは統計dashboardが月次以下のデータがとれないからです。なので、例えば日経平均などは月末の終値を引っ張っています。ただし、GDPは四半期データとなっています。さきほど定義したget_dashboardの使用方法は簡単で、引数に統計ダッシュボードで公開されている統計IDを入力するだけでデータが取れます。今回使用するデータを以下の表にまとめました。</p>
-<p><img src="/myblog/img/portfolio/20180714212330.png" /></p>
+<p><img src="/my_blog/img/portfolio/20180714212330.png" /></p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># データを取得</span></a>
 <a class="sourceLine" id="cb3-2" title="2">Nikkei &lt;-<span class="st"> </span><span class="kw">get_dashboard</span>(<span class="st">&quot;0702020501000010010&quot;</span>)</a>
 <a class="sourceLine" id="cb3-3" title="3">callrate &lt;-<span class="st"> </span><span class="kw">get_dashboard</span>(<span class="st">&quot;0702020300000010010&quot;</span>)</a>
