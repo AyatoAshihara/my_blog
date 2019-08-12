@@ -79,13 +79,13 @@ https://developers.google.com/earth-engine/datasets/
 
 Earth Engineにはいくつかの固有なデータ型が存在します。覚えておくべきものは以下の3つです。
 
-・Image
+・Image…
 ある１時点におけるrasterデータです。imageオブジェクトはいくつかのbandで構成されています。このbandはデータによって異なりますが、おおよそのデータはbandそれぞれがRGB値を表していたりします。Earth Engineを使用する上で最も基本的なデータです。
 
-・ImageCollection
+・ImageCollection…
 Imageオブジェクトを時系列に並べたオブジェクトです。今回は時系列解析をするのでこのデータを使用します。
 
-・FeatureCollection
+・FeatureCollection…
 GeoJSON Featureです。地理情報を表すGeometryオブジェクトやそのデータのプロパティ（国名等）が格納されています。今回は日本の位置情報を取得する際に使用しています。
 
 ではコーディングしていきます。まず、日本の地理情報のFeatureCollectionオブジェクトを取得します。地理情報はFusion Tablesに格納されていますので、IDで引っ張りCountryがJapanのものを抽出します。ee.FeatureCollection()の引数にIDを入力すれば簡単に取得できます。
