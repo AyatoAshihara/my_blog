@@ -26,7 +26,7 @@
         "datePublished": "2019-07-16 00:00:00 \x2b0000 UTC",
         "dateModified" : "2019-07-16 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post14\/",
-        "wordCount" : "126",
+        "wordCount" : "148",
         "image" : "/my_blog/img/portfolio/earthengine6.jpg"",
         "keywords" : [ ""R"",""前処理"",""Earth Engine"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1565583990" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1565601697" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1565583990" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1565601697" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -281,19 +281,31 @@ if (!doNotTrack) {
 <h3>2. Python APIを用いた衛星画像データの取得</h3>
 <p>Python APIを使用する準備ができました。ここからは衛星画像データを取得していきます。以下にあるようにEarth Engineにはたくさんのデータセットが存在します。</p>
 <p><a href="https://developers.google.com/earth-engine/datasets/" class="uri">https://developers.google.com/earth-engine/datasets/</a></p>
-<p>今回は「VIIRS Stray Light Corrected Nighttime Day/Night Band Composites Version 1」というデータセットを使用します。このデータセットは月次の夜間光画像を提供するものです。</p>
-<pre class="python"><code>
-import ee
+<p>今回は「VIIRS Stray Light Corrected Nighttime Day/Night Band Composites Version 1」というデータセットを使用します。このデータセットは月次の夜間光画像を提供するものです。サンプル期間は2014-01~現在です。</p>
+<p>Earth Engineにはいくつかの固有なデータ型が存在します。覚えておくべきものは以下の3つです。</p>
+<p>・Image
+ある１時点におけるrasterデータです。imageオブジェクトはいくつかのbandで構成されています。このbandはデータによって異なりますが、おおよそのデータはbandそれぞれがRGB値を表していたりします。Earth Engineを使用する上で最も基本的なデータです。
+・ImageCollection
+Imageオブジェクトを時系列に並べたオブジェクトです。今回は時系列解析をするのでこのデータを使用します。
+・FeatureCollection
+GeoJSON Featureです。地理情報を表すGeometryオブジェクトやそのデータのプロパティ（国名等）が格納されています。今回は日本の位置情報を取得する際に使用しています。</p>
+<p>ではコーディングしていきます。まず、日本の地理情報を表すFeatureCollectionオブジェクトを取得します。地理情報はFusion Tablesに格納されていますので、IDで引っ張りCountryがJapanのものを抽出します。ee.FeatureCollection()の引数にIDを入力すれば簡単に取得できます。</p>
+<pre class="python"><code>import ee
 from dateutil.parser import parse
 
 ee.Initialize()
 
 # get Japan geometory as FeatureCollection from fusion table
-japan = ee.FeatureCollection(&#39;ft:1tdSwUL7MVpOauSgRzqVTOwdfy17KDbw-1d9omPw&#39;).filter(ee.Filter.eq(&#39;Country&#39;, &#39;Japan&#39;))
-
-# get night-light data from earth engine from 2014-01-01 to 2019-01-01
-dataset = ee.ImageCollection(&#39;NOAA/VIIRS/DNB/MONTHLY_V1/VCMSLCFG&#39;).filter(ee.Filter.date(&#39;2014-01-01&#39;,&#39;2019-01-01&#39;)).select(&#39;avg_rad&#39;)
-
+japan = ee.FeatureCollection(&#39;ft:1tdSwUL7MVpOauSgRzqVTOwdfy17KDbw-1d9omPw&#39;).filter(ee.Filter.eq(&#39;Country&#39;, &#39;Japan&#39;))</code></pre>
+<p>次に夜間光の衛星画像を取得してみます。こちらもee.ImageCollection()にデータセットのIDを渡すと取得できます。なお、ここではbandをavg_radに抽出しています。</p>
+<pre class="python"><code># get night-light data from earth engine from 2014-01-01 to 2019-01-01
+dataset = ee.ImageCollection(&#39;NOAA/VIIRS/DNB/MONTHLY_V1/VCMSLCFG&#39;).filter(ee.Filter.date(&#39;2014-01-01&#39;,&#39;2019-01-01&#39;)).select(&#39;avg_rad&#39;)</code></pre>
+<p>取得した衛星画像を日本周辺に切り出し、画像ファイルとして出力してみましょう。画像ファイルの出力はimageオブジェクトで可能です（そうでないと画像がたくさん出てきてしますからね。。。）。今取得したのはImageCollectionオブジェクトですからImageオブジェクトへ圧縮してやる必要があります。ここでは、ImageCollectionオブジェクトの中にあるのImageオブジェクトの平均値をとってサンプル期間の平均的な画像を出力してみたいと思います。ImageCollection.mean()ｄできます。その後、データをダウンロードするurlをgetDownloadURL関数で取得しています。regionで切り出す範囲をポリゴン値で指定し、scaleでデータの解像度を指定しています（scaleが小さすぎるとエラーが出て処理できません）。</p>
+<pre class="python"><code>dataset.mean().getDownloadURL(dict(name=&#39;thumbnail&#39;,region=[[[120.3345348936478, 46.853488838010854],[119.8071911436478, 24.598157870729043],[148.6353161436478, 24.75788466523463],[149.3384411436478, 46.61252884462868]]],scale=5000))</code></pre>
+<pre><code>## &#39;https://earthengine.googleapis.com/api/download?docid=ea7bbf9c8b115821899b3a1c56b149f8&amp;token=58f2459b65f48eac7855dffc22d19574&#39;</code></pre>
+<p>取得した画像が以下です。</p>
+<p><img src="\img\portfolio\earthengine6.jpg" /></p>
+<pre class="python"><code>
 # initialize output box
 time0 = dataset.first().get(&#39;system:time_start&#39;);
 first = dataset.first().reduceRegions(reducer=ee.Reducer.sum(),collection=japan,scale=1000).set(&#39;time_start&#39;, time0)
@@ -309,7 +321,7 @@ nightjp = dataset.filter(ee.Filter.date(&#39;2014-02-01&#39;,&#39;2019-01-01&#39
 # get url to download
 ee.FeatureCollection(nightjp).getDownloadURL(filetype=&#39;csv&#39;,selectors=ee.FeatureCollection(nightjp).first().propertyNames().getInfo())
 </code></pre>
-<pre><code>## &#39;https://earthengine.googleapis.com/api/table?docid=9618f2ec6104eed5c5061a27d1398e78&amp;token=6051ba5b3047dc23da04d2661e452d85&#39;</code></pre>
+<pre><code>## &#39;https://earthengine.googleapis.com/api/table?docid=9618f2ec6104eed5c5061a27d1398e78&amp;token=3b684ebd5fd3c1148db9f36e9263fdc8&#39;</code></pre>
 <p>CSVファイルのurlが取得できました。今日はここまで。</p>
 </div>
 
@@ -520,7 +532,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1565583990"></script>
+<script src="/my_blog/js/production.min.js?v=1565601697"></script>
 
 </body>
 </html>
