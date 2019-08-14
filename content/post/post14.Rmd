@@ -35,8 +35,7 @@ https://jp.reuters.com/article/gdp-u-tokyo-idJPKBN15M0NH
 >米国の海洋大気庁が運営する気象衛星「スオミＮＰＰ」が日本上空を通過する毎日午前１時３０分時点の画像を購入し、縦、横７２０メートル四方のマス目ごとの明るさを計測する。同じ明るさでも、農地、商業用地、工業用地など土地の用途によって経済活動の大きさが異なるため、国土地理院の土地利用調査を参照。土地の用途と、明るさが示す経済活動の相関を弾き出し、この結果を考慮した上で、明るさから経済活動の大きさを試算する。
 >（中略）衛星画像のように誰もが入手可能な公表データであれば、政府、民間の区別なく分析が可能であるため、渡辺氏はこれを「統計の民主化」と呼び、世界的な潮流になると予想している。
 
-と書かれており、衛星写真を用いた分析に興味を惹かれました。 衛星写真って誰でも利用可能か？というところですが、GoogleがEarth Engineというサービスを提供していることがわかりました
-。
+と書かれており、衛星写真を用いた分析に興味を惹かれました。 衛星写真って誰でも利用可能か？というところですが、GoogleがEarth Engineというサービスを提供していることがわかりました。
 
 ![](/my_blog/img/portfolio/earthengine3.jpg)
 
@@ -75,7 +74,7 @@ Python APIを使用する準備ができました。ここからは衛星画像�
 
 https://developers.google.com/earth-engine/datasets/
 
-今回は「VIIRS Stray Light Corrected Nighttime Day/Night Band Composites Version 1」というデータセットを使用します。このデータセットは月次の夜間光画像を提供するものです。サンプル期間は2014-01~現在です。
+今回は「VIIRS Stray Light Corrected Nighttime Day/Night Band Composites Version 1」というデータセットを使用します。このデータセットは世界中の夜間光の光量を月次単位で平均し、提供するものです。サンプル期間は2014-01~現在です。
 
 Earth Engineにはいくつかの固有なデータ型が存在します。覚えておくべきものは以下の3つです。
 
@@ -101,7 +100,7 @@ japan = ee.FeatureCollection('ft:1tdSwUL7MVpOauSgRzqVTOwdfy17KDbw-1d9omPw').filt
 
 ```
 
-次に夜間光の衛星画像を取得してみます。こちらもee.ImageCollection()にデータセットのIDを渡すと取得できます。なお、ここではbandをavg_radに抽出しています。
+次に夜間光の衛星画像を取得してみます。こちらもee.ImageCollection()にデータセットのIDを渡すと取得できます。なお、ここではbandを月次の平均光量であるavg_radに抽出しています。
 
 ```{python}
 # get night-light data from earth engine from 2014-01-01 to 2019-01-01
@@ -113,7 +112,7 @@ dataset = ee.ImageCollection('NOAA/VIIRS/DNB/MONTHLY_V1/VCMSLCFG').filter(ee.Fil
 
 ![](https://developers.google.com/earth-engine/images/Reduce_ImageCollection.png)
 
-ここでは、ImageCollectionオブジェクトの中にあるのImageオブジェクトの平均値をとってサンプル期間の平均的な画像を出力してみたいと思います。ImageCollection.mean()でできます。また、.visualize({min:0.5})でピクセル値が0.5以上でフィルターをかけています。こうしないと雲と思われるものやゴミ？みたいなものがついてしまいます。次に、ここまで加工した画像データをダウンロードするurlを.getDownloadURL関数で取得しています。その際、regionで切り出す範囲をポリゴン値で指定し、scaleでデータの解像度を指定しています（scaleが小さすぎると処理が重すぎるらしくエラーが出て処理できません）。
+ここでは、ImageCollectionオブジェクトの中にあるのImageオブジェクトの平均値をとってサンプル期間の平均的な画像を出力してみたいと思います。ImageCollection.mean()でできます。また、.visualize({min:0.5})でピクセル値が0.5以上でフィルターをかけています。こうしないと雲と思われるものやゴミ？みたいなものがついてしまいます。次に、ここまで加工した画像データをダウンロードするurlを.getDownloadURLメソッドで取得しています。その際、regionで切り出す範囲をポリゴン値で指定し、scaleでデータの解像度を指定しています（scaleが小さすぎると処理が重すぎるらしくエラーが出て処理できません）。
 
 ```{python}
 dataset.mean().visualize(min=0.5).getDownloadURL(dict(name='thumbnail',region=[[[120.3345348936478, 46.853488838010854],[119.8071911436478, 24.598157870729043],[148.6353161436478, 24.75788466523463],[149.3384411436478, 46.61252884462868]]],scale=5000))
@@ -124,13 +123,13 @@ dataset.mean().visualize(min=0.5).getDownloadURL(dict(name='thumbnail',region=[[
 
 ![](/my_blog/img/portfolio/earthengine6.jpg)
 
-やはり、東京を中心とした関東圏、大阪を中心とした関西圏、愛知、福岡、北海道（札幌周辺）の光量が多く、経済活動が夜も経済活動が活発であることがわかります。また、陸内よりも沿岸部で光量が多い地域があることがわかります。これは経済活動とは直接関係しない現象のような気もします。今回は分析対象外ですが、北緯38度を境に北側が真っ暗になるのが印象的です。これは言うまでもなく北朝鮮と韓国の境界線ですから、両国の経済活動水準の差が視覚的にコントラストされいるのでしょう。今回使用したデータセットは2014年からのものですが、他のデータセットでは1990年代からのデータが取得できるものもあります（その代わり最近のデータは取れませんが）。それらを用いて朝鮮半島や中国の経済発展を観察するのも面白いかもしれません。
+やはり、東京を中心とした関東圏、大阪を中心とした関西圏、愛知、福岡、北海道（札幌周辺）の光量が多く、経済活動が活発であることがわかります。また、陸内よりも沿岸部で光量が多い地域があることがわかります。これは経済活動とは直接関係しない現象のような気もします。今回は分析対象外ですが、北緯38度を境に北側が真っ暗になるのが印象的です。これは言うまでもなく北朝鮮と韓国の境界線ですから、両国の経済活動水準の差が視覚的にコントラストされているのでしょう。今回使用したデータセットは2014年からのものですが、他のデータセットでは1990年代からのデータが取得できるものもあります（その代わり最近のデータは取れませんが）。それらを用いて朝鮮半島や中国の経済発展を観察するのも面白いかもしれません。
 
 さて、画像は取得できましたがこのままでは解析ができません。ここからは夜間光をピクセル値にマッピングしたデータを取得し、数値的な解析を試みます。ただ、先ほどとはデータ取得の手続きが少し変わります。というのも、今度は日本各地で各ピクセル単位ごとにさまざまな値をとる夜間光を**集約**し、1つの代用値にしなければならないからです。ピクセルごとの数値を手に入れたところで解析するには手に余ってしまいますからね。イメージは以下のような感じです（Earth Engineサイトから引用）。
 
 ![](https://developers.google.com/earth-engine/images/Reduce_region_diagram.png)
 
-先ほど取得した夜間光のImageCollectionのある1時点の衛星画像が左です。その中に日本というRegionが存在し、それをee.Reducerによって定量的に集約（aggregate）します。Earth Engine APIには.reduceRegions()関数が用意されていますのでそれを用いればいいです。引数は、reducer=集約方法（ここでは合計値）、collection=集約をかけるregion（FeatureCollectionオブジェクト）、scale=解像度、です。以下では、ImageCollection（dataset）の中にある1番目のImageオブジェクトに.reduceRegions()関数をかけています。
+先ほど取得した夜間光のImageCollectionのある1時点の衛星画像が左です。その中に日本というRegionが存在し、それをee.Reducerによって定量的に集約（aggregate）します。Earth Engine APIには.reduceRegions()メソッドが用意されていますのでそれを用いればいいです。引数は、reducer=集約方法（ここでは合計値）、collection=集約をかけるregion（FeatureCollectionオブジェクト）、scale=解像度、です。以下では、ImageCollection（dataset）の中にある1番目のImageオブジェクトに.reduceRegions()メソッドをかけています。
 
 ```{python}
 # initialize output box
@@ -139,7 +138,7 @@ first = dataset.first().reduceRegions(reducer=ee.Reducer.sum(),collection=japan,
 
 ```
 
-我々は時系列データが欲しいわけですから、ImageCollection内にあるImageそれぞれに対して同じ処理を行う必要があります。Earth Engineにはiterateという便利な関数があり、引数に処理したい関数を渡せばfor文いらずでこの処理を行ってくれます。ここではImageオブジェクトにreduceRegions関数を処理したComputed Objectを以前に処理したものとmergeするmyfuncという関数を定義し、それをiterateに渡しています。最後に、先ほどと同じく生成したデータをgetDownloadURL関数を用いてurlを取得しています（ファイル形式はcsv）。
+我々は時系列データが欲しいわけですから、ImageCollection内にあるImageそれぞれに対して同じ処理を行う必要があります。Earth Engineにはiterateという便利な関数があり、引数に処理したい関数を渡せばfor文いらずでこの処理を行ってくれます。ここではImageオブジェクトにreduceRegionsメソッドを処理したComputed Objectを以前に処理したものとmergeするmyfuncという関数を定義し、それをiterateに渡しています。最後に、先ほどと同じく生成したデータをgetDownloadURLメソッドを用いてurlを取得しています（ファイル形式はcsv）。
 
 ```{python}
 # define reduceRegions function for iteration
@@ -155,5 +154,21 @@ ee.FeatureCollection(nightjp).getDownloadURL(filetype='csv',selectors=ee.Feature
 
 ```
 
-CSVファイルのurlが取得できました。今日はここまで。
+CSVファイルのurlが取得できました。この時系列をプロットして今日は終わりにしたいと思います。
+データを読み込むとこんな感じです、
+
+```{python}
+import pandas as pd
+
+nightjp_csv = pd.read_csv('C:/Users/aashi/Desktop/my_blog/public/dataset/jpnightlight.csv',index_col=0)
+
+```
+
+```{python}
+import pandas as pd
+
+nightjp_csv.head()
+nightjp_csv.plot()
+
+```
 
