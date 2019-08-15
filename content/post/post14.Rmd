@@ -24,6 +24,7 @@ library(reticulate)
 conda_path <- "C:\\Users\\aashi\\Anaconda3"
 use_condaenv(conda_path)
 
+
 ```
 
 皆さんおはこんばんにちわ。前回、GPLVMモデルを用いたGDP予測モデルを構築しました。ただ、ナウキャスティングというからにはオルタナティブデータを用いた解析を行いたいところではあります。ふと、以下の記事を見つけました。
@@ -155,20 +156,27 @@ ee.FeatureCollection(nightjp).getDownloadURL(filetype='csv',selectors=ee.Feature
 ```
 
 CSVファイルのurlが取得できました。この時系列をプロットして今日は終わりにしたいと思います。
-データを読み込むとこんな感じです、
+データを読み込むとこんな感じです。
 
-```{python}
+```{python, include=FALSE}
 import pandas as pd
 
-nightjp_csv = pd.read_csv('C:/Users/aashi/Desktop/my_blog/public/dataset/jpnightlight.csv',index_col=0)
+nightjp_csv = pd.read_csv('C:/Users/aashi/Desktop/my_blog/public/dataset/jpnightlight.csv')
 
 ```
 
 ```{python}
 import pandas as pd
+import matplotlib.pyplot as plt
+import os
+
+os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = 'C:/Users/aashi/Anaconda3/Library/plugins/platforms'
+
+plt.style.use('ggplot')
 
 nightjp_csv.head()
-nightjp_csv.plot()
+plt.plot(pd.to_datetime(nightjp_csv['system:index']),nightjp_csv['sum'])
 
 ```
 
+かなり季節性がありますね。冬場は日照時間が少ないこともあって光量が増えているみたいです。それにしても急激な増え方ですが。次回はこのデータと景況感の代理変数となる経済統計を元に統計解析を行いたいと思います。おたのしみに。
