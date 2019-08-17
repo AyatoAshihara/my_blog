@@ -1,0 +1,61 @@
+---
+title: 【日次GDP】Google Earth Engine APIで衛星画像データを取得し、景況感をナウキャスティングしてみる（第２回）
+author: Ayato Ashiara
+date: '2019-08-15'
+slug: post15
+categories:
+  - 日次GDP
+tags:
+  - Earth Engine
+  - Python
+  - 時系列解析
+image: img/portfolio/earthengine6.jpg
+---
+
+<!--more-->
+
+```{r,include=FALSE}
+
+library(reticulate)
+conda_path <- "C:\\Users\\aashi\\Anaconda3"
+use_condaenv(conda_path)
+
+```
+
+おはこんばんにちは。前回の記事でGoogl Earth Enngineから衛星画像データを取得しました。今回はそのデータを用いて景況感のナウキャスティングをやってみます。
+まず、前回取得したデータを見ましょう。
+
+```{python, include=FALSE}
+import pandas as pd
+
+nightjp_csv = pd.read_csv('C:/Users/aashi/Desktop/my_blog/public/dataset/jpnightlight.csv')
+
+```
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
+
+os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = 'C:/Users/aashi/Anaconda3/Library/plugins/platforms'
+
+plt.style.use('ggplot')
+
+nightjp = nightjp_csv.assign(date=lambda nightjp_csv:pd.to_datetime(nightjp_csv['system:index']))
+nightjp.head()
+
+plt.plot(nightjp['date'],nightjp['sum'])
+
+```
+
+かなり季節性があることがわかります。どうやら冬場に光量が大きくなる傾向になるようです。なので、季節調整をかけてみます。RではX-13ARIMA-SEATSをいつも使用していますが、rmarkdownからのpythonでの使い方がわからないので、statsmodels.apiのseasonal_decomposeを使います。冬場とそれ以外で挙動が異なるのでfreqは12にしてみました。
+
+```{python}
+import statsmodels.api as sm
+nightjp = nightjp.set_index('date')
+nightjp_sm = sm.tsa.seasonal_decompose(nightjp['sum'],freq=12,model='multiplicative')
+nightjp_sm.plot()
+
+```
+
+
