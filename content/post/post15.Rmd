@@ -58,4 +58,28 @@ nightjp_sm.plot()
 
 ```
 
+季節性を除いたTrendが2016年半ばくらいから2017年下旬にかけて急激に上昇しています。おそらく、景況感とはあまり相関がなさそうな動きをしていますが、以下の記事を参考にestatからAPIで鉱工業生産指数のデータを落とし、検証してみます。
+
+http://sinhrks.hatenablog.com/entry/2015/12/31/222207
+
+```{python,include=FALSE}
+
+key = '16aba745ce9d2640a24adcd96c0b39e60c181de4'
+
+```
+
+```{python}
+import numpy as np
+import japandas as jpd
+import datetime 
+
+dlist = jpd.DataReader("00550300", 'estat', appid=key)
+tables = dlist[(dlist['統計表題名及び表番号'].str.contains('付加価値額生産')) & (dlist['提供統計名及び提供分類名'].str.contains('鉱工業生産・出荷・在庫指数'))]
+data = jpd.DataReader("0003325360", 'estat', appid=key)
+df = data[(data['業種別'].str.contains('1000000000 鉱工業')) & ~(data['統計項目A'].str.contains('付加生産ウエイト'))]
+df = df.set_index(pd.to_datetime(df["統計項目A"], format="%Y%m"))
+df.head()
+
+```
+
 

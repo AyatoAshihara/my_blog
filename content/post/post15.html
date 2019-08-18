@@ -27,12 +27,14 @@ plt.style.use(&#39;ggplot&#39;)
 
 nightjp = nightjp_csv.assign(date=lambda nightjp_csv:pd.to_datetime(nightjp_csv[&#39;system:index&#39;]))
 nightjp.head()</code></pre>
-<pre><code>##   system:index          sum Country       date
-## 0    2014/1/31  881512.4572   Japan 2014-01-31
-## 1    2014/2/28  827345.3551   Japan 2014-02-28
-## 2    2014/3/31  729110.4619   Japan 2014-03-31
-## 3    2014/4/30  612665.8866   Japan 2014-04-30
-## 4    2014/5/31  661434.5027   Japan 2014-05-31</code></pre>
+<pre><code>##   system:index          sum    ...     Unnamed: 4       date
+## 0     2014/1/1  881512.4572    ...            NaN 2014-01-01
+## 1     2014/2/1  827345.3551    ...            NaN 2014-02-01
+## 2     2014/3/1  729110.4619    ...            NaN 2014-03-01
+## 3     2014/4/1  612665.8866    ...            NaN 2014-04-01
+## 4     2014/5/1  661434.5027    ...            NaN 2014-05-01
+## 
+## [5 rows x 6 columns]</code></pre>
 <pre class="python"><code>plt.plot(nightjp[&#39;date&#39;],nightjp[&#39;sum&#39;])</code></pre>
 <p><img src="/my_blog/post/post15_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>かなり季節性があることがわかります。どうやら冬場に光量が大きくなる傾向になるようです。なので、季節調整をかけてみます。RではX-13ARIMA-SEATSをいつも使用していますが、rmarkdownからのpythonでの使い方がわからないので、statsmodels.apiのseasonal_decomposeを使います。冬場とそれ以外で挙動が異なるのでfreqは12にしてみました。</p>
@@ -41,3 +43,22 @@ nightjp = nightjp.set_index(&#39;date&#39;)
 nightjp_sm = sm.tsa.seasonal_decompose(nightjp[&#39;sum&#39;],freq=12,model=&#39;multiplicative&#39;)
 nightjp_sm.plot()</code></pre>
 <p><img src="/my_blog/post/post15_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>季節性を除いたTrendが2016年半ばくらいから2017年下旬にかけて急激に上昇しています。おそらく、景況感とはあまり相関がなさそうな動きをしていますが、以下の記事を参考にestatからAPIで鉱工業生産指数のデータを落とし、検証してみます。</p>
+<p><a href="http://sinhrks.hatenablog.com/entry/2015/12/31/222207" class="uri">http://sinhrks.hatenablog.com/entry/2015/12/31/222207</a></p>
+<pre class="python"><code>import numpy as np
+import japandas as jpd
+import datetime 
+
+dlist = jpd.DataReader(&quot;00550300&quot;, &#39;estat&#39;, appid=key)
+tables = dlist[(dlist[&#39;統計表題名及び表番号&#39;].str.contains(&#39;付加価値額生産&#39;)) &amp; (dlist[&#39;提供統計名及び提供分類名&#39;].str.contains(&#39;鉱工業生産・出荷・在庫指数&#39;))]
+data = jpd.DataReader(&quot;0003325360&quot;, &#39;estat&#39;, appid=key)
+df = data[(data[&#39;業種別&#39;].str.contains(&#39;1000000000 鉱工業&#39;)) &amp; ~(data[&#39;統計項目A&#39;].str.contains(&#39;付加生産ウエイト&#39;))]
+df = df.set_index(pd.to_datetime(df[&quot;統計項目A&quot;], format=&quot;%Y%m&quot;))
+df.head()</code></pre>
+<pre><code>##             value             業種別   統計項目A
+## 統計項目A                                    
+## 2013-01-01   94.8  1000000000 鉱工業  201301
+## 2013-02-01   96.5  1000000000 鉱工業  201302
+## 2013-03-01   97.7  1000000000 鉱工業  201303
+## 2013-04-01   97.7  1000000000 鉱工業  201304
+## 2013-05-01   99.3  1000000000 鉱工業  201305</code></pre>
