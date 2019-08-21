@@ -40,6 +40,7 @@ import os
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = 'C:/Users/aashi/Anaconda3/Library/plugins/platforms'
 
 plt.style.use('ggplot')
+plt.xkcd()
 
 nightjp = nightjp_csv.assign(date=lambda nightjp_csv:pd.to_datetime(nightjp_csv['system:index']))
 nightjp.head()
@@ -73,13 +74,28 @@ import numpy as np
 import japandas as jpd
 import datetime 
 
+# import IIP from estat api
 dlist = jpd.DataReader("00550300", 'estat', appid=key)
 tables = dlist[(dlist['統計表題名及び表番号'].str.contains('付加価値額生産')) & (dlist['提供統計名及び提供分類名'].str.contains('鉱工業生産・出荷・在庫指数'))]
 data = jpd.DataReader("0003325360", 'estat', appid=key)
 df = data[(data['業種別'].str.contains('1000000000 鉱工業')) & ~(data['統計項目A'].str.contains('付加生産ウエイト'))]
-df = df.set_index(pd.to_datetime(df["統計項目A"], format="%Y%m"))
+df = df.assign(date=lambda nightjp_csv:pd.to_datetime(df["統計項目A"], format="%Y%m"))
 df.head()
+
+# merge with seasonally adjusted nightlight data
+df2 = pd.merge(nightjp_sm.trend.to_frame(),df,how='left',on='date')[['date','sum','value']]
+
+# plot
+fig = plt.figure()
+ax1 = fig.add_subplot(1, 1, 1)
+ax1.plot(df2['date'], df2['sum'],'C0',label='nightlight')
+ax2 = ax1.twinx()
+ax2.plot(df2['date'], df2['value'],'C1',label='IIP')
+h1, l1 = ax1.get_legend_handles_labels()
+h2, l2 = ax2.get_legend_handles_labels()
+ax1.legend(h1+h2, l1+l2, loc='lower right')
+plt.show()
 
 ```
 
-
+これはかなり良い傾向を掴めているのではないでしょうか。季節調整を少し雑にやっているので、必要な情報もノイズとしてスクリーニングされた感がありますが、季節調整を真面目にやればかなり近い数値が出てくる気もします。
