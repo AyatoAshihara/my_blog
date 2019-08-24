@@ -26,7 +26,7 @@
         "datePublished": "2019-08-15 00:00:00 \x2b0000 UTC",
         "dateModified" : "2019-08-15 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post15\/",
-        "wordCount" : "269",
+        "wordCount" : "372",
         "image" : "/my_blog/img/portfolio/earthengine6.jpg"",
         "keywords" : [ ""Earth Engine"",""Python"",""時系列解析"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1566612015" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1566619126" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1566612015" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1566619126" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -257,7 +257,7 @@ os.environ[&#39;QT_QPA_PLATFORM_PLUGIN_PATH&#39;] = &#39;C:/Users/aashi/Anaconda
 
 plt.style.use(&#39;ggplot&#39;)
 plt.xkcd()</code></pre>
-<pre><code>## &lt;matplotlib.pyplot.xkcd.&lt;locals&gt;.dummy_ctx object at 0x0000000029548518&gt;</code></pre>
+<pre><code>## &lt;matplotlib.pyplot.xkcd.&lt;locals&gt;.dummy_ctx object at 0x00000000295685C0&gt;</code></pre>
 <pre class="python"><code>nightjp = nightjp_csv.assign(date=lambda nightjp_csv:pd.to_datetime(nightjp_csv[&#39;system:index&#39;]))
 nightjp.head()</code></pre>
 <pre><code>##   system:index          sum    ...     Unnamed: 4       date
@@ -332,6 +332,49 @@ h2, l2 = ax2.get_legend_handles_labels()
 ax1.legend(h1+h2, l1+l2, loc=&#39;lower right&#39;)
 plt.show()</code></pre>
 <p><img src="/my_blog/post/post15_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>そこそこ説明量高め。単回帰もやってみます。</p>
+<pre class="python"><code>
+from sklearn import linear_model
+clf = linear_model.LinearRegression(normalize=False)
+
+X = df3.loc[:, [&#39;seasadj&#39;]].as_matrix()</code></pre>
+<pre><code>## C:\Users\aashi\ANACON~1\python.exe:1: FutureWarning: Method .as_matrix will be removed in a future version. Use .values instead.</code></pre>
+<pre class="python"><code>Y = df3[&#39;value&#39;].as_matrix()
+
+clf.fit(X, Y)</code></pre>
+<pre><code>## LinearRegression(copy_X=True, fit_intercept=True, n_jobs=1, normalize=False)</code></pre>
+<pre class="python"><code>print(clf.coef_)</code></pre>
+<pre><code>## [2.24932518e-05]</code></pre>
+<pre class="python"><code>print(clf.intercept_)</code></pre>
+<pre><code>## 85.74128984259595</code></pre>
+<pre class="python"><code>print(clf.score(X, Y))</code></pre>
+<pre><code>## 0.4958790404129829</code></pre>
+<pre class="python"><code>plt.scatter(X, Y)
+ 
+plt.plot(X, clf.predict(X))</code></pre>
+<p><img src="/my_blog/post/post15_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>ほぼほぼ比例の関係にありますね。決定係数は0.5でした。散布図を見ると非線形の関係にあるようにも見えるのでガウス回帰でそれも試してみます。</p>
+<pre class="python"><code>
+from sklearn.gaussian_process.kernels import RBF,WhiteKernel
+from sklearn.gaussian_process import GaussianProcessRegressor as GPR
+
+kernel = 1*RBF()+WhiteKernel() # sklearnのカーネル
+gp = GPR(kernel,alpha=0) # MCMCで最適化するので、ここではoptimizer=None
+gp.fit(X,Y)
+
+# 近似の結果</code></pre>
+<pre><code>## GaussianProcessRegressor(alpha=0, copy_X_train=True,
+##              kernel=1**2 * RBF(length_scale=1) + WhiteKernel(noise_level=1),
+##              n_restarts_optimizer=0, normalize_y=False,
+##              optimizer=&#39;fmin_l_bfgs_b&#39;, random_state=None)</code></pre>
+<pre class="python"><code>X1 = np.linspace(600000,850000,25000)
+plt.plot(X,Y,&#39;. &#39;)
+mu,std = gp.predict(X1.reshape(-1, 1),return_std=True)
+plt.plot(X1,mu,&#39;g&#39;)
+plt.fill_between(X1,mu-std,mu+std,alpha=0.2,color=&#39;g&#39;)
+plt.show()</code></pre>
+<p><img src="/my_blog/post/post15_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>外れ値に引っ張られています。本当は750000~800000のところで二次関数のようにぐっと上昇して欲しいのですが。外れ値に引っ張られないよう、正規分布でなくt分布を仮定したt過程回帰で推計します。</p>
 
             </article>
           </div>
@@ -540,7 +583,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1566612015"></script>
+<script src="/my_blog/js/production.min.js?v=1566619126"></script>
 
 </body>
 </html>
