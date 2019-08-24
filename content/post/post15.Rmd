@@ -129,7 +129,9 @@ plt.show()
 
 ```
 
-そこそこ説明力高め。単回帰もやってみます。
+そこそこ説明力高め。これは個人的には大発見です。鉱工業生産指数はGDPとの相関が高く、月次統計でもあります。ただ、生産動向統計から作成されると言うこともあり、データが公表されるタイミングは速報値が出るのが翌月末です。一方、衛星データであれば月初から推計値を計算することが可能です。まさにナウキャスティングですね。欲を言えば、日次でデータが取れれば最高なんですけどね。多分それは有料ならできるんでしょう。。。今はこれで我慢です。（いつか使える日が来るのか？）
+
+単回帰もやってみます。
 
 ```{python}
 
@@ -178,14 +180,22 @@ plt.show()
 実際の推計をする前に、理論的な話をしておきます。そもそもt分布とは正規分布の分散を増減させるパラメータを新たに与え、それがガンマ分布に従うと仮定した分布です。t過程はガウス過程と同様、有限集合$\textbf{X}$が入力として与えられた際に、関数値ベクトル$\textbf{f}_{TP}$の分布がその多変量t分布に従うような確率分布を言います。t過程は自由度$v$、平均関数$\mu$、共分散関数を要素に持つ共分散行列$\textbf{K}$をパラメータとしています。これを$\textbf{f}_{TP}$~$T(v,\mu(\textbf{x}),\textbf{K}(\textbf{x},\textbf{x}'))$と表します。$T(v,\mu(\textbf{x}),\textbf{K}(\textbf{x},\textbf{x}'))$は先述の通り多変量t分布です。出力である確率変数$\textbf{y}$に対して、確率密度関数は以下のように与えられます（つまり多変量t分布の密度関数）。
 
 $$
-T(v,\mu,\textbf{K}) = \frac{\Gamma(\frac{v+n}{2})}{((v-2)\pi)^{n/2}\Gamma(\frac{v}{2})}\frac{1}{\sqrt(\det\textbf{K})}(1+\frac{((\textbf{y}-\mu)^T\textbf{K}^{-1}(\textbf{y}-\mu)}{v-2})^{-\frac{(v+n)}2}
+T(v,\mu,\textbf{K}) = \frac{\Gamma(\frac{v+n}{2})}{((v-2)\pi)^{n/2}\Gamma(\frac{v}{2})}\frac{1}{\sqrt(\det\textbf{K})}(1+\frac{(\textbf{y}-\mu)^T\textbf{K}^{-1}(\textbf{y}-\mu)}{v-2})^{-\frac{(v+n)}2}
 $$
 
 ここで、$\Gamma$はΓ関数です。ここで、$v\to\infty$とするとカーネルの部分が、
 
 $$
-\lim_{v\to\infty}(1+\frac{((\textbf{y}-\mu)^T\textbf{K}^{-1}(\textbf{y}-\mu)}{v-2})^{-\frac{(v+n)}2}=\exp(\frac{(\textbf{y}-\mu)^T\textbf{K}^{-1}(\textbf{y}-\mu)}{2})
+\lim_{v\to\infty}(1+\frac{(\textbf{y}-\mu)^T\textbf{K}^{-1}(\textbf{y}-\mu)}{v-2})^{-\frac{(v+n)}2}=\exp(\frac{(\textbf{y}-\mu)^T\textbf{K}^{-1}(\textbf{y}-\mu)}{2})
 $$
 
-と正規分布に収束するので、先述の通りt分布は正規分布の一般系であることがわかります。
+と正規分布に収束するので、先述の通りt分布は正規分布の一般系であることがわかります。次に、今定義したt過程を使った回帰問題について考えます。学習データ$(\textbf{x}_i,y_{i})$が手元にあるとします。t過程回帰では以下のようなモデルを考えます。
+
+$$
+y_{i} = f_{TP}(\textbf{x}_{i}) + \epsilon_{i}
+$$
+ここで、$f_{TP}(\textbf{x}_{i})$は基底関数による入力ベクトルの特徴量、$\epsilon_{i}-T(v,0,\sigma^2)$は観測ノイズを表しています。また、$\textbf{f}_{TP}=[f_{TP}(\textbf{x}_{1}),...,f_{TP}(\textbf{x}_{n})]^T$と定義し、t過程に従うとします。$\textbf{f}_{TP}$と$\epsilon_{i}$の分布がわかっていますから、$\textbf{x}$が既知となった後の$\textbf{y}$の分布を計算することができます。これはガウス過程の時と同じで、2つの独立なt分布のたたみ込みになるので、$y-T(v,\mu(\textbf{x}),\textbf{K}(\textbf{x},\textbf{x}')+\sigma\textbf{I})$となります。
+
+
+
 
