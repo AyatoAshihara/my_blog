@@ -25,7 +25,7 @@ os.environ[&#39;QT_QPA_PLATFORM_PLUGIN_PATH&#39;] = &#39;C:/Users/aashi/Anaconda
 
 plt.style.use(&#39;ggplot&#39;)
 plt.xkcd()</code></pre>
-<pre><code>## &lt;matplotlib.pyplot.xkcd.&lt;locals&gt;.dummy_ctx object at 0x0000000026BECDD8&gt;</code></pre>
+<pre><code>## &lt;matplotlib.pyplot.xkcd.&lt;locals&gt;.dummy_ctx object at 0x00000000273DCD30&gt;</code></pre>
 <pre class="python"><code>nightjp = nightjp_csv.assign(date=lambda nightjp_csv:pd.to_datetime(nightjp_csv[&#39;system:index&#39;]))
 nightjp.head()</code></pre>
 <pre><code>##   system:index          sum    ...     Unnamed: 4       date
@@ -155,4 +155,9 @@ T(v,\mu,\textbf{K}) = \frac{\Gamma(\frac{v+n}{2})}{((v-2)\pi)^{n/2}\Gamma(\frac{
 <p><span class="math display">\[
 y_{i} = f_{TP}(\textbf{x}_{i}) + \epsilon_{i}
 \]</span>
-ここで、<span class="math inline">\(f_{TP}(\textbf{x}_{i})\)</span>は基底関数による入力ベクトルの特徴量、<span class="math inline">\(\epsilon_{i}-T(v,0,\sigma^2)\)</span>は観測ノイズを表しています。また、<span class="math inline">\(\textbf{f}_{TP}=[f_{TP}(\textbf{x}_{1}),...,f_{TP}(\textbf{x}_{n})]^T\)</span>と定義し、t過程に従うとします。<span class="math inline">\(\textbf{f}_{TP}\)</span>と<span class="math inline">\(\epsilon_{i}\)</span>の分布がわかっていますから、<span class="math inline">\(\textbf{x}\)</span>が既知となった後の<span class="math inline">\(\textbf{y}\)</span>の分布を計算することができます。これはガウス過程の時と同じで、2つの独立なt分布のたたみ込みになるので、<span class="math inline">\(y-T(v,\mu(\textbf{x}),\textbf{K}(\textbf{x},\textbf{x}&#39;)+\sigma\textbf{I})\)</span>となります。</p>
+ここで、<span class="math inline">\(f_{TP}(\textbf{x}_{i})\)</span>は基底関数による入力ベクトルの特徴量、<span class="math inline">\(\epsilon_{i}-T(v,0,\sigma^2)\)</span>は観測ノイズを表しています。また、<span class="math inline">\(\textbf{f}_{TP}=[f_{TP}(\textbf{x}_{1}),...,f_{TP}(\textbf{x}_{n})]^T\)</span>と定義し、t過程に従うとします。<span class="math inline">\(\textbf{f}_{TP}\)</span>と<span class="math inline">\(\epsilon_{i}\)</span>の分布がわかっていますから、<span class="math inline">\(\textbf{x}\)</span>が既知となった後の<span class="math inline">\(\textbf{y}\)</span>の分布を計算することができます。これはガウス過程の時と同じで、2つの独立なt分布のたたみ込みになるので、<span class="math inline">\(\textbf{y}-T(v,\mu(\textbf{x}),\textbf{K}(\textbf{x},\textbf{x}&#39;)+\sigma\textbf{I})\)</span>となります。この分布を推定するには<span class="math inline">\(\mu,\textbf{K},\sigma\)</span>を推定する必要があります。まあ、だいたい<span class="math inline">\(\mu=0,\sigma=1/100\)</span>みたいに決め打ちしてしまうことが多い気がします。重要なのは<span class="math inline">\(\textbf{K}\)</span>です。これもガウス過程と同じでカーネル関数を用いることで計算の効率化を図ります。どのカーネル関数を用いるかで推定すべきパラメータの数は変わってきますからここでは大まかな推定方法について説明したいと思います。</p>
+<p>パラメータの推定方法は最尤法です。カーネル関数を<span class="math inline">\(K(\textbf{x},\textbf{x}&#39;,\beta)\)</span>と定義し、<span class="math inline">\(\beta\)</span>をパラメータとします。尤度関数は以下で与えられます。</p>
+<p><span class="math display">\[
+L(v,\mu,\textbf{K}(\textbf{x},\textbf{x}&#39;,\beta),\textbf{y}) = \frac{\Gamma(\frac{v+n}{2})}{((v-2)\pi)^{n/2}\Gamma(\frac{v}{2})}\frac{1}{\sqrt(\det\textbf{K}(\textbf{x},\textbf{x}&#39;,\beta))}(1+\frac{(\textbf{y}-\mu)^T\textbf{K}(\textbf{x},\textbf{x}&#39;,\beta)^{-1}(\textbf{y}-\mu)}{v-2})^{-\frac{(v+n)}2}
+\]</span></p>
+<p>これを最大化するような<span class="math inline">\(\beta\)</span>を最尤推定値とするのです。ここらへんもガウス過程と同じです。これで回帰の推定は完了です。とりあえずここまでをpythonで実行しましょう。</p>
