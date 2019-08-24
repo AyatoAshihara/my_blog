@@ -49,7 +49,7 @@ plt.plot(nightjp['date'],nightjp['sum'])
 
 ```
 
-かなり季節性があることがわかります。どうやら冬場に光量が大きくなる傾向になるようです。なので、季節調整をかけてみます。RではX-13ARIMA-SEATSをいつも使用していますが、rmarkdownからのpythonでの使い方がわからないので、statsmodels.apiのseasonal_decomposeを使います。冬場とそれ以外で挙動が異なるのでfreqは12にしてみました。
+かなり季節性があることがわかります。どうやら冬場に光量が大きくなる傾向になるようです。なので、季節調整をかけてみます。RではX-13ARIMA-SEATSをいつも使用していますが、pythonでの使い方がわからないので、statsmodels.apiのseasonal_decomposeを使います。冬場とそれ以外で挙動が異なるのでfreqは12にしてみました。
 
 ```{python}
 import statsmodels.api as sm
@@ -98,4 +98,26 @@ plt.show()
 
 ```
 
-これはかなり良い傾向を掴めているのではないでしょうか。季節調整を少し雑にやっているので、必要な情報もノイズとしてスクリーニングされた感がありますが、季節調整を真面目にやればかなり近い数値が出てくる気もします。
+これはかなり良い傾向を掴めているのではないでしょうか。季節調整を少し雑にやっているので、必要な情報もノイズとしてスクリーニングされた感がありますが、季節調整を真面目にやればかなり近い数値が出てくる気もします。ということで、X-13ARIMA-SEATSのpythonでの使い方をググりました。なんとstatsmodelsで動かせるようです。
+
+```{python}
+
+import statsmodels as sms
+
+# x13 
+x13results = sms.tsa.x13.x13_arima_analysis(endog = nightjp['sum'])
+x13results.plot()
+
+# merge with seasonally adjusted nightlight data
+df3 = pd.merge(x13results.seasadj.to_frame(),df,how='left',on='date')[['date','seasadj','value']]
+
+# plot
+fig = plt.figure()
+ax1 = fig.add_subplot(1, 1, 1)
+ax1.plot(df3['date'], df3['seasadj'],'C0',label='nightlight')
+ax2 = ax1.twinx()
+ax2.plot(df3['date'], df3['value'],'C1',label='IIP')
+h1, l1 = ax1.get_legend_handles_labels()
+h2, l2 = ax2.get_legend_handles_labels()
+ax1.legend(h1+h2, l1+l2, loc='lower right')
+plt.show()

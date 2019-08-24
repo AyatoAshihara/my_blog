@@ -26,7 +26,7 @@
         "datePublished": "2019-08-15 00:00:00 \x2b0000 UTC",
         "dateModified" : "2019-08-15 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post15\/",
-        "wordCount" : "217",
+        "wordCount" : "269",
         "image" : "/my_blog/img/portfolio/earthengine6.jpg"",
         "keywords" : [ ""Earth Engine"",""Python"",""時系列解析"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1566398741" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1566612015" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1566398741" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1566612015" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -257,7 +257,7 @@ os.environ[&#39;QT_QPA_PLATFORM_PLUGIN_PATH&#39;] = &#39;C:/Users/aashi/Anaconda
 
 plt.style.use(&#39;ggplot&#39;)
 plt.xkcd()</code></pre>
-<pre><code>## &lt;matplotlib.pyplot.xkcd.&lt;locals&gt;.dummy_ctx object at 0x0000000028F58518&gt;</code></pre>
+<pre><code>## &lt;matplotlib.pyplot.xkcd.&lt;locals&gt;.dummy_ctx object at 0x0000000029548518&gt;</code></pre>
 <pre class="python"><code>nightjp = nightjp_csv.assign(date=lambda nightjp_csv:pd.to_datetime(nightjp_csv[&#39;system:index&#39;]))
 nightjp.head()</code></pre>
 <pre><code>##   system:index          sum    ...     Unnamed: 4       date
@@ -270,7 +270,7 @@ nightjp.head()</code></pre>
 ## [5 rows x 6 columns]</code></pre>
 <pre class="python"><code>plt.plot(nightjp[&#39;date&#39;],nightjp[&#39;sum&#39;])</code></pre>
 <p><img src="/my_blog/post/post15_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>かなり季節性があることがわかります。どうやら冬場に光量が大きくなる傾向になるようです。なので、季節調整をかけてみます。RではX-13ARIMA-SEATSをいつも使用していますが、rmarkdownからのpythonでの使い方がわからないので、statsmodels.apiのseasonal_decomposeを使います。冬場とそれ以外で挙動が異なるのでfreqは12にしてみました。</p>
+<p>かなり季節性があることがわかります。どうやら冬場に光量が大きくなる傾向になるようです。なので、季節調整をかけてみます。RではX-13ARIMA-SEATSをいつも使用していますが、pythonでの使い方がわからないので、statsmodels.apiのseasonal_decomposeを使います。冬場とそれ以外で挙動が異なるのでfreqは12にしてみました。</p>
 <pre class="python"><code>import statsmodels.api as sm
 nightjp = nightjp.set_index(&#39;date&#39;)
 nightjp_sm = sm.tsa.seasonal_decompose(nightjp[&#39;sum&#39;],freq=12,model=&#39;multiplicative&#39;)
@@ -310,7 +310,28 @@ h2, l2 = ax2.get_legend_handles_labels()
 ax1.legend(h1+h2, l1+l2, loc=&#39;lower right&#39;)
 plt.show()</code></pre>
 <p><img src="/my_blog/post/post15_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>これはかなり良い傾向を掴めているのではないでしょうか。季節調整を少し雑にやっているので、必要な情報もノイズとしてスクリーニングされた感がありますが、季節調整を真面目にやればかなり近い数値が出てくる気もします。</p>
+<p>これはかなり良い傾向を掴めているのではないでしょうか。季節調整を少し雑にやっているので、必要な情報もノイズとしてスクリーニングされた感がありますが、季節調整を真面目にやればかなり近い数値が出てくる気もします。ということで、X-13ARIMA-SEATSのpythonでの使い方をググりました。なんとstatsmodelsで動かせるようです。</p>
+<pre class="python"><code>
+import statsmodels as sms
+
+# x13 
+x13results = sms.tsa.x13.x13_arima_analysis(endog = nightjp[&#39;sum&#39;])
+x13results.plot()
+
+# merge with seasonally adjusted nightlight data
+df3 = pd.merge(x13results.seasadj.to_frame(),df,how=&#39;left&#39;,on=&#39;date&#39;)[[&#39;date&#39;,&#39;seasadj&#39;,&#39;value&#39;]]
+
+# plot
+fig = plt.figure()
+ax1 = fig.add_subplot(1, 1, 1)
+ax1.plot(df3[&#39;date&#39;], df3[&#39;seasadj&#39;],&#39;C0&#39;,label=&#39;nightlight&#39;)
+ax2 = ax1.twinx()
+ax2.plot(df3[&#39;date&#39;], df3[&#39;value&#39;],&#39;C1&#39;,label=&#39;IIP&#39;)
+h1, l1 = ax1.get_legend_handles_labels()
+h2, l2 = ax2.get_legend_handles_labels()
+ax1.legend(h1+h2, l1+l2, loc=&#39;lower right&#39;)
+plt.show()</code></pre>
+<p><img src="/my_blog/post/post15_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 
             </article>
           </div>
@@ -519,7 +540,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1566398741"></script>
+<script src="/my_blog/js/production.min.js?v=1566612015"></script>
 
 </body>
 </html>
