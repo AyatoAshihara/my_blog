@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1566657939" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1567094206" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1566657939" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1567094206" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -85,6 +85,10 @@ if (!doNotTrack) {
         
         <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
           <a href="/my_blog/categories/%E4%BB%95%E4%BA%8B%E9%96%A2%E9%80%A3">仕事関連</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E5%8D%98%E7%99%BA">単発</a>
         </li>
         
         <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
@@ -367,7 +371,7 @@ jgb.xts[&quot;2000::&quot;] %&gt;%
       zaxis=list(title=&quot;yield&quot;)
     )
   )</code></pre>
-<iframe src="../htmlwidget/jgb/index.html" width="100%" height="500" seamless>
+<iframe src="../../htmlwidget/jgb/index.html" width="100%" height="500" seamless>
 </iframe>
 <p>金利は低下傾向であり、また2010年の前と後では短期ゾーンの形状が変わっていることもわかると思います。つまり、これは先述したパラメータが一定ではないことを意味しており、各時期のイールドカーブにフィッティングするためには時変パラメータの推定が必要であることを示唆しています。当たり前といえば当たり前ですが、しかしパラメータが推定期間に対して安定性がないのではモデルとしてはいまいちなのではと思ってしまいます。</p>
 <p>では、固定パラメータの推計に移ります。Nelson and Siegel(1987)では<span class="math inline">\(\lambda\)</span>の値を先に決め、その後でほかのパラメータをOLS推計することを繰り返し、決定係数が最大になる点を推定値としています。とりあえず、こちらもこの推計方法に従いたいと思います。まず推計用のデータセットを作成します。</p>
@@ -680,7 +684,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1566657939"></script>
+<script src="/my_blog/js/production.min.js?v=1567094206"></script>
 
 </body>
 </html>

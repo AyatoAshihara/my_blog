@@ -6,10 +6,19 @@
     <description>Recent content in Categories on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 15 Aug 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 29 Aug 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/my_blog/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>単発</title>
+      <link>/my_blog/categories/%E5%8D%98%E7%99%BA/</link>
+      <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/categories/%E5%8D%98%E7%99%BA/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>日次GDP</title>

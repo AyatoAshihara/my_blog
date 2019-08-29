@@ -6,10 +6,22 @@
     <description>Recent content on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 15 Aug 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 29 Aug 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/my_blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>【単発】10年物長期金利をフィッティングしてみる</title>
+      <link>/my_blog/post/post16/</link>
+      <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post/post16/</guid>
+      <description>
+
+
+</description>
+    </item>
     
     <item>
       <title>【日次GDP】Google Earth Engine APIで衛星画像データを取得し、景況感をナウキャスティングしてみる（第２回）</title>
@@ -685,11 +697,20 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
     
     <item>
       <title></title>
-      <link>/my_blog/post/htmlwidget/jgb/</link>
+      <link>/my_blog/htmlwidget/jgb/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/htmlwidget/jgb/</guid>
+      <guid>/my_blog/htmlwidget/jgb/</guid>
       <description>plotly(function() {// If window.HTMLWidgets is already defined, then use it; otherwise create a// new object. This allows preceding code to set options that affect the// initialization process (though none currently exist).window.HTMLWidgets = window.HTMLWidgets || {};// See if we&#39;re running in a viewer pane. If not, we&#39;re in a web browser.var viewerMode = window.HTMLWidgets.viewerMode =/\bviewer_pane=1\b/.test(window.location);// See if we&#39;re running in Shiny mode.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/my_blog/htmlwidget/macro_indicator/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/htmlwidget/macro_indicator/</guid>
+      <description>datatables(function() {// If window.HTMLWidgets is already defined, then use it; otherwise create a// new object. This allows preceding code to set options that affect the// initialization process (though none currently exist).window.HTMLWidgets = window.HTMLWidgets || {};// See if we&#39;re running in a viewer pane. If not, we&#39;re in a web browser.var viewerMode = window.HTMLWidgets.viewerMode =/\bviewer_pane=1\b/.test(window.location);// See if we&#39;re running in Shiny mode.</description>
     </item>
     
   </channel>

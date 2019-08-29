@@ -4,7 +4,54 @@
   
   <url>
     <loc>/my_blog/categories/</loc>
-    <lastmod>2019-08-15T00:00:00+00:00</lastmod>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/post/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/tags/r/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/tags/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/post/post16/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/my_blog/categories/%E5%8D%98%E7%99%BA/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/tags/%E6%99%82%E7%B3%BB%E5%88%97%E8%A7%A3%E6%9E%90/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/tags/%E9%87%91%E8%9E%8D/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -15,19 +62,7 @@
   </url>
   
   <url>
-    <loc>/my_blog/post/</loc>
-    <lastmod>2019-08-15T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/my_blog/tags/python/</loc>
-    <lastmod>2019-08-15T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/tags/</loc>
     <lastmod>2019-08-15T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -40,24 +75,6 @@
   <url>
     <loc>/my_blog/categories/%E6%97%A5%E6%AC%A1gdp/</loc>
     <lastmod>2019-08-15T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/tags/%E6%99%82%E7%B3%BB%E5%88%97%E8%A7%A3%E6%9E%90/</loc>
-    <lastmod>2019-08-15T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/</loc>
-    <lastmod>2019-08-15T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/tags/r/</loc>
-    <lastmod>2019-07-16T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -180,7 +197,17 @@
   </url>
   
   <url>
-    <loc>/my_blog/post/htmlwidget/jgb/</loc>
+    <loc>/my_blog/htmlwidget/jgb/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/htmlwidget/macro_indicator/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/htmlwidget/</loc>
     <priority>0</priority>
   </url>
   

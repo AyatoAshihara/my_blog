@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1566657939" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1567094206" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1566657939" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1567094206" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -85,6 +85,10 @@ if (!doNotTrack) {
         
         <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
           <a href="/my_blog/categories/%E4%BB%95%E4%BA%8B%E9%96%A2%E9%80%A3">仕事関連</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E5%8D%98%E7%99%BA">単発</a>
         </li>
         
         <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
@@ -257,7 +261,7 @@ os.environ[&#39;QT_QPA_PLATFORM_PLUGIN_PATH&#39;] = &#39;C:/Users/aashi/Anaconda
 
 plt.style.use(&#39;ggplot&#39;)
 plt.xkcd()</code></pre>
-<pre><code>## &lt;matplotlib.pyplot.xkcd.&lt;locals&gt;.dummy_ctx object at 0x00000000273DCD30&gt;</code></pre>
+<pre><code>## &lt;matplotlib.pyplot.xkcd.&lt;locals&gt;.dummy_ctx object at 0x000000002741CE48&gt;</code></pre>
 <pre class="python"><code>nightjp = nightjp_csv.assign(date=lambda nightjp_csv:pd.to_datetime(nightjp_csv[&#39;system:index&#39;]))
 nightjp.head()</code></pre>
 <pre><code>##   system:index          sum    ...     Unnamed: 4       date
@@ -392,7 +396,7 @@ y_{i} = f_{TP}(\textbf{x}_{i}) + \epsilon_{i}
 <p><span class="math display">\[
 L(v,\mu,\textbf{K}(\textbf{x},\textbf{x}&#39;,\beta),\textbf{y}) = \frac{\Gamma(\frac{v+n}{2})}{((v-2)\pi)^{n/2}\Gamma(\frac{v}{2})}\frac{1}{\sqrt(\det\textbf{K}(\textbf{x},\textbf{x}&#39;,\beta))}(1+\frac{(\textbf{y}-\mu)^T\textbf{K}(\textbf{x},\textbf{x}&#39;,\beta)^{-1}(\textbf{y}-\mu)}{v-2})^{-\frac{(v+n)}2}
 \]</span></p>
-<p>これを最大化するような<span class="math inline">\(\beta\)</span>を最尤推定値とするのです。ここらへんもガウス過程と同じです。これで回帰の推定は完了です。とりあえずここまでをpythonで実行しましょう。</p>
+<p>これを最大化するような<span class="math inline">\(\beta\)</span>をPCのパワーを使って探索的に求め、最尤推定値とするのです。ここらへんもガウス過程と同じです。これで回帰推定は完了です。とりあえずここまでをpythonで実行しましょう。</p>
 
             </article>
           </div>
@@ -601,7 +605,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1566657939"></script>
+<script src="/my_blog/js/production.min.js?v=1567094206"></script>
 
 </body>
 </html>

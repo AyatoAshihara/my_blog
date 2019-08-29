@@ -1,0 +1,74 @@
+---
+title: 【単発】10年物長期金利をフィッティングしてみる
+author: Ayato Ashihara
+date: '2019-08-29'
+slug: post16
+categories:
+  - 単発
+tags:
+  - R
+  - 時系列解析
+  - 金融
+image: img/portfolio/FRED.png
+---
+
+<!--more-->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+```
+
+おはこんばんにちは。とある理由で10年物長期金利のフィッティングを行いたいと思いました。USデータを用いて解析してみます。まず、データを収集します。quantmodパッケージを用いて、FREDからデータを落としてきます。getsymbols(キー,from=開始日,src="FRED", auto.assign=TRUE)でできちゃうんですねー。便利です。ちなみにキーはFREDのHPで確認できます。
+
+```{r}
+library(quantmod)
+
+# data name collected
+symbols.name <- c("10-Year Treasury Constant Maturity Rate","Effective Federal Funds Rate","
+Consumer Price Index for All Urban Consumers: All Items","Civilian Unemployment Rate","3-Month Treasury Bill: Secondary Market Rate","Industrial Production Index","
+10-Year Breakeven Inflation Rate","Trade Weighted U.S. Dollar Index: Broad, Goods","
+Smoothed U.S. Recession Probabilities","Moody's Seasoned Baa Corporate Bond Yield","5-Year, 5-Year Forward Inflation Expectation Rate","Personal Consumption Expenditures")
+
+# Collect economic data
+symbols <- c("GS10","FEDFUNDS","CPIAUCSL","UNRATE","TB3MS","INDPRO","T10YIEM","TWEXBMTH","RECPROUSM156N","BAA","T5YIFRM","PCE")
+getSymbols(symbols, from = '1980-01-01', src = "FRED", auto.assign = TRUE)
+macro_indicator <- merge(GS10,FEDFUNDS,CPIAUCSL,UNRATE,TB3MS,INDPRO,T10YIEM,TWEXBMTH,RECPROUSM156N,BAA,T5YIFRM,PCE)
+rm(GS10,FEDFUNDS,CPIAUCSL,UNRATE,TB3MS,INDPRO,T10YIEM,TWEXBMTH,RECPROUSM156N,BAA,T5YIFRM,PCE)
+
+setwd("../htmlwidget")
+library(DT)
+DT.macro <- datatable(as.data.frame(macro_indicator),colnames = symbols.name)
+saveWidget(DT.macro, "macro_indicator.html", selfcontained = T)
+setwd("../post")
+```
+
+<iframe src="../../htmlwidget/macro_indicator/index.html" width="100%" height="500" seamless></iframe>
+
+```{r}
+# make dataset
+traindata <- na.omit(macro_indicator["2003-01-01::2017-12-31"])
+testdata <- na.omit(macro_indicator["2018-01-01::"])
+
+# fitting OLS
+trial1 <- lm(GS10~.,data = traindata)
+summary(trial1)
+est.OLS.Y <- predict(trial1,testdata[,-1])
+Y <- as.matrix(testdata[,1])
+mse.OLS <- sum((Y - est.OLS.Y)^2) / length(Y)
+
+# fitting ridge regression
+library(glmnet)
+trial2 <- cv.glmnet(as.matrix(traindata[,-1]),as.matrix(traindata[,1]),family="gaussian",alpha=1)
+plot(trial2)
+trial2$lambda.min
+coef(trial2,s=trial2$lambda.min)
+
+est.ridge.Y <- predict(trial2, newx = as.matrix(testdata[,-1]), s = trial2$lambda.min, type = 'response')
+mse.ridge <- sum((Y - est.ridge.Y)^2) / length(Y)
+
+plot(Y,est.OLS.Y)
+plot(Y,est.ridge.Y)
+
+```
+

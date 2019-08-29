@@ -202,7 +202,7 @@ $$
 L(v,\mu,\textbf{K}(\textbf{x},\textbf{x}',\beta),\textbf{y}) = \frac{\Gamma(\frac{v+n}{2})}{((v-2)\pi)^{n/2}\Gamma(\frac{v}{2})}\frac{1}{\sqrt(\det\textbf{K}(\textbf{x},\textbf{x}',\beta))}(1+\frac{(\textbf{y}-\mu)^T\textbf{K}(\textbf{x},\textbf{x}',\beta)^{-1}(\textbf{y}-\mu)}{v-2})^{-\frac{(v+n)}2}
 $$
 
-これを最大化するような$\beta$を最尤推定値とするのです。ここらへんもガウス過程と同じです。これで回帰の推定は完了です。とりあえずここまでをpythonで実行しましょう。
+これを最大化するような$\beta$をPCのパワーを使って探索的に求め、最尤推定値とするのです。ここらへんもガウス過程と同じです。これで回帰推定は完了です。とりあえずここまでをpythonで実行しましょう。
 
 
 

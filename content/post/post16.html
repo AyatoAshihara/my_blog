@@ -1,0 +1,110 @@
+---
+title: 【単発】10年物長期金利をフィッティングしてみる
+author: Ayato Ashihara
+date: '2019-08-29'
+slug: post16
+categories:
+  - 単発
+tags:
+  - R
+  - 時系列解析
+  - 金融
+image: img/portfolio/FRED.png
+---
+
+
+
+<!--more-->
+<p>おはこんばんにちは。とある理由で10年物長期金利のフィッティングを行いたいと思いました。USデータを用いて解析してみます。まず、データを収集します。quantmodパッケージを用いて、FREDからデータを落としてきます。getsymbols(キー,from=開始日,src=“FRED”, auto.assign=TRUE)でできちゃうんですねー。便利です。ちなみにキーはFREDのHPで確認できます。</p>
+<pre class="r"><code>library(quantmod)
+
+# data name collected
+symbols.name &lt;- c(&quot;10-Year Treasury Constant Maturity Rate&quot;,&quot;Effective Federal Funds Rate&quot;,&quot;
+Consumer Price Index for All Urban Consumers: All Items&quot;,&quot;Civilian Unemployment Rate&quot;,&quot;3-Month Treasury Bill: Secondary Market Rate&quot;,&quot;Industrial Production Index&quot;,&quot;
+10-Year Breakeven Inflation Rate&quot;,&quot;Trade Weighted U.S. Dollar Index: Broad, Goods&quot;,&quot;
+Smoothed U.S. Recession Probabilities&quot;,&quot;Moody&#39;s Seasoned Baa Corporate Bond Yield&quot;,&quot;5-Year, 5-Year Forward Inflation Expectation Rate&quot;,&quot;Personal Consumption Expenditures&quot;)
+
+# Collect economic data
+symbols &lt;- c(&quot;GS10&quot;,&quot;FEDFUNDS&quot;,&quot;CPIAUCSL&quot;,&quot;UNRATE&quot;,&quot;TB3MS&quot;,&quot;INDPRO&quot;,&quot;T10YIEM&quot;,&quot;TWEXBMTH&quot;,&quot;RECPROUSM156N&quot;,&quot;BAA&quot;,&quot;T5YIFRM&quot;,&quot;PCE&quot;)
+getSymbols(symbols, from = &#39;1980-01-01&#39;, src = &quot;FRED&quot;, auto.assign = TRUE)</code></pre>
+<pre><code>##  [1] &quot;GS10&quot;          &quot;FEDFUNDS&quot;      &quot;CPIAUCSL&quot;      &quot;UNRATE&quot;       
+##  [5] &quot;TB3MS&quot;         &quot;INDPRO&quot;        &quot;T10YIEM&quot;       &quot;TWEXBMTH&quot;     
+##  [9] &quot;RECPROUSM156N&quot; &quot;BAA&quot;           &quot;T5YIFRM&quot;       &quot;PCE&quot;</code></pre>
+<pre class="r"><code>macro_indicator &lt;- merge(GS10,FEDFUNDS,CPIAUCSL,UNRATE,TB3MS,INDPRO,T10YIEM,TWEXBMTH,RECPROUSM156N,BAA,T5YIFRM,PCE)
+rm(GS10,FEDFUNDS,CPIAUCSL,UNRATE,TB3MS,INDPRO,T10YIEM,TWEXBMTH,RECPROUSM156N,BAA,T5YIFRM,PCE)
+
+setwd(&quot;../htmlwidget&quot;)
+library(DT)
+DT.macro &lt;- datatable(as.data.frame(macro_indicator),colnames = symbols.name)
+saveWidget(DT.macro, &quot;macro_indicator.html&quot;, selfcontained = T)
+setwd(&quot;../post&quot;)</code></pre>
+<iframe src="../../htmlwidget/macro_indicator/index.html" width="100%" height="500" seamless>
+</iframe>
+<pre class="r"><code># make dataset
+traindata &lt;- na.omit(macro_indicator[&quot;2003-01-01::2017-12-31&quot;])
+testdata &lt;- na.omit(macro_indicator[&quot;2018-01-01::&quot;])
+
+# fitting OLS
+trial1 &lt;- lm(GS10~.,data = traindata)
+summary(trial1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = GS10 ~ ., data = traindata)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.54079 -0.13323 -0.01827  0.14982  0.70538 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)    9.1763130  2.8481629   3.222 0.001530 ** 
+## FEDFUNDS      -0.3447123  0.1075334  -3.206 0.001613 ** 
+## CPIAUCSL      -0.0745766  0.0153068  -4.872 2.54e-06 ***
+## UNRATE        -0.1524600  0.0580622  -2.626 0.009443 ** 
+## TB3MS          0.4403176  0.1070980   4.111 6.14e-05 ***
+## INDPRO        -0.0266866  0.0174299  -1.531 0.127629    
+## T10YIEM        0.8057917  0.1329464   6.061 8.64e-09 ***
+## TWEXBMTH      -0.0283859  0.0080681  -3.518 0.000559 ***
+## RECPROUSM156N -0.0120951  0.0016266  -7.436 5.08e-12 ***
+## BAA            0.9256302  0.0619744  14.936  &lt; 2e-16 ***
+## T5YIFRM        0.1001273  0.1432234   0.699 0.485457    
+## PCE            0.0009288  0.0001738   5.343 2.94e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.238 on 168 degrees of freedom
+## Multiple R-squared:  0.9515, Adjusted R-squared:  0.9484 
+## F-statistic: 299.9 on 11 and 168 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>est.OLS.Y &lt;- predict(trial1,testdata[,-1])
+Y &lt;- as.matrix(testdata[,1])
+mse.OLS &lt;- sum((Y - est.OLS.Y)^2) / length(Y)
+
+# fitting ridge regression
+library(glmnet)
+trial2 &lt;- cv.glmnet(as.matrix(traindata[,-1]),as.matrix(traindata[,1]),family=&quot;gaussian&quot;,alpha=1)
+plot(trial2)</code></pre>
+<p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>trial2$lambda.min</code></pre>
+<pre><code>## [1] 0.0002899246</code></pre>
+<pre class="r"><code>coef(trial2,s=trial2$lambda.min)</code></pre>
+<pre><code>## 12 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                          1
+## (Intercept)    7.575365789
+## FEDFUNDS      -0.270357210
+## CPIAUCSL      -0.063733090
+## UNRATE        -0.145176592
+## TB3MS          0.375092013
+## INDPRO        -0.025888287
+## T10YIEM        0.822931881
+## TWEXBMTH      -0.023086860
+## RECPROUSM156N -0.011822181
+## BAA            0.907155787
+## T5YIFRM        0.087212577
+## PCE            0.000796228</code></pre>
+<pre class="r"><code>est.ridge.Y &lt;- predict(trial2, newx = as.matrix(testdata[,-1]), s = trial2$lambda.min, type = &#39;response&#39;)
+mse.ridge &lt;- sum((Y - est.ridge.Y)^2) / length(Y)
+
+plot(Y,est.OLS.Y)</code></pre>
+<p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
+<pre class="r"><code>plot(Y,est.ridge.Y)</code></pre>
+<p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-2-3.png" width="672" /></p>
