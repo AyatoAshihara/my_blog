@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1567094206" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1567094773" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1567094206" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1567094773" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -274,7 +274,7 @@ library(DT)
 DT.macro &lt;- datatable(as.data.frame(macro_indicator),colnames = symbols.name)
 saveWidget(DT.macro, &quot;macro_indicator.html&quot;, selfcontained = T)
 setwd(&quot;../post&quot;)</code></pre>
-<iframe src="../../htmlwidget/macro_indicator/index.html" width="100%" height="500" seamless>
+<iframe src="../../htmlwidget/macro_indicator/index.html" width="100%" height="500" scrolling="”auto”" seamless allowfullscreen>
 </iframe>
 <pre class="r"><code># make dataset
 traindata &lt;- na.omit(macro_indicator[&quot;2003-01-01::2017-12-31&quot;])
@@ -321,22 +321,22 @@ trial2 &lt;- cv.glmnet(as.matrix(traindata[,-1]),as.matrix(traindata[,1]),family
 plot(trial2)</code></pre>
 <p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <pre class="r"><code>trial2$lambda.min</code></pre>
-<pre><code>## [1] 0.0002899246</code></pre>
+<pre><code>## [1] 0.0002193173</code></pre>
 <pre class="r"><code>coef(trial2,s=trial2$lambda.min)</code></pre>
 <pre><code>## 12 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
-##                          1
-## (Intercept)    7.575365789
-## FEDFUNDS      -0.270357210
-## CPIAUCSL      -0.063733090
-## UNRATE        -0.145176592
-## TB3MS          0.375092013
-## INDPRO        -0.025888287
-## T10YIEM        0.822931881
-## TWEXBMTH      -0.023086860
-## RECPROUSM156N -0.011822181
-## BAA            0.907155787
-## T5YIFRM        0.087212577
-## PCE            0.000796228</code></pre>
+##                           1
+## (Intercept)    7.8700794481
+## FEDFUNDS      -0.2826558594
+## CPIAUCSL      -0.0656101946
+## UNRATE        -0.1467712523
+## TB3MS          0.3857656225
+## INDPRO        -0.0261509564
+## T10YIEM        0.8195327289
+## TWEXBMTH      -0.0240398265
+## RECPROUSM156N -0.0118742721
+## BAA            0.9102299682
+## T5YIFRM        0.0899129489
+## PCE            0.0008193127</code></pre>
 <pre class="r"><code>est.ridge.Y &lt;- predict(trial2, newx = as.matrix(testdata[,-1]), s = trial2$lambda.min, type = &#39;response&#39;)
 mse.ridge &lt;- sum((Y - est.ridge.Y)^2) / length(Y)
 
@@ -552,7 +552,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1567094206"></script>
+<script src="/my_blog/js/production.min.js?v=1567094773"></script>
 
 </body>
 </html>
