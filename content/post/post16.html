@@ -107,12 +107,12 @@ setwd(&quot;../post&quot;)</code></pre>
 </tr>
 </tbody>
 </table>
-<p>かなり適当な変数選択ではあるんですが、マクロ経済学的に長期金利ってどうやってモデル化するかというとちゃんとやってない場合が多いです。DSGEでは効率市場仮説に従って10年先までの短期金利のパスをリンクしたものと等しくなると定式化するのが院生時代のモデリングでした。今はどうかわかりません。おそらくマクロファイナンスの界隈ではもうちょっとちゃんとやってそうです。ということで、短期金利を加えています。そして、短期金利に影響を与えるであろう物価にかかる指標も3つ追加しました。加えて、景気との相関が強いことはよく知られているので景気に関するデータも追加しました。そもそもマクロモデルでは短期金利は以下のようなテイラールールに従うとモデリングすることが一般的です（よく当たるので）。</p>
+<p>かなり適当な変数選択ではあるんですが、マクロモデリング的に長期金利ってどうやってモデル化するかというとちゃんとやってない場合が多いです。DSGEでは効率市場仮説に従って10年先までの短期金利のパスをリンクしたものと長期金利が等しくなると定式化するのが院生時代のモデリングでした（マクロファイナンスの界隈ではちゃんとやってそう）。そういうわけで、短期金利を説明変数に加えています。そして、短期金利に影響を与えるであろう物価にかかる指標も3つ追加しました。加えて、景気との相関が強いことはよく知られているので景気に関するデータも追加しました。これらはそもそもマクロモデルでは短期金利は以下のようなテイラールールに従うとモデリングすることが一般的であることが背景にあります。</p>
 <p><span class="math display">\[
 r_t = \rho r_{t-1} + \alpha \pi_{t} + \beta y_{t}
 \]</span>
 ここで、<span class="math inline">\(r_t\)</span>は政策金利（短期金利）、<span class="math inline">\(\pi_t\)</span>はインフレ率、<span class="math inline">\(y_t\)</span>はoutputです。<span class="math inline">\(\rho, \alpha, \beta\)</span>はdeep parameterと呼ばれるもので、それぞれ慣性、インフレ率への金利の感応度、outputに対する感応度を表しています。<span class="math inline">\(\rho=0,\beta=0\)</span>の時、<span class="math inline">\(\alpha&gt;=1\)</span>でなければ合理的期待均衡解が得られないことは「テイラーの原理」として有名です。
-その他、Corporate bondとの裁定関係も存在しそうなのでMoody’s Seasoned Baa Corporate Bond Yieldも追加しています。欲を言えばVIX指数と財政に関する指標を追加したいところです。財政に関する指数はQuateryかAnnualyなので今回のようなmonthlyの推計には使用することができません。この部分は最もネックなところです。なにか考え付いたら再推計します。</p>
+その他、Corporate bondとの裁定関係も存在しそうなMoody’s Seasoned Baa Corporate Bond Yieldも説明変数に追加しています。また、欲を言えばVIX指数と財政に関する指標を追加したいところです。財政に関する指数はQuateryかAnnualyなので今回のようなmonthlyの推計には使用することができません。この部分は最もネックなところです。なにか考え付いたら再推計します。</p>
 <p>では、推計に入ります。今回は説明変数が多いのでridge回帰を行い、有効な変数を絞り込みたいと思います。また、比較のためにOLSもやります。</p>
 <pre class="r"><code># make dataset
 traindata &lt;- na.omit(macro_indicator[&quot;2003-01-01::2017-12-31&quot;])
@@ -149,7 +149,7 @@ summary(trial1)</code></pre>
 ## Residual standard error: 0.238 on 168 degrees of freedom
 ## Multiple R-squared:  0.9515, Adjusted R-squared:  0.9484 
 ## F-statistic: 299.9 on 11 and 168 DF,  p-value: &lt; 2.2e-16</code></pre>
-<p>自由度修正済み決定係数高めですね。アウトサンプルのデータを用いて平均二乗誤差を計算します。</p>
+<p>自由度修正済み決定係数高めですね。20171231までのモデルを使って、アウトサンプルのデータ(20180101~)を予測し、平均二乗誤差を計算します。</p>
 <pre class="r"><code>est.OLS.Y &lt;- predict(trial1,testdata[,-1])
 Y &lt;- as.matrix(testdata[,1])
 mse.OLS &lt;- sum((Y - est.OLS.Y)^2) / length(Y)
@@ -162,25 +162,33 @@ trial2 &lt;- cv.glmnet(as.matrix(traindata[,-1]),as.matrix(traindata[,1]),family
 plot(trial2)</code></pre>
 <p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <pre class="r"><code>trial2$lambda.min</code></pre>
-<pre><code>## [1] 0.0001255014</code></pre>
+<pre><code>## [1] 0.0001511669</code></pre>
 <pre class="r"><code>coef(trial2,s=trial2$lambda.min)</code></pre>
 <pre><code>## 12 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
 ##                           1
-## (Intercept)    8.2579520716
-## FEDFUNDS      -0.2988131899
-## CPIAUCSL      -0.0680751399
-## UNRATE        -0.1488868437
-## TB3MS          0.3997825468
-## INDPRO        -0.0265014967
-## T10YIEM        0.8150636150
-## TWEXBMTH      -0.0252941439
-## RECPROUSM156N -0.0119432441
-## BAA            0.9142773813
-## T5YIFRM        0.0934582873
-## PCE            0.0008496374</code></pre>
+## (Intercept)    8.1524974304
+## FEDFUNDS      -0.2944203653
+## CPIAUCSL      -0.0674052993
+## UNRATE        -0.1483100559
+## TB3MS          0.3959725963
+## INDPRO        -0.0264059335
+## T10YIEM        0.8162752377
+## TWEXBMTH      -0.0249529799
+## RECPROUSM156N -0.0119244143
+## BAA            0.9131746534
+## T5YIFRM        0.0924989005
+## PCE            0.0008413955</code></pre>
 <p>Federal Funds Rate、Unemployment Rate、3-Month Treasury Bill、Breakeven Inflation Rate、Moody’s Seasoned Baa Corporate Bond Yieldの回帰係数が大きくなるという結果ですね。失業率以外は想定内の結果です。失業率は雇用に関する特徴量がこれしかなかったのが原因でしょうか。ただ、今回の結果を見る限り景気との相関は低そうです（逆向きにしか効かない？）。MSEを計算します。</p>
 <pre class="r"><code>est.ridge.Y &lt;- predict(trial2, newx = as.matrix(testdata[,-1]), s = trial2$lambda.min, type = &#39;response&#39;)
 mse.ridge &lt;- sum((Y - est.ridge.Y)^2) / length(Y)
 mse.ridge</code></pre>
-<pre><code>## [1] 0.03522911</code></pre>
-<p>辛うじて、ridge回帰のほうが良い結果になりました。</p>
+<pre><code>## [1] 0.03482042</code></pre>
+<p>ridge回帰のほうが良い結果になりました。ridge回帰で計算した予測値と実績値を時系列プロットしてみます。</p>
+<pre class="r"><code>library(tidyverse)
+
+ggplot(gather(data.frame(actual=Y[,1],prediction=est.ridge.Y[,1],date=as.POSIXct(rownames(Y))),key=data,value=rate,-date),aes(x=date,y=rate, colour=data)) +
+  geom_line(size=1.5) +
+  scale_x_datetime(breaks = &quot;2 month&quot;,date_labels = &quot;%Y-%m&quot;) +
+  scale_y_continuous(breaks=c(2,2.5,3,3.5),limits = c(2,3.5))</code></pre>
+<p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>方向感はいい感じです。2018年12月以降の急激な金利低下は予測できていません。この部分については何か変数を考えるorローリング推計を実施する、のいずれかをやってみないと精度が上がらなそうです。とりあえず、いったんこれでこの記事は終わりたいと思います。ここまで読み進めていただき、ありがとうございました。</p>
