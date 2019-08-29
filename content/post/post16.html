@@ -38,7 +38,82 @@ library(DT)
 DT.macro &lt;- datatable(as.data.frame(macro_indicator),colnames = symbols.name)
 saveWidget(DT.macro, &quot;macro_indicator.html&quot;, selfcontained = T)
 setwd(&quot;../post&quot;)</code></pre>
-<p><a href="../../htmlwidget/macro_indicator/index.html">データはこちらから</a></p>
+<p>データは
+<a href="../../htmlwidget/macro_indicator/index.html">こちら</a>
+から参照できます。では、推計用のデータセットを作成していきます。被説明変数は「10-Year Treasury Constant Maturity Rate(GS10)」です。説明変数は以下の通りです。</p>
+<table>
+<thead>
+<tr class="header">
+<th>説明変数名</th>
+<th>キー</th>
+<th>代理変数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Federal Funds Rate</td>
+<td>FEDFUNDS</td>
+<td>短期金利</td>
+</tr>
+<tr class="even">
+<td>Consumer Price Index</td>
+<td>CPIAUCSL</td>
+<td>物価</td>
+</tr>
+<tr class="odd">
+<td>Unemployment Rate</td>
+<td>UNRATE</td>
+<td>雇用関連</td>
+</tr>
+<tr class="even">
+<td>3-Month Treasury Bill</td>
+<td>TB3MS</td>
+<td>短期金利</td>
+</tr>
+<tr class="odd">
+<td>Industrial Production Index</td>
+<td>INDPRO</td>
+<td>景気</td>
+</tr>
+<tr class="even">
+<td>Breakeven Inflation Rate</td>
+<td>T10YIEM</td>
+<td>物価</td>
+</tr>
+<tr class="odd">
+<td>Trade Weighted Dollar Index</td>
+<td>TWEXBMTH</td>
+<td>為替</td>
+</tr>
+<tr class="even">
+<td>Recession Probabilities</td>
+<td>RECPROUSM156N</td>
+<td>景気</td>
+</tr>
+<tr class="odd">
+<td>Moody’s Seasoned Baa Corporate Bond Yield</td>
+<td>BAA</td>
+<td>リスクプレミアム</td>
+</tr>
+<tr class="even">
+<td>Inflation Expectation Rate</td>
+<td>T5YIFRM</td>
+<td>物価</td>
+</tr>
+<tr class="odd">
+<td>Personal Consumption Expenditures</td>
+<td>PCE</td>
+<td>景気</td>
+</tr>
+</tbody>
+</table>
+<p>かなり適当な変数選択ではあるんですが、マクロ経済学的に長期金利ってどうやってモデル化するかというとちゃんとやってない場合が多いです。DSGEでは効率市場仮説に従って10年先までの短期金利のパスをリンクしたものと等しくなると定式化するのが院生時代のモデリングでした。今はどうかわかりません。おそらくマクロファイナンスの界隈ではもうちょっとちゃんとやってそうです。ということで、短期金利を加えています。そして、短期金利に影響を与えるであろう物価にかかる指標も3つ追加しました。加えて、景気との相関が強いことはよく知られているので景気に関するデータも追加しました。そもそもマクロモデルでは短期金利は以下のようなテイラールールに従うとモデリングすることが一般的です（よく当たるので）。</p>
+<p><span class="math display">\[
+r_t = \rho r_{t-1} + \alpha \pi_{t} + \beta y_{t}
+\]</span>
+ここで、<span class="math inline">\(r_t\)</span>は政策金利（短期金利）、<span class="math inline">\(\pi_t\)</span>はインフレ率、<span class="math inline">\(y_t\)</span>はoutputです。<span class="math inline">\(\rho, \alpha, \beta\)</span>はdeep parameterと呼ばれるもので、それぞれ慣性、インフレ率への金利の感応度、outputに対する感応度を表しています。<span class="math inline">\(\rho=0,\beta=0\)</span>の時、<span class="math inline">\(\alpha&gt;=1\)</span>でなければ合理的期待均衡解が得られないことは「テイラーの原理」として有名です。
+その他、Corporate bondとの裁定関係も存在しそうなのでMoody’s Seasoned Baa Corporate Bond Yieldも追加しています。欲を言えばVIX指数と財政に関する指標を追加したいところです。財政に関する指数はQuateryかAnnualyなので今回のようなmonthlyの推計には使用することができません。この部分は最もネックなところです。なにか考え付いたら再推計します。</p>
+<p>では、推計に入ります。今回は説明変数が多いのでridge回帰を行い、有効な変数を絞り込みたいと思います。また、比較のためにOLSもやります。</p>
 <pre class="r"><code># make dataset
 traindata &lt;- na.omit(macro_indicator[&quot;2003-01-01::2017-12-31&quot;])
 testdata &lt;- na.omit(macro_indicator[&quot;2018-01-01::&quot;])
@@ -74,15 +149,18 @@ summary(trial1)</code></pre>
 ## Residual standard error: 0.238 on 168 degrees of freedom
 ## Multiple R-squared:  0.9515, Adjusted R-squared:  0.9484 
 ## F-statistic: 299.9 on 11 and 168 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>自由度修正済み決定係数高めですね。アウトサンプルのデータを用いて平均二乗誤差を計算します。</p>
 <pre class="r"><code>est.OLS.Y &lt;- predict(trial1,testdata[,-1])
 Y &lt;- as.matrix(testdata[,1])
 mse.OLS &lt;- sum((Y - est.OLS.Y)^2) / length(Y)
-
-# fitting ridge regression
+mse.OLS</code></pre>
+<pre><code>## [1] 0.0406695</code></pre>
+<p>次にridge回帰です。</p>
+<pre class="r"><code># fitting ridge regression
 library(glmnet)
 trial2 &lt;- cv.glmnet(as.matrix(traindata[,-1]),as.matrix(traindata[,1]),family=&quot;gaussian&quot;,alpha=1)
 plot(trial2)</code></pre>
-<p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <pre class="r"><code>trial2$lambda.min</code></pre>
 <pre><code>## [1] 0.0001255014</code></pre>
 <pre class="r"><code>coef(trial2,s=trial2$lambda.min)</code></pre>
@@ -100,10 +178,9 @@ plot(trial2)</code></pre>
 ## BAA            0.9142773813
 ## T5YIFRM        0.0934582873
 ## PCE            0.0008496374</code></pre>
+<p>Federal Funds Rate、Unemployment Rate、3-Month Treasury Bill、Breakeven Inflation Rate、Moody’s Seasoned Baa Corporate Bond Yieldの回帰係数が大きくなるという結果ですね。失業率以外は想定内の結果です。失業率は雇用に関する特徴量がこれしかなかったのが原因でしょうか。ただ、今回の結果を見る限り景気との相関は低そうです（逆向きにしか効かない？）。MSEを計算します。</p>
 <pre class="r"><code>est.ridge.Y &lt;- predict(trial2, newx = as.matrix(testdata[,-1]), s = trial2$lambda.min, type = &#39;response&#39;)
 mse.ridge &lt;- sum((Y - est.ridge.Y)^2) / length(Y)
-
-plot(Y,est.OLS.Y)</code></pre>
-<p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
-<pre class="r"><code>plot(Y,est.ridge.Y)</code></pre>
-<p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-2-3.png" width="672" /></p>
+mse.ridge</code></pre>
+<pre><code>## [1] 0.03522911</code></pre>
+<p>辛うじて、ridge回帰のほうが良い結果になりました。</p>

@@ -43,7 +43,33 @@ saveWidget(DT.macro, "macro_indicator.html", selfcontained = T)
 setwd("../post")
 ```
 
-[データはこちらから](../../htmlwidget/macro_indicator/index.html)
+データは
+[こちら](../../htmlwidget/macro_indicator/index.html)
+から参照できます。では、推計用のデータセットを作成していきます。被説明変数は「10-Year Treasury Constant Maturity Rate(GS10)」です。説明変数は以下の通りです。
+
+|  説明変数名  |  キー  |  代理変数  |
+| ---- | ---- | ---- |
+|  Federal Funds Rate  |  FEDFUNDS  |  短期金利  |
+|  Consumer Price Index  |  CPIAUCSL  |  物価  |
+|  Unemployment Rate  |  UNRATE  |  雇用関連  |
+|  3-Month Treasury Bill  |  TB3MS  |  短期金利  |
+|  Industrial Production Index  |  INDPRO  |  景気  |
+|  Breakeven Inflation Rate  |  T10YIEM  |  物価  |
+|  Trade Weighted Dollar Index  |  TWEXBMTH  |  為替  |
+|  Recession Probabilities  |  RECPROUSM156N  |  景気  |
+|  Moody's Seasoned Baa Corporate Bond Yield  |  BAA  |  リスクプレミアム  |
+|  Inflation Expectation Rate  |  T5YIFRM  |  物価  |
+|  Personal Consumption Expenditures  |  PCE  |  景気  |
+
+かなり適当な変数選択ではあるんですが、マクロ経済学的に長期金利ってどうやってモデル化するかというとちゃんとやってない場合が多いです。DSGEでは効率市場仮説に従って10年先までの短期金利のパスをリンクしたものと等しくなると定式化するのが院生時代のモデリングでした。今はどうかわかりません。おそらくマクロファイナンスの界隈ではもうちょっとちゃんとやってそうです。ということで、短期金利を加えています。そして、短期金利に影響を与えるであろう物価にかかる指標も3つ追加しました。加えて、景気との相関が強いことはよく知られているので景気に関するデータも追加しました。そもそもマクロモデルでは短期金利は以下のようなテイラールールに従うとモデリングすることが一般的です（よく当たるので）。
+
+$$
+r_t = \rho r_{t-1} + \alpha \pi_{t} + \beta y_{t}
+$$
+ここで、$r_t$は政策金利（短期金利）、$\pi_t$はインフレ率、$y_t$はoutputです。$\rho, \alpha, \beta$はdeep parameterと呼ばれるもので、それぞれ慣性、インフレ率への金利の感応度、outputに対する感応度を表しています。$\rho=0,\beta=0$の時、$\alpha>=1$でなければ合理的期待均衡解が得られないことは「テイラーの原理」として有名です。
+その他、Corporate bondとの裁定関係も存在しそうなのでMoody's Seasoned Baa Corporate Bond Yieldも追加しています。欲を言えばVIX指数と財政に関する指標を追加したいところです。財政に関する指数はQuateryかAnnualyなので今回のようなmonthlyの推計には使用することができません。この部分は最もネックなところです。なにか考え付いたら再推計します。
+
+では、推計に入ります。今回は説明変数が多いのでridge回帰を行い、有効な変数を絞り込みたいと思います。また、比較のためにOLSもやります。
 
 ```{r}
 # make dataset
@@ -53,10 +79,21 @@ testdata <- na.omit(macro_indicator["2018-01-01::"])
 # fitting OLS
 trial1 <- lm(GS10~.,data = traindata)
 summary(trial1)
+
+```
+
+自由度修正済み決定係数高めですね。アウトサンプルのデータを用いて平均二乗誤差を計算します。
+
+```{r}
 est.OLS.Y <- predict(trial1,testdata[,-1])
 Y <- as.matrix(testdata[,1])
 mse.OLS <- sum((Y - est.OLS.Y)^2) / length(Y)
+mse.OLS
+```
 
+次にridge回帰です。
+
+```{r}
 # fitting ridge regression
 library(glmnet)
 trial2 <- cv.glmnet(as.matrix(traindata[,-1]),as.matrix(traindata[,1]),family="gaussian",alpha=1)
@@ -64,11 +101,17 @@ plot(trial2)
 trial2$lambda.min
 coef(trial2,s=trial2$lambda.min)
 
+```
+
+Federal Funds Rate、Unemployment Rate、3-Month Treasury Bill、Breakeven Inflation Rate、Moody's Seasoned Baa Corporate Bond Yieldの回帰係数が大きくなるという結果ですね。失業率以外は想定内の結果です。失業率は雇用に関する特徴量がこれしかなかったのが原因でしょうか。ただ、今回の結果を見る限り景気との相関は低そうです（逆向きにしか効かない？）。MSEを計算します。
+
+```{r}
 est.ridge.Y <- predict(trial2, newx = as.matrix(testdata[,-1]), s = trial2$lambda.min, type = 'response')
 mse.ridge <- sum((Y - est.ridge.Y)^2) / length(Y)
-
-plot(Y,est.OLS.Y)
-plot(Y,est.ridge.Y)
-
+mse.ridge
 ```
+
+辛うじて、ridge回帰のほうが良い結果になりました。
+
+
 
