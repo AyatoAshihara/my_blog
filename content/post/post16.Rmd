@@ -69,12 +69,12 @@ $$
 ここで、$r_t$は政策金利（短期金利）、$\pi_t$はインフレ率、$y_t$はoutputです。$\rho, \alpha, \beta$はdeep parameterと呼ばれるもので、それぞれ慣性、インフレ率への金利の感応度、outputに対する感応度を表しています。$\rho=0,\beta=0$の時、$\alpha>=1$でなければ合理的期待均衡解が得られないことは「テイラーの原理」として有名です。
 その他、Corporate bondとの裁定関係も存在しそうなMoody's Seasoned Baa Corporate Bond Yieldも説明変数に追加しています。また、欲を言えばVIX指数と財政に関する指標を追加したいところです。財政に関する指数はQuateryかAnnualyなので今回のようなmonthlyの推計には使用することができません。この部分は最もネックなところです。なにか考え付いたら再推計します。
 
-では、推計に入ります。今回は説明変数が多いのでridge回帰を行い、有効な変数を絞り込みたいと思います。また、比較のためにOLSもやります。
+では、推計に入ります。今回は説明変数が多いのでridge回帰を行い、有効な変数を絞り込みたいと思います。また、比較のためにOLSもやります。説明変数は被説明変数の1期前の値を使用します。おそらく、1期前でもデータの公表時期によっては翌月の推計に間に合わない可能性もありますが、とりあえずこれでやってみます。
 
 ```{r}
 # make dataset
-traindata <- na.omit(macro_indicator["2003-01-01::2017-12-31"])
-testdata <- na.omit(macro_indicator["2018-01-01::"])
+traindata <- na.omit(merge(macro_indicator["2003-01-01::2017-12-31"][,1],stats::lag(macro_indicator["2003-01-01::2015-12-31"][,-1],1)))
+testdata  <- na.omit(merge(macro_indicator["2016-01-01::"][,1],stats::lag(macro_indicator["2016-01-01::"][,-1],1)))
 
 # fitting OLS
 trial1 <- lm(GS10~.,data = traindata)
@@ -82,7 +82,7 @@ summary(trial1)
 
 ```
 
-自由度修正済み決定係数高めですね。20171231までのモデルを使って、アウトサンプルのデータ(20180101~)を予測し、平均二乗誤差を計算します。
+自由度修正済み決定係数高めですね。2015/12/31までのモデルを使って、アウトサンプルのデータ(2016/01/01~)を予測し、平均二乗誤差を計算します。
 
 ```{r}
 est.OLS.Y <- predict(trial1,testdata[,-1])
@@ -91,7 +91,7 @@ mse.OLS <- sum((Y - est.OLS.Y)^2) / length(Y)
 mse.OLS
 ```
 
-次にridge回帰です。
+次にridge回帰です。Cross Validation
 
 ```{r}
 # fitting ridge regression
@@ -103,7 +103,7 @@ coef(trial2,s=trial2$lambda.min)
 
 ```
 
-Federal Funds Rate、Unemployment Rate、3-Month Treasury Bill、Breakeven Inflation Rate、Moody's Seasoned Baa Corporate Bond Yieldの回帰係数が大きくなるという結果ですね。失業率以外は想定内の結果です。失業率は雇用に関する特徴量がこれしかなかったのが原因でしょうか。ただ、今回の結果を見る限り景気との相関は低そうです（逆向きにしか効かない？）。MSEを計算します。
+Unemployment Rate、3-Month Treasury Bill、Breakeven Inflation Rate、Moody's Seasoned Baa Corporate Bond Yield、Inflation Expectation Rateの回帰係数が大きくなるという結果ですね。失業率以外は想定内の結果です。ただ、今回の結果を見る限り景気との相関は低そうです（逆向きにしか効かない？）。MSEを計算します。
 
 ```{r}
 est.ridge.Y <- predict(trial2, newx = as.matrix(testdata[,-1]), s = trial2$lambda.min, type = 'response')
@@ -118,9 +118,9 @@ library(tidyverse)
 
 ggplot(gather(data.frame(actual=Y[,1],prediction=est.ridge.Y[,1],date=as.POSIXct(rownames(Y))),key=data,value=rate,-date),aes(x=date,y=rate, colour=data)) +
   geom_line(size=1.5) +
-  scale_x_datetime(breaks = "2 month",date_labels = "%Y-%m") +
-  scale_y_continuous(breaks=c(2,2.5,3,3.5),limits = c(2,3.5))
+  scale_x_datetime(breaks = "6 month",date_labels = "%Y-%m") +
+  scale_y_continuous(breaks=c(1,1.5,2,2.5,3,3.5),limits = c(1.25,3.5))
 
 ```
 
-方向感はいい感じです。2018年12月以降の急激な金利低下は予測できていません。この部分については何か変数を考えるorローリング推計を実施する、のいずれかをやってみないと精度が上がらなそうです。とりあえず、いったんこれでこの記事は終わりたいと思います。ここまで読み進めていただき、ありがとうございました。
+方向感はいい感じです。一方で、2016年1月からや2018年12月以降の急激な金利低下は予測できていません。この部分については何か変数を考えるorローリング推計を実施する、のいずれかをやってみないと精度が上がらなそうです。とりあえず、いったんこれでこの記事は終わりたいと思います。ここまで読み進めていただき、ありがとうございました。

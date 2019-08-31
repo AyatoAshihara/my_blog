@@ -26,7 +26,7 @@
         "datePublished": "2019-08-29 00:00:00 \x2b0000 UTC",
         "dateModified" : "2019-08-29 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post16\/",
-        "wordCount" : "523",
+        "wordCount" : "524",
         "image" : "/my_blog/img/portfolio/FRED.png"",
         "keywords" : [ ""R"",""時系列解析"",""金融"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1567100206" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1567220291" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1567100206" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1567220291" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -349,10 +349,10 @@ r_t = \rho r_{t-1} + \alpha \pi_{t} + \beta y_{t}
 \]</span>
 ここで、<span class="math inline">\(r_t\)</span>は政策金利（短期金利）、<span class="math inline">\(\pi_t\)</span>はインフレ率、<span class="math inline">\(y_t\)</span>はoutputです。<span class="math inline">\(\rho, \alpha, \beta\)</span>はdeep parameterと呼ばれるもので、それぞれ慣性、インフレ率への金利の感応度、outputに対する感応度を表しています。<span class="math inline">\(\rho=0,\beta=0\)</span>の時、<span class="math inline">\(\alpha&gt;=1\)</span>でなければ合理的期待均衡解が得られないことは「テイラーの原理」として有名です。
 その他、Corporate bondとの裁定関係も存在しそうなMoody’s Seasoned Baa Corporate Bond Yieldも説明変数に追加しています。また、欲を言えばVIX指数と財政に関する指標を追加したいところです。財政に関する指数はQuateryかAnnualyなので今回のようなmonthlyの推計には使用することができません。この部分は最もネックなところです。なにか考え付いたら再推計します。</p>
-<p>では、推計に入ります。今回は説明変数が多いのでridge回帰を行い、有効な変数を絞り込みたいと思います。また、比較のためにOLSもやります。</p>
+<p>では、推計に入ります。今回は説明変数が多いのでridge回帰を行い、有効な変数を絞り込みたいと思います。また、比較のためにOLSもやります。説明変数は被説明変数の1期前の値を使用します。おそらく、1期前でもデータの公表時期によっては翌月の推計に間に合わない可能性もありますが、とりあえずこれでやってみます。</p>
 <pre class="r"><code># make dataset
-traindata &lt;- na.omit(macro_indicator[&quot;2003-01-01::2017-12-31&quot;])
-testdata &lt;- na.omit(macro_indicator[&quot;2018-01-01::&quot;])
+traindata &lt;- na.omit(merge(macro_indicator[&quot;2003-01-01::2017-12-31&quot;][,1],stats::lag(macro_indicator[&quot;2003-01-01::2015-12-31&quot;][,-1],1)))
+testdata  &lt;- na.omit(merge(macro_indicator[&quot;2016-01-01::&quot;][,1],stats::lag(macro_indicator[&quot;2016-01-01::&quot;][,-1],1)))
 
 # fitting OLS
 trial1 &lt;- lm(GS10~.,data = traindata)
@@ -363,71 +363,71 @@ summary(trial1)</code></pre>
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -0.54079 -0.13323 -0.01827  0.14982  0.70538 
+## -0.75683 -0.21102  0.00154  0.22050  0.69964 
 ## 
 ## Coefficients:
 ##                 Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)    9.1763130  2.8481629   3.222 0.001530 ** 
-## FEDFUNDS      -0.3447123  0.1075334  -3.206 0.001613 ** 
-## CPIAUCSL      -0.0745766  0.0153068  -4.872 2.54e-06 ***
-## UNRATE        -0.1524600  0.0580622  -2.626 0.009443 ** 
-## TB3MS          0.4403176  0.1070980   4.111 6.14e-05 ***
-## INDPRO        -0.0266866  0.0174299  -1.531 0.127629    
-## T10YIEM        0.8057917  0.1329464   6.061 8.64e-09 ***
-## TWEXBMTH      -0.0283859  0.0080681  -3.518 0.000559 ***
-## RECPROUSM156N -0.0120951  0.0016266  -7.436 5.08e-12 ***
-## BAA            0.9256302  0.0619744  14.936  &lt; 2e-16 ***
-## T5YIFRM        0.1001273  0.1432234   0.699 0.485457    
-## PCE            0.0009288  0.0001738   5.343 2.94e-07 ***
+## (Intercept)   14.6105842  4.3437565   3.364 0.000988 ***
+## FEDFUNDS      -0.2281525  0.1449398  -1.574 0.117670    
+## CPIAUCSL      -0.0696664  0.0209329  -3.328 0.001112 ** 
+## UNRATE        -0.2143573  0.0797112  -2.689 0.008015 ** 
+## TB3MS          0.3305061  0.1421094   2.326 0.021440 *  
+## INDPRO        -0.0671882  0.0260464  -2.580 0.010901 *  
+## T10YIEM        1.1112254  0.1763376   6.302 3.43e-09 ***
+## TWEXBMTH      -0.0318222  0.0117401  -2.711 0.007539 ** 
+## RECPROUSM156N -0.0104952  0.0022041  -4.762 4.66e-06 ***
+## BAA            0.7758102  0.0856821   9.055 9.23e-16 ***
+## T5YIFRM       -0.4390203  0.1878507  -2.337 0.020823 *  
+## PCE            0.0009085  0.0002499   3.636 0.000386 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 0.238 on 168 degrees of freedom
-## Multiple R-squared:  0.9515, Adjusted R-squared:  0.9484 
-## F-statistic: 299.9 on 11 and 168 DF,  p-value: &lt; 2.2e-16</code></pre>
-<p>自由度修正済み決定係数高めですね。20171231までのモデルを使って、アウトサンプルのデータ(20180101~)を予測し、平均二乗誤差を計算します。</p>
+## Residual standard error: 0.2972 on 143 degrees of freedom
+## Multiple R-squared:  0.9208, Adjusted R-squared:  0.9147 
+## F-statistic: 151.1 on 11 and 143 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>自由度修正済み決定係数高めですね。2015/12/31までのモデルを使って、アウトサンプルのデータ(2016/01/01~)を予測し、平均二乗誤差を計算します。</p>
 <pre class="r"><code>est.OLS.Y &lt;- predict(trial1,testdata[,-1])
 Y &lt;- as.matrix(testdata[,1])
 mse.OLS &lt;- sum((Y - est.OLS.Y)^2) / length(Y)
 mse.OLS</code></pre>
-<pre><code>## [1] 0.0406695</code></pre>
-<p>次にridge回帰です。</p>
+<pre><code>## [1] 0.1520849</code></pre>
+<p>次にridge回帰です。Cross Validation</p>
 <pre class="r"><code># fitting ridge regression
 library(glmnet)
 trial2 &lt;- cv.glmnet(as.matrix(traindata[,-1]),as.matrix(traindata[,1]),family=&quot;gaussian&quot;,alpha=1)
 plot(trial2)</code></pre>
 <p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <pre class="r"><code>trial2$lambda.min</code></pre>
-<pre><code>## [1] 0.0001511669</code></pre>
+<pre><code>## [1] 0.0006950552</code></pre>
 <pre class="r"><code>coef(trial2,s=trial2$lambda.min)</code></pre>
 <pre><code>## 12 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
 ##                           1
-## (Intercept)    8.1524974304
-## FEDFUNDS      -0.2944203653
-## CPIAUCSL      -0.0674052993
-## UNRATE        -0.1483100559
-## TB3MS          0.3959725963
-## INDPRO        -0.0264059335
-## T10YIEM        0.8162752377
-## TWEXBMTH      -0.0249529799
-## RECPROUSM156N -0.0119244143
-## BAA            0.9131746534
-## T5YIFRM        0.0924989005
-## PCE            0.0008413955</code></pre>
-<p>Federal Funds Rate、Unemployment Rate、3-Month Treasury Bill、Breakeven Inflation Rate、Moody’s Seasoned Baa Corporate Bond Yieldの回帰係数が大きくなるという結果ですね。失業率以外は想定内の結果です。失業率は雇用に関する特徴量がこれしかなかったのが原因でしょうか。ただ、今回の結果を見る限り景気との相関は低そうです（逆向きにしか効かない？）。MSEを計算します。</p>
+## (Intercept)   11.0913765347
+## FEDFUNDS      -0.0872570864
+## CPIAUCSL      -0.0508651301
+## UNRATE        -0.1871709994
+## TB3MS          0.2058502593
+## INDPRO        -0.0612950674
+## T10YIEM        1.1416879545
+## TWEXBMTH      -0.0206931552
+## RECPROUSM156N -0.0098454812
+## BAA            0.7470735428
+## T5YIFRM       -0.4412856213
+## PCE            0.0006705683</code></pre>
+<p>Unemployment Rate、3-Month Treasury Bill、Breakeven Inflation Rate、Moody’s Seasoned Baa Corporate Bond Yield、Inflation Expectation Rateの回帰係数が大きくなるという結果ですね。失業率以外は想定内の結果です。ただ、今回の結果を見る限り景気との相関は低そうです（逆向きにしか効かない？）。MSEを計算します。</p>
 <pre class="r"><code>est.ridge.Y &lt;- predict(trial2, newx = as.matrix(testdata[,-1]), s = trial2$lambda.min, type = &#39;response&#39;)
 mse.ridge &lt;- sum((Y - est.ridge.Y)^2) / length(Y)
 mse.ridge</code></pre>
-<pre><code>## [1] 0.03482042</code></pre>
+<pre><code>## [1] 0.1322327</code></pre>
 <p>ridge回帰のほうが良い結果になりました。ridge回帰で計算した予測値と実績値を時系列プロットしてみます。</p>
 <pre class="r"><code>library(tidyverse)
 
 ggplot(gather(data.frame(actual=Y[,1],prediction=est.ridge.Y[,1],date=as.POSIXct(rownames(Y))),key=data,value=rate,-date),aes(x=date,y=rate, colour=data)) +
   geom_line(size=1.5) +
-  scale_x_datetime(breaks = &quot;2 month&quot;,date_labels = &quot;%Y-%m&quot;) +
-  scale_y_continuous(breaks=c(2,2.5,3,3.5),limits = c(2,3.5))</code></pre>
+  scale_x_datetime(breaks = &quot;6 month&quot;,date_labels = &quot;%Y-%m&quot;) +
+  scale_y_continuous(breaks=c(1,1.5,2,2.5,3,3.5),limits = c(1.25,3.5))</code></pre>
 <p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>方向感はいい感じです。2018年12月以降の急激な金利低下は予測できていません。この部分については何か変数を考えるorローリング推計を実施する、のいずれかをやってみないと精度が上がらなそうです。とりあえず、いったんこれでこの記事は終わりたいと思います。ここまで読み進めていただき、ありがとうございました。</p>
+<p>方向感はいい感じです。一方で、2016年1月からや2018年12月以降の急激な金利低下は予測できていません。この部分については何か変数を考えるorローリング推計を実施する、のいずれかをやってみないと精度が上がらなそうです。とりあえず、いったんこれでこの記事は終わりたいと思います。ここまで読み進めていただき、ありがとうございました。</p>
 
             </article>
           </div>
@@ -636,7 +636,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1567100206"></script>
+<script src="/my_blog/js/production.min.js?v=1567220291"></script>
 
 </body>
 </html>
