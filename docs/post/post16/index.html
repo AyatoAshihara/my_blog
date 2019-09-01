@@ -26,7 +26,7 @@
         "datePublished": "2019-08-29 00:00:00 \x2b0000 UTC",
         "dateModified" : "2019-08-29 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post16\/",
-        "wordCount" : "524",
+        "wordCount" : "927",
         "image" : "/my_blog/img/portfolio/FRED.png"",
         "keywords" : [ ""R"",""時系列解析"",""金融"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1567220291" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1567353284" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1567220291" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1567353284" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -251,7 +251,9 @@ if (!doNotTrack) {
         <div class="entry-container">
           <div class="entry-content">
             <article>
-              <p>おはこんばんにちは。とある理由で10年物長期金利のフィッティングを行いたいと思いました。USデータを用いて解析してみます。まず、データを収集します。quantmodパッケージを用いて、FREDからデータを落としてきます。getsymbols(キー,from=開始日,src=“FRED”, auto.assign=TRUE)でできちゃうんですねー。便利です。ちなみにキーはFREDのHPで確認できます。</p>
+              <p>おはこんばんにちは。とある理由で10年物長期金利のフィッティングを行いたいと思いました。というわけで、USデータを用いて解析していきます。まず、データを収集しましょう。quantmodパッケージを用いて、FREDからデータを落とします。getsymbols(キー,from=開始日,src=“FRED”, auto.assign=TRUE)で簡単にできちゃいます。ちなみにキーはFREDのHPで確認できます。</p>
+<div id="section" class="section level3">
+<h3>1. データ収集</h3>
 <pre class="r"><code>library(quantmod)
 
 # data name collected
@@ -267,13 +269,16 @@ getSymbols(symbols, from = &#39;1980-01-01&#39;, src = &quot;FRED&quot;, auto.as
 ##  [5] &quot;TB3MS&quot;         &quot;INDPRO&quot;        &quot;T10YIEM&quot;       &quot;TWEXBMTH&quot;     
 ##  [9] &quot;RECPROUSM156N&quot; &quot;BAA&quot;           &quot;T5YIFRM&quot;       &quot;PCE&quot;</code></pre>
 <pre class="r"><code>macro_indicator &lt;- merge(GS10,FEDFUNDS,CPIAUCSL,UNRATE,TB3MS,INDPRO,T10YIEM,TWEXBMTH,RECPROUSM156N,BAA,T5YIFRM,PCE)
-rm(GS10,FEDFUNDS,CPIAUCSL,UNRATE,TB3MS,INDPRO,T10YIEM,TWEXBMTH,RECPROUSM156N,BAA,T5YIFRM,PCE)
+rm(GS10,FEDFUNDS,CPIAUCSL,UNRATE,TB3MS,INDPRO,T10YIEM,TWEXBMTH,RECPROUSM156N,BAA,T5YIFRM,PCE,USEPUINDXD)
 
 setwd(&quot;../htmlwidget&quot;)
 library(DT)
 DT.macro &lt;- datatable(as.data.frame(macro_indicator),colnames = symbols.name)
 saveWidget(DT.macro, &quot;macro_indicator.html&quot;, selfcontained = T)
 setwd(&quot;../post&quot;)</code></pre>
+</div>
+<div id="section-1" class="section level3">
+<h3>2. 月次解析パート</h3>
 <p>データは
 <a href="../../htmlwidget/macro_indicator/index.html">こちら</a>
 から参照できます。では、推計用のデータセットを作成していきます。被説明変数は「10-Year Treasury Constant Maturity Rate(GS10)」です。説明変数は以下の通りです。</p>
@@ -341,6 +346,11 @@ setwd(&quot;../post&quot;)</code></pre>
 <td>PCE</td>
 <td>景気</td>
 </tr>
+<tr class="even">
+<td>Economic Policy Uncertainty Index</td>
+<td>USEPUINDXD</td>
+<td>政治</td>
+</tr>
 </tbody>
 </table>
 <p>かなり適当な変数選択ではあるんですが、マクロモデリング的に長期金利ってどうやってモデル化するかというとちゃんとやってない場合が多いです。DSGEでは効率市場仮説に従って10年先までの短期金利のパスをリンクしたものと長期金利が等しくなると定式化するのが院生時代のモデリングでした（マクロファイナンスの界隈ではちゃんとやってそう）。そういうわけで、短期金利を説明変数に加えています。そして、短期金利に影響を与えるであろう物価にかかる指標も3つ追加しました。加えて、景気との相関が強いことはよく知られているので景気に関するデータも追加しました。これらはそもそもマクロモデルでは短期金利は以下のようなテイラールールに従うとモデリングすることが一般的であることが背景にあります。</p>
@@ -349,9 +359,9 @@ r_t = \rho r_{t-1} + \alpha \pi_{t} + \beta y_{t}
 \]</span>
 ここで、<span class="math inline">\(r_t\)</span>は政策金利（短期金利）、<span class="math inline">\(\pi_t\)</span>はインフレ率、<span class="math inline">\(y_t\)</span>はoutputです。<span class="math inline">\(\rho, \alpha, \beta\)</span>はdeep parameterと呼ばれるもので、それぞれ慣性、インフレ率への金利の感応度、outputに対する感応度を表しています。<span class="math inline">\(\rho=0,\beta=0\)</span>の時、<span class="math inline">\(\alpha&gt;=1\)</span>でなければ合理的期待均衡解が得られないことは「テイラーの原理」として有名です。
 その他、Corporate bondとの裁定関係も存在しそうなMoody’s Seasoned Baa Corporate Bond Yieldも説明変数に追加しています。また、欲を言えばVIX指数と財政に関する指標を追加したいところです。財政に関する指数はQuateryかAnnualyなので今回のようなmonthlyの推計には使用することができません。この部分は最もネックなところです。なにか考え付いたら再推計します。</p>
-<p>では、推計に入ります。今回は説明変数が多いのでridge回帰を行い、有効な変数を絞り込みたいと思います。また、比較のためにOLSもやります。説明変数は被説明変数の1期前の値を使用します。おそらく、1期前でもデータの公表時期によっては翌月の推計に間に合わない可能性もありますが、とりあえずこれでやってみます。</p>
+<p>では、推計に入ります。今回は説明変数が多いのでlasso回帰を行い、有効な変数を絞り込みたいと思います。また、比較のためにOLSもやります。説明変数は被説明変数の1期前の値を使用します。おそらく、1期前でもデータの公表時期によっては翌月の推計に間に合わない可能性もありますが、とりあえずこれでやってみます。</p>
 <pre class="r"><code># make dataset
-traindata &lt;- na.omit(merge(macro_indicator[&quot;2003-01-01::2017-12-31&quot;][,1],stats::lag(macro_indicator[&quot;2003-01-01::2015-12-31&quot;][,-1],1)))
+traindata &lt;- na.omit(merge(macro_indicator[&quot;2003-01-01::2015-12-31&quot;][,1],stats::lag(macro_indicator[&quot;2003-01-01::2015-12-31&quot;][,-1],1)))
 testdata  &lt;- na.omit(merge(macro_indicator[&quot;2016-01-01::&quot;][,1],stats::lag(macro_indicator[&quot;2016-01-01::&quot;][,-1],1)))
 
 # fitting OLS
@@ -391,43 +401,133 @@ Y &lt;- as.matrix(testdata[,1])
 mse.OLS &lt;- sum((Y - est.OLS.Y)^2) / length(Y)
 mse.OLS</code></pre>
 <pre><code>## [1] 0.1520849</code></pre>
-<p>次にridge回帰です。Cross Validation</p>
-<pre class="r"><code># fitting ridge regression
+<p>次にlasso回帰です。Cross Validationを行い、<span class="math inline">\(\lambda\)</span>を決めるglmnetパッケージのcv.glmnet関数を使用します。</p>
+<pre class="r"><code># fitting lasso regression
 library(glmnet)
 trial2 &lt;- cv.glmnet(as.matrix(traindata[,-1]),as.matrix(traindata[,1]),family=&quot;gaussian&quot;,alpha=1)
 plot(trial2)</code></pre>
 <p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <pre class="r"><code>trial2$lambda.min</code></pre>
-<pre><code>## [1] 0.0006950552</code></pre>
+<pre><code>## [1] 0.0006333084</code></pre>
 <pre class="r"><code>coef(trial2,s=trial2$lambda.min)</code></pre>
 <pre><code>## 12 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
-##                           1
-## (Intercept)   11.0913765347
-## FEDFUNDS      -0.0872570864
-## CPIAUCSL      -0.0508651301
-## UNRATE        -0.1871709994
-## TB3MS          0.2058502593
-## INDPRO        -0.0612950674
-## T10YIEM        1.1416879545
-## TWEXBMTH      -0.0206931552
-## RECPROUSM156N -0.0098454812
-## BAA            0.7470735428
-## T5YIFRM       -0.4412856213
-## PCE            0.0006705683</code></pre>
+##                          1
+## (Intercept)   11.370488098
+## FEDFUNDS      -0.097433090
+## CPIAUCSL      -0.052334550
+## UNRATE        -0.189332356
+## TB3MS          0.214744728
+## INDPRO        -0.061806766
+## T10YIEM        1.139522665
+## TWEXBMTH      -0.021554956
+## RECPROUSM156N -0.009895542
+## BAA            0.749189499
+## T5YIFRM       -0.441222817
+## PCE            0.000689252</code></pre>
 <p>Unemployment Rate、3-Month Treasury Bill、Breakeven Inflation Rate、Moody’s Seasoned Baa Corporate Bond Yield、Inflation Expectation Rateの回帰係数が大きくなるという結果ですね。失業率以外は想定内の結果です。ただ、今回の結果を見る限り景気との相関は低そうです（逆向きにしか効かない？）。MSEを計算します。</p>
-<pre class="r"><code>est.ridge.Y &lt;- predict(trial2, newx = as.matrix(testdata[,-1]), s = trial2$lambda.min, type = &#39;response&#39;)
-mse.ridge &lt;- sum((Y - est.ridge.Y)^2) / length(Y)
-mse.ridge</code></pre>
-<pre><code>## [1] 0.1322327</code></pre>
-<p>ridge回帰のほうが良い結果になりました。ridge回帰で計算した予測値と実績値を時系列プロットしてみます。</p>
+<pre class="r"><code>est.lasso.Y &lt;- predict(trial2, newx = as.matrix(testdata[,-1]), s = trial2$lambda.min, type = &#39;response&#39;)
+mse.lasso &lt;- sum((Y - est.lasso.Y)^2) / length(Y)
+mse.lasso</code></pre>
+<pre><code>## [1] 0.1336762</code></pre>
+<p>lasso回帰のほうが良い結果になりました。lasso回帰で計算した予測値と実績値を時系列プロットしてみます。</p>
 <pre class="r"><code>library(tidyverse)
 
-ggplot(gather(data.frame(actual=Y[,1],prediction=est.ridge.Y[,1],date=as.POSIXct(rownames(Y))),key=data,value=rate,-date),aes(x=date,y=rate, colour=data)) +
+ggplot(gather(data.frame(actual=Y[,1],lasso_prediction=est.lasso.Y[,1],OLS_prediction=est.OLS.Y,date=as.POSIXct(rownames(Y))),key=data,value=rate,-date),aes(x=date,y=rate, colour=data)) +
   geom_line(size=1.5) +
   scale_x_datetime(breaks = &quot;6 month&quot;,date_labels = &quot;%Y-%m&quot;) +
   scale_y_continuous(breaks=c(1,1.5,2,2.5,3,3.5),limits = c(1.25,3.5))</code></pre>
 <p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>方向感はいい感じです。一方で、2016年1月からや2018年12月以降の急激な金利低下は予測できていません。この部分については何か変数を考えるorローリング推計を実施する、のいずれかをやってみないと精度が上がらなそうです。とりあえず、いったんこれでこの記事は終わりたいと思います。ここまで読み進めていただき、ありがとうございました。</p>
+<p>方向感はいい感じです。一方で、2016年1月からや2018年12月以降の急激な金利低下は予測できていません。この部分については何か変数を考えるorローリング推計を実施する、のいずれかをやってみないと精度が上がらなそうです。</p>
+</div>
+<div id="section-2" class="section level3">
+<h3>3. 日次解析パート</h3>
+<p>月次での解析に加えて日次での解析もやりたいとおもいます。日次データであればデータの公表は市場が閉まり次第の場合が多いので、いわゆる「jagged edge」の問題が起こりにくいと思います。まずは日次データの収集から始めます。</p>
+<pre class="r"><code># data name collected
+symbols.name &lt;- c(&quot;10-Year Treasury Constant Maturity Rate&quot;,&quot;Effective Federal Funds Rate&quot;,&quot;
+6-Month London Interbank Offered Rate (LIBOR), based on U.S. Dollar&quot;,&quot;NASDAQ Composite Index&quot;,&quot;3-Month Treasury Bill: Secondary Market Rate&quot;,&quot;Economic Policy Uncertainty Index for United States&quot;,&quot;
+10-Year Breakeven Inflation Rate&quot;,&quot;Trade Weighted U.S. Dollar Index: Broad, Goods&quot;,&quot;Moody&#39;s Seasoned Baa Corporate Bond Yield&quot;,&quot;5-Year, 5-Year Forward Inflation Expectation Rate&quot;)
+
+# Collect economic data
+symbols &lt;- c(&quot;DGS10&quot;,&quot;DFF&quot;,&quot;USD6MTD156N&quot;,&quot;NASDAQCOM&quot;,&quot;DTB3&quot;,&quot;USEPUINDXD&quot;,&quot;T10YIE&quot;,&quot;DTWEXB&quot;,&quot;DBAA&quot;,&quot;T5YIFR&quot;)
+getSymbols(symbols, from = &#39;1980-01-01&#39;, src = &quot;FRED&quot;, auto.assign = TRUE)</code></pre>
+<pre><code>##  [1] &quot;DGS10&quot;       &quot;DFF&quot;         &quot;USD6MTD156N&quot; &quot;NASDAQCOM&quot;   &quot;DTB3&quot;       
+##  [6] &quot;USEPUINDXD&quot;  &quot;T10YIE&quot;      &quot;DTWEXB&quot;      &quot;DBAA&quot;        &quot;T5YIFR&quot;</code></pre>
+<pre class="r"><code>NASDAQCOM.r &lt;- ROC(na.omit(NASDAQCOM))
+macro_indicator.d &lt;- merge(DGS10,DFF,USD6MTD156N,NASDAQCOM.r,DTB3,USEPUINDXD,T10YIE,DTWEXB,DBAA,T5YIFR)
+rm(DGS10,DFF,USD6MTD156N,NASDAQCOM,NASDAQCOM.r,DTB3,USEPUINDXD,T10YIE,DTWEXB,DBAA,T5YIFR)</code></pre>
+<p>次にデータセットを構築します。学習用と訓練用にデータを分けます。実際の予測プロセスを考え、2営業日前のデータを説明変数に用いています。</p>
+<pre class="r"><code># make dataset
+traindata.d &lt;- na.omit(merge(macro_indicator.d[&quot;1980-01-01::2010-12-31&quot;][,1],stats::lag(macro_indicator.d[&quot;1980-01-01::2010-12-31&quot;][,-1],2)))
+testdata.d  &lt;- na.omit(merge(macro_indicator.d[&quot;2010-01-01::&quot;][,1],stats::lag(macro_indicator.d[&quot;2010-01-01::&quot;][,-1],2)))
+
+# fitting OLS
+trial1.d &lt;- lm(DGS10~.,data = traindata.d)
+summary(trial1.d)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = DGS10 ~ ., data = traindata.d)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.82445 -0.12285  0.00469  0.14332  0.73789 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -3.5051208  0.1690503 -20.734  &lt; 2e-16 ***
+## DFF          0.0818269  0.0239371   3.418 0.000653 ***
+## USD6MTD156N -0.0135771  0.0233948  -0.580 0.561799    
+## NASDAQCOM   -0.3880217  0.4367334  -0.888 0.374483    
+## DTB3         0.1227984  0.0280283   4.381 1.29e-05 ***
+## USEPUINDXD  -0.0006611  0.0001086  -6.087 1.58e-09 ***
+## T10YIE       0.6980971  0.0355734  19.624  &lt; 2e-16 ***
+## DTWEXB       0.0270128  0.0012781  21.135  &lt; 2e-16 ***
+## DBAA         0.2988122  0.0182590  16.365  &lt; 2e-16 ***
+## T5YIFR       0.3374944  0.0381111   8.856  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.2173 on 1114 degrees of freedom
+## Multiple R-squared:  0.8901, Adjusted R-squared:  0.8892 
+## F-statistic:  1002 on 9 and 1114 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>依然決定係数は高めです。</p>
+<pre class="r"><code>est.OLS.Y.d &lt;- predict(trial1.d,testdata.d[,-1])
+Y.d &lt;- as.matrix(testdata.d[,1])
+mse.OLS.d &lt;- sum((Y.d - est.OLS.Y.d)^2) / length(Y.d)
+mse.OLS.d</code></pre>
+<pre><code>## [1] 0.7575628</code></pre>
+<p>次にlasso回帰です。CVで<span class="math inline">\(\lambda\)</span>を決定。</p>
+<pre class="r"><code># fitting lasso regression
+trial2.d &lt;- cv.glmnet(as.matrix(traindata.d[,-1]),as.matrix(traindata.d[,1]),family=&quot;gaussian&quot;,alpha=1)
+plot(trial2.d)</code></pre>
+<p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>trial2.d$lambda.min</code></pre>
+<pre><code>## [1] 0.001946395</code></pre>
+<pre class="r"><code>coef(trial2.d,s=trial2.d$lambda.min)</code></pre>
+<pre><code>## 10 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                         1
+## (Intercept) -3.3909765744
+## DFF          0.0699863918
+## USD6MTD156N  .           
+## NASDAQCOM   -0.2387283133
+## DTB3         0.1211502622
+## USEPUINDXD  -0.0006466593
+## T10YIE       0.6892394967
+## DTWEXB       0.0269516521
+## DBAA         0.2842685912
+## T5YIFR       0.3370093419</code></pre>
+<p>liborの係数値が0になりました。MSEはOLSの方が高い結果に。</p>
+<pre class="r"><code>est.lasso.Y.d &lt;- predict(trial2.d, newx = as.matrix(testdata.d[,-1]), s = trial2.d$lambda.min, type = &#39;response&#39;)
+mse.lasso.d &lt;- sum((Y.d - est.lasso.Y.d)^2) / length(Y.d)
+mse.lasso.d</code></pre>
+<pre><code>## [1] 0.7983624</code></pre>
+<p>予測値をプロットします。</p>
+<pre class="r"><code>ggplot(gather(data.frame(actual=Y.d[,1],lasso_prediction=est.lasso.Y.d[,1],OLS_prediction=est.OLS.Y.d,date=as.POSIXct(rownames(Y.d))),key=data,value=rate,-date),aes(x=date,y=rate, colour=data)) +
+  geom_line(size=1.5) +
+  scale_x_datetime(breaks = &quot;2 year&quot;,date_labels = &quot;%Y-%m&quot;) +
+  scale_y_continuous(breaks=c(1,1.5,2,2.5,3,3.5),limits = c(1.25,5))</code></pre>
+<p><img src="/my_blog/post/post16_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>月次と同じく、OLSとlassoで予測値に差はほとんどありません。なかなかいい感じに変動を捉えることができていますが、2011年の「United States federal government credit-rating downgrades」による金利低下や2013年の景気回復に伴う金利上昇は捉えることができていません。日次の景気指標はPOSデータくらいしかないんですが、強いて言うなら最近使用した夜間光の衛星画像データなんかは使えるかもしれません。時間があればやってみます。とりあえず、いったんこれでこの記事は終わりたいと思います。ここまで読み進めていただき、ありがとうございました。</p>
+</div>
 
             </article>
           </div>
@@ -636,7 +736,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1567220291"></script>
+<script src="/my_blog/js/production.min.js?v=1567353284"></script>
 
 </body>
 </html>
