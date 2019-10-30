@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/xcode.min.css" rel="stylesheet">
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<script type="application/ld+json">
+    {
+        "@context" : "http://schema.org",
+        "@type" : "BlogPosting",
+        "mainEntityOfPage": {
+             "@type": "WebPage",
+             "@id": "\/my_blog\/"
+        },
+        "articleSection" : "",
+        "name" : "【統計学検定】統計学1級をはじめから丁寧に（第１回 確率と確率変数）",
+        "headline" : "【統計学検定】統計学1級をはじめから丁寧に（第１回 確率と確率変数）",
+        "description" : "\r\n\r\n\r\n",
+        "inLanguage" : "en",
+        "author" : "Ayato Ashihara",
+        "creator" : "Ayato Ashihara",
+        "publisher": "Ayato Ashihara",
+        "accountablePerson" : "Ayato Ashihara",
+        "copyrightHolder" : "Ayato Ashihara",
+        "copyrightYear" : "2019",
+        "datePublished": "2019-09-22 00:00:00 \x2b0000 UTC",
+        "dateModified" : "2019-09-22 00:00:00 \x2b0000 UTC",
+        "url" : "\/my_blog\/post17\/",
+        "wordCount" : "514",
+        "image" : "/my_blog/%!s(\u003cnil\u003e)"",
+        "keywords" : [ ""統計学検定"","Blog" ]   
+    }
+    </script>
+
+
+ <title>【統計学検定】統計学1級をはじめから丁寧に（第１回 確率と確率変数） </title>
+
+
+<meta name="description" content="マクロ経済、機械学習系の記事を投稿しています。" />
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="all,follow">
+<meta name="googlebot" content="index,follow,snippet,archive">
+<link rel="stylesheet" id="ct-tracks-google-fonts-css" href="//fonts.googleapis.com/css?family=Raleway%3A400%2C700&amp;subset=latin%2Clatin-ext&amp;ver=4.7.2" type="text/css" media="all">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+<link href="/my_blog/css/style.css?v=1572458778" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+
+<link href="/my_blog/css/custom.css?v=1572458778" rel="stylesheet" type='text/css' media='all'>
+<link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-140804055-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+
+<body class="post-template-default single single-post single-format-standard ct-body singular singular-post not-front standard">
+
+  <div id="overflow-container" class="overflow-container">
+    <a class="skip-content" href="#main">Skip to content</a>
+    <header id="site-header" class="site-header" role="banner">
+      <div class='top-navigation'>
+        <div class='container'>
+
+  <div id="menu-secondary" class="menu-container menu-secondary" role="navigation">
+    <button id="toggle-secondary-navigation" class="toggle-secondary-navigation"><i class="fas fa-plus"></i></button>
+
+    <div class="menu">
+
+      <ul id="menu-secondary-items" class="menu-secondary-items">
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E4%BB%95%E4%BA%8B%E9%96%A2%E9%80%A3">仕事関連</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E5%8D%98%E7%99%BA">単発</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E6%97%A5%E6%AC%A1gdp">日次gdp</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E7%AB%B6%E9%A6%AC">競馬</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E7%B5%B1%E8%A8%88">統計</a>
+        </li>
+        
+
+      </ul>
+
+    </div>
+
+  </div>
+
+
+  <ul class="social-media-icons">
+
+
+    
+    <li>
+      <a href="https://www.facebook.com/ASSIY" data-animate-hover="pulse" class="facebook" target="_blank">
+        <i class="fab fa-facebook-square" title="facebook"></i>
+        <span class="screen-reader-text">facebook</span>
+      </a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+    <li>
+      <a href="mailto:assiy119@yahoo.co.jp" data-animate-hover="pulse" class="email">
+        <i class="fas fa-envelope" title="email"></i>
+        <span class="screen-reader-text">email</span>
+      </a>
+    </li>
+    
+
+    
+
+    
+
+
+    
+    <li>
+      <a href="https://github.com/AyatoAshihara/my_blog" data-animate-hover="pulse" class="github" target="_blank">
+        <i class="fab fa-github" title="github"></i>
+        <span class="screen-reader-text">github</span>
+      </a>
+    </li>
+    
+
+
+    
+
+    
+    <li>
+      <a href="/my_blog/index.xml" data-animate-hover="pulse" class="rss" target="_blank">
+        <i class="fas fa-rss" title="rss"></i>
+        <span class="screen-reader-text">rss</span>
+      </a>
+    </li>
+    
+
+
+  </ul></div>
+
+      </div>
+
+      <div class="container">
+        
+
+
+<div id="title-info" class="title-info">
+  <div id='site-title' class='site-title'>
+    
+    <a href="/my_blog"> 東京の資産運用会社で働く社会人が研究に没頭するブログ </a>
+    </div>
+  </div>
+  <button id="toggle-navigation" class="toggle-navigation">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div id="menu-primary-tracks" class="menu-primary-tracks"></div>
+  <div id="menu-primary" class="menu-container menu-primary" role="navigation">
+    
+    <p class="site-description">院卒2年目の社会人が夜な夜な更新中。本ブログの内容は筆者が所属する組織の公式見解とは全く関係ありません。</p>
+    
+
+    <div class="menu">
+      <ul id="menu-primary-items" class="menu-primary-items">
+        
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/">Home</a>
+          
+        </li>
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/about/">About</a>
+          
+        </li>
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/contact/">Get in touch</a>
+          
+        </li>
+        
+      </ul>
+    </div>
+
+  </div>
+
+      </div>
+    </header>
+
+    <div id="main" class="main" role="main">
+
+      
+  
+  
+    
+  
+  
+  <div id="loop-container" class="loop-container">
+    
+
+      <div class="post type-post status-publish format-standard hentry category-standard category-travel entry full-without-featured odd excerpt-1">
+
+        
+        <div class="entry-meta">
+          <span class="date">22 September</span>	<span> / </span>
+
+          <span class="author">
+            <a href="/my_blog/" title="Posts by " rel="author"></a>
+          </span>
+
+
+          
+          <span class="category">
+            <span> / </span>
+
+            <a href="/categories/%E7%B5%B1%E8%A8%88">統計</a>
+          </span>
+          
+
+
+        </div>
+        <div class='entry-header'>
+          <h1 class='entry-title'> 【統計学検定】統計学1級をはじめから丁寧に（第１回 確率と確率変数）</h1>
+        </div>
+        <div class="entry-container">
+          <div class="entry-content">
+            <article>
+              <p>おはこんばんにちは。新シリーズです。統計学検定１級の内容を丁寧に学習していこうという自己満シリーズをやりたいと思います。教科書では省略されてしまう証明や式変形を丁寧に追っていきたいと思います。第１回の今回は「確率と確率変数」です。</p>
+<div id="section" class="section level4">
+<h4>1. 事象と確率</h4>
+<div id="section-1" class="section level5">
+<h5>1.1 確率の計算</h5>
+<p>まず、今後使用していく用語の定義をしていきたいと思います。</p>
+<p>・試行 - その結果が偶然によって左右される実験や観測（ex. くじを引く、サイコロを投げる）
+・根源事象あるいは標本点 - 試行に対する結果
+・事象 - 根源事象あるいは標本点の集合</p>
+<p>事象には以下のような用語があります。</p>
+<p>・全事象<span class="math inline">\(\Omega\)</span> - 結果全体の集合<br />
+・空事象<span class="math inline">\(\phi\)</span> - 標本点を持たない空集合<br />
+・<span class="math inline">\(A\)</span>の余事象<span class="math inline">\(A^c\)</span> - <span class="math inline">\(A\)</span>が起こらないという事象<br />
+・<span class="math inline">\(A\)</span>と<span class="math inline">\(B\)</span>の和事象<span class="math inline">\(A\cup B\)</span> - <span class="math inline">\(S\)</span>または<span class="math inline">\(B\)</span>が起こるという事象<br />
+・<span class="math inline">\(A\)</span>と<span class="math inline">\(B\)</span>の積事象<span class="math inline">\(A\cap B\)</span> - <span class="math inline">\(A\)</span>かつ<span class="math inline">\(B\)</span>が起こるという事象<br />
+・<span class="math inline">\(A\)</span>と<span class="math inline">\(B\)</span>が排反 - <span class="math inline">\(A\cap B=\phi\)</span>であること（<span class="math inline">\(A\)</span>と<span class="math inline">\(B\)</span>は同じに起こりえない）</p>
+<p>次に確率を定義します。統計学検定１級では測度論的確率論を用いた厳密な定義を行いません。確率は以下の３つを満たす<span class="math inline">\(P(・)\)</span>と<strong>関数</strong>として定義されています。</p>
+<ol style="list-style-type: decimal">
+<li>任意の事象<span class="math inline">\(A\)</span>に対して<span class="math inline">\(0\le P(A) \le 1\)</span></li>
+<li>全事象<span class="math inline">\(\Omega\)</span>に対して<span class="math inline">\(P(\Omega)=1\)</span></li>
+<li><span class="math inline">\(A_1,A_2,...\)</span>が互いに排反な事象ならば<span class="math inline">\(P(\displaystyle \bigcup_{i=1}^\infty A_i)=\sum_{i=1}^\infty P(A_i)\)</span>（<span class="math inline">\(\sigma\)</span>加法性）</li>
+</ol>
+<p>ここから以下のような定理を証明することができます。</p>
+<p>(1)空事象<span class="math inline">\(\phi\)</span>に対して<span class="math inline">\(P(\phi)=0\)</span></p>
+<p><span class="math inline">\(\phi\)</span>と<span class="math inline">\(\Omega\)</span>は排反なので、
+<span class="math display">\[
+P(\Omega) = P(\phi \cup \Omega) = P(\phi) + P(\Omega).
+\]</span>
+最後の等式は<span class="math inline">\(\sigma\)</span>加法性を使いました。ここから、
+<span class="math display">\[
+P(\phi) = 0.
+\]</span>
+となります。かなり当たり前のこと事実も定義から証明できます。空集合であって、なにも起こらない確率でないことに注意です。何も起こらないことも事象ですので。</p>
+<p>(2)<span class="math inline">\(A_1,A_2,...,A_n\)</span>が互いに排反な事象ならば<span class="math inline">\(P(A_1\cup A_2\cup ... \cup A_n) = P(A_1)+P(A_2)+...+P(A_n)\)</span></p>
+<p>事象<span class="math inline">\(A\)</span>を<span class="math inline">\(A_1,A_2,...,A_n\)</span>と<span class="math inline">\(A_{n+1},A_{n+2},...\)</span>に分割します。後半を<span class="math inline">\(A_{n+1},A_{n+2},...=\phi\)</span>とすると、<span class="math inline">\(P(\phi)=0\)</span>なので、<span class="math inline">\(\sigma\)</span>加法性より</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+P(\displaystyle \bigcup_{i=1}^\infty A_i)&amp;=&amp;\sum_{i=1}^\infty P(A_i) \\
+&amp;=&amp; P(A_1)+P(A_2)+...+P(A_n) + P(A_{n+1}) + P(A_{n+2})+ ...\\
+&amp;=&amp; P(A_1)+P(A_2)+...+P(A_n) + 0 + 0 + ...\\
+&amp;=&amp;P(A_1\cup A_2\cup ... \cup A_n) \\
+&amp;=&amp; P(A_1)+P(A_2)+...+P(A_n).
+\end{eqnarray}
+\]</span>
+無理矢理感ありますが、和事象の確率を定義できました。</p>
+<p>(3)任意の事象<span class="math inline">\(A\)</span>に対して<span class="math inline">\(P(A^c)=1-P(A)\)</span></p>
+<p>全確率が1から導けます。
+<span class="math display">\[
+1 = P(\Omega) = P(A \cup A^c) = P(A) + P(A^c)
+\]</span>
+より、<span class="math inline">\(P(A^c)=1-P(A)\)</span>.</p>
+<p>(4)任意の事象<span class="math inline">\(A\)</span>と<span class="math inline">\(B\)</span>に対して<span class="math inline">\(P(A\cup B)=P(A)+P(B)-P(A\cap B)\)</span>（加法定理）</p>
+<p><span class="math display">\[
+A\cup B = (A\cap B)\cup(A\cap B^c)\cup(A^c\cap B), \\
+A = (A\cap B)\cup(A\cap B^c), \\
+B = (A\cap B)\cup(A^c\cap B).
+\]</span>
+<span class="math inline">\(A\cap B, A\cap B^c, A^c\cap B\)</span>は排反なので(2)を用いて
+<span class="math display">\[
+P(A\cup B) = P(A\cap B) + P(A^c\cap B) + P(A\cap B^c),\\
+P(A) = P(A\cap B) + P(A\cap B^c), \\
+P(B) = P(A\cap B) + P(A^c\cap B).
+\]</span>
+ここから、</p>
+<p><span class="math display">\[
+P(A\cap B^c) = P(A) - P(A\cap B),  \\
+P(A^c\cap B) = P(B) - P(A\cap B)
+\]</span>
+なので、代入すると</p>
+<p>$$
+<span class="math display">\[\begin{eqnarray}
+P(A\cup B) &amp;=&amp; P(A\cap B) + (P(A) - P(A\cap B)) + (P(B) - P(A\cap B)) \\
+&amp;=&amp;P(A) + P(B) - P(A\cap B)
+
+\end{eqnarray}\]</span>
+$$</p>
+<p>事象<span class="math inline">\(A\)</span>と<span class="math inline">\(B\)</span>は排反ではないので、単純に確率を足し合わせるとかぶっている部分が出るため、その部分を引いています。</p>
+</div>
+<div id="section-2" class="section level5">
+<h5>1.2 統計的独立</h5>
+<p>2つの事象<span class="math inline">\(A\)</span>,<span class="math inline">\(B\)</span>が<span class="math inline">\(P(A\cap B)=P(A)P(B)\)</span>を満たすとき、<span class="math inline">\(A\)</span>と<span class="math inline">\(B\)</span>は統計的独立であるといいます。ここから、余事象が独立であることも示すことができます。</p>
+<p>(1)事象<span class="math inline">\(A\)</span>と<span class="math inline">\(B^c\)</span>は独立
+　
+<span class="math display">\[
+\begin{eqnarray}
+P(A\cap B^c) &amp;=&amp; P(A) - P(A\cap B)  \\
+&amp;=&amp; P(A) - P(A)P(B) \\
+&amp;=&amp; P(A)\{1-P(B)\} \\
+&amp;=&amp; P(A)P(B^c)
+\end{eqnarray}
+\]</span></p>
+<p>(2)事象<span class="math inline">\(A^c\)</span>と<span class="math inline">\(B^c\)</span>は独立</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+P(A^c\cap B^c) &amp;=&amp; P(A^c)-P(A^c\cap B)\\
+&amp;=&amp; P(A^c) - P(A^c)P(B) \\
+&amp;=&amp;P(A^c)\{1-P(B)\} \\
+&amp;=&amp;P(A^c)P(B^c)
+\end{eqnarray}
+\]</span></p>
+</div>
+<div id="section-3" class="section level5">
+<h5>1.3 条件付き確率</h5>
+<p><span class="math inline">\(P(A)&gt;0\)</span>である事象<span class="math inline">\(A\)</span>と事象<span class="math inline">\(B\)</span>に対して、<span class="math inline">\(A\)</span>が起こった条件のもとで<span class="math inline">\(B\)</span>が生じる確率を<span class="math inline">\(A\)</span>を与えたときの<span class="math inline">\(B\)</span>の条件付き確率といいます。条件付き確率は以下で与えられます。</p>
+<p><span class="math display">\[
+\displaystyle P(B|A)=\frac{P(A\cap B)}{P(A)}
+\]</span>
+条件付き確率には以下の性質があります。</p>
+<p>(1)<span class="math inline">\(P(・|A)\)</span>は確率の定義を満たす</p>
+<p><span class="math display">\[
+\displaystyle P(\phi|A)=\frac{P(\phi\cap A)}{P(A)}=\frac{P(\phi)}{P(A)} = 0\\
+\displaystyle P(\Omega|A) = \frac{P(\Omega\cap A)}{P(A)} = \frac{P(A)}{P(A)} = 1 \\
+\]</span>
+<span class="math inline">\(B\)</span>と<span class="math inline">\(C\)</span>が排反ならば、
+<span class="math display">\[
+\displaystyle P(B\cup C|A)=\frac{P(A\cap B) + P(A\cap C)}{P(A)}=P(B|A)+P(C|A)
+\]</span></p>
+<p>(2)<span class="math inline">\(P(B|A)=P(B)\)</span>ならば<span class="math inline">\(A\)</span>と<span class="math inline">\(B\)</span>は独立であり、また逆も成り立つ。
+<span class="math display">\[
+\displaystyle P(B|A)=\frac{P(A\cap B)}{P(A)}=P(B)
+\]</span>
+より
+<span class="math display">\[
+P(A\cap B) = P(A)P(B)
+\]</span></p>
+<p>条件付き確率の問題ではベイズの定理を使った問題が頻出です。<br />
+<span class="math inline">\(A_1,A_2,...,A_n\)</span>が<span class="math inline">\(\bigcup_{i=1}^nA_i=\Omega\)</span>を満たす互いに排反な事象ならば、任意の事象<span class="math inline">\(B\)</span>に対して次が成立します。</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\displaystyle P(A_i|B)&amp;=&amp;\frac{P(A_i\cap B)}{P(B)}=\frac{P(A_i \cap B)}{\sum_{i=1}^nP(A_i\cap B)}　\\
+&amp;=&amp; \frac{P(A_i\cap B)}{P(\bigcup_{i=1}^n\{A_i\cap B\})}=\frac{P(A_i\cap B)}{P(\Omega\cap B)} \\
+&amp;=&amp; \frac{P(B|A_i)P(A_i)}{\sum_{i=1}^nP(B|A_i)P(A_i)}
+\end{eqnarray}
+\]</span></p>
+</div>
+</div>
+<div id="section-4" class="section level4">
+<h4>2 確率分布と母関数</h4>
+<div id="section-5" class="section level5">
+<h5>2.1 離散型確率変数</h5>
+<p>ある確率に基づいた試行の結果により値が定まるような変数<span class="math inline">\(X\)</span>を確率変数といいます。そして、とりうる値が離散型の確率変数を離散型確率変数と呼びます。そして、</p>
+<p><span class="math display">\[
+f_X(x) = P(X=x)
+\]</span>
+で定義される関数<span class="math inline">\(f_X(・)\)</span>を<span class="math inline">\(X\)</span>の確率関数といいます。<span class="math inline">\(f_X(・)\)</span>のとりうる値が<span class="math inline">\(x_1,x_2,...\)</span>のとき、<span class="math inline">\(f_X(x)=0(x\notin\{x_1,x_2,...\})\)</span>また、ぜんかくりつが1となることより、<span class="math inline">\(f_X(・)\)</span>は
+<span class="math display">\[
+\displaystyle \sum_{k=1}^\infty f_X(x_k) = 1
+\]</span>
+を満たします。このような確率変数のとりうる値と確率の対応関係を、その確率変数の確率分布といいます。</p>
+</div>
+<div id="section-6" class="section level5">
+<h5>2.2 連続型確率変数</h5>
+<p>離散型確率変数とは対照的に、とりうる値がとびとびではなく連続的な物となる確率変数を連続型確率変数といいます。連続型確率変数においては、とりうる値全てに正の確率を与えると総和が無限大になってしまうので、確率は区間に対して与えられます。<span class="math inline">\(a\)</span>と<span class="math inline">\(b\)</span>を定数とした時の<span class="math inline">\(a\le X \le b\)</span>という事象の確率が、非負関数<span class="math inline">\(f_X(・)\)</span>を用いて</p>
+<p><span class="math display">\[
+P(a\le X \le b) = \int_a^bf_X(x)dx
+\]</span>
+で与えられるとき、この<span class="math inline">\(fX(・)\)</span>を<span class="math inline">\(X\)</span>の確率密度関数といいます。全確率が1であることより、<span class="math inline">\(f_X(・)\)</span>は</p>
+<p><span class="math display">\[
+\int_{-\infty}^\infty f_X(x)dx=1
+\]</span>
+を満たします。<span class="math inline">\(P(X=a)=P(a\le X\le a)=0\)</span>であり、<span class="math inline">\(P(a\le X\le b)=P(a&lt;X&lt;b)\)</span>となります。</p>
+</div>
+<div id="section-7" class="section level5">
+<h5>2.3 分布関数</h5>
+<p><span class="math inline">\(X\)</span>を確率変数とするとき、</p>
+<p><span class="math display">\[
+F_X(x)=P(X\le x)
+\]</span>
+で定義される関数<span class="math inline">\(F_X(・)\)</span>を<span class="math inline">\(X\)</span>の累積分布関数といいます。<span class="math inline">\(X\)</span>が離散型である場合は確率関数<span class="math inline">\(f_X(・)\)</span>を用いて</p>
+<p><span class="math display">\[
+\displaystyle F_X(x) = \sum_{k:x_k\le x}f_X(x_k)
+\]</span>
+となります。<span class="math inline">\(X\)</span>が連続型の時は</p>
+<p><span class="math display">\[
+F_X(x) = \int_{-\infty}^xf_X(t)dt
+\]</span>
+となります。また、これより<span class="math inline">\(f_X(・)\)</span>が連続的な点で
+<span class="math display">\[
+f_X(x) = \frac{d}{dx}F_X(x)
+\]</span>
+が成り立つ。</p>
+</div>
+<div id="section-8" class="section level5">
+<h5>2.4 同時分布</h5>
+<p>複数の確率変数に対する分布を考えてみます。とりうる値が<span class="math inline">\(x_1,x_2,...\)</span>と<span class="math inline">\(y_1,y_2,...\)</span>である離散型確率変数<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>に対し、</p>
+<p><span class="math display">\[
+f_{XY}(x,y) = P(X=x,Y=y)
+\]</span>
+で定義される関数を確率関数ということができ、</p>
+<p><span class="math display">\[
+\displaystyle \sum_{k=1}^\infty\sum_{l=1}^\infty f_{XY}(x_k,y_l)=1
+\]</span>
+となります。このような複数の確率変数の確率関数を同時確率関数といい、一部の確率変数に対する確率関数を周辺確率関数といいます。<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>が連続の時も同様で、<span class="math inline">\(a,b,c,d\)</span>を定数としたときに<span class="math inline">\(a\le X\le b\)</span>かつ<span class="math inline">\(c\le Y \le d\)</span>となる確率が非負の2変数関数を用いて</p>
+<p><span class="math display">\[
+P(a\le X \le b,c\le Y \le d)=\int_a^b\int_c^df_{XY}(x,y)dxdy
+\]</span>
+で与えられるとき、<span class="math inline">\(f_{XY}(・,・)\)</span>を同時確率密度関数といいます。そして、<span class="math inline">\(f_X(・)\)</span>を周辺確率密度関数といいます。<br />
+同様に、<span class="math inline">\(F_{XY}(x,y)=P(X\le x,Y\le y)\)</span>で定義される<span class="math inline">\(F_{XY}(・)\)</span>を同時分布関数、<span class="math inline">\(F_X(・)\)</span>を周辺分布関数といいます。<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>が連続の時、</p>
+<p><span class="math display">\[
+f_{XY} = \frac{\partial^2}{\partial x\partial y}F_{XY}(x,y)
+\]</span>
+が成り立ちます。また、<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>の分布をそれらの同時分布、このときの<span class="math inline">\(X\)</span>の分布をその周辺分布といいます。周辺分布は同時分布から求めることができます。例えば、離散の場合は</p>
+<p><span class="math display">\[
+P(X=x)=P(X=x,Y\in\{y_1,y_2,...\})=\sum_{l=1}^\infty P(X=x,Y=y_l)
+\]</span>
+ここから、
+<span class="math display">\[
+f_X(x)=\sum_{l=1}^\infty f_{XY}(x,y_l)
+\]</span>
+となります。連続の場合は
+<span class="math display">\[
+P(X\le x)=P(X\le x,-\infty\le Y\le\infty)=\int_{-\infty}^x\{\int_{-\infty}^\infty f_{XY}(s,t)dt\}ds
+\]</span>
+ここから
+<span class="math display">\[
+f_X(x)=\int_{-\infty}^\infty f_{XY}(x,y)dy
+\]</span>
+となります。</p>
+</div>
+<div id="section-9" class="section level5">
+<h5>2.5 確率変数の独立</h5>
+<p>離散型確率変数<span class="math inline">\(X,Y\)</span>に関する事象<span class="math inline">\(X\in A,Y\in B\)</span>が独立であれば</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\sum_{k:x_k\in A}\sum_{l:y_l\in B}f_{XY}(x_k,y_l)&amp;=&amp;P(X\in A,Y\in B) \\
+&amp;=&amp; P(X\in A)P(Y\in B) \\
+&amp;=&amp; \sum_{k:x_k\in A}\sum_{l:y_l\in B}f_X(x_k)f_Y(y_l)
+\end{eqnarray}
+\]</span>
+となることからもわかるように、確率関数が任意の<span class="math inline">\(x,y\)</span>について</p>
+<p><span class="math display">\[
+f_XY(x,y)=f_X(x)f_Y(y)
+\]</span>
+と表せることは、<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>に関する事象が独立であることの必要十分条件です。連続型の場合は、確率密度関数について考えればよいです。<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>が独立であるならば、<span class="math inline">\(g(・)\)</span>を適当な関数とした<span class="math inline">\(g(X)\)</span>と<span class="math inline">\(Y\)</span>も独立です。<span class="math inline">\(g(X)\)</span>に関する事象は元をたどればXに関する事象ですので。</p>
+</div>
+<div id="section-10" class="section level5">
+<h5>2.6 条件付き確率</h5>
+<p>離散型確率変数<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>に対して、<span class="math inline">\(X=x\)</span>という事象を与えたときの<span class="math inline">\(Y=y\)</span>という</p>
+</div>
+</div>
+
+            </article>
+          </div>
+          
+      <div class='entry-meta-bottom'>
+        
+
+  <div class="entry-categories"><p><span>Categories</span>
+    
+    <a href="/my_blog/categories/%E7%B5%B1%E8%A8%88" title="View all posts in 統計">統計</a>
+  </p>
+</div>
+
+
+
+<div class="entry-tags"><p><span>Tags</span>
+  
+  <a href="/my_blog/tags/%E7%B5%B1%E8%A8%88%E5%AD%A6%E6%A4%9C%E5%AE%9A" title="View all posts tagged 統計学検定">統計学検定</a>
+  
+
+</p></div>	</div>
+
+	
+<div class="author-meta">
+
+  <div class="author">
+    	
+      <img alt='Ayato Ashihara' src="https://www.gravatar.com/avatar/0334adec0ab8bf709927e209f83de319?s=100&d=identicon" class='avatar avatar-72 photo' height='72' width='72'>
+    
+    <span>
+      Written by:<a href="https://ayatoashihara.github.io/my_blog/about/" title="Posts by Ayato Ashihara" rel="author">Ayato Ashihara</a> </span>
+    </div>
+    <div class="bio">
+      
+      
+      <p></p>
+      
+      
+	
+
+<a class="facebook" target="_blank"
+href="https://www.facebook.com/ASSIY">
+<i class="fab fa-facebook-f"
+title="facebook icon"></i>
+</a>
+
+
+
+
+
+
+
+
+
+<a class="email" target="_blank"
+href="mailto:assiy119@yahoo.co.jp">
+<i class="fas fa-envelope"
+title="email icon"></i>
+</a>
+
+
+
+
+
+
+
+<a class="github" target="_blank"
+href="https://github.com/AyatoAshihara/my_blog">
+<i class="fab fa-github"
+title="github icon"></i>
+</a>
+
+
+
+
+
+
+
+</div>
+</div>
+
+</div>
+</div>
+
+<section id="comments" class="comments">
+  
+
+  
+
+
+
+
+</section>
+</div>
+
+ 
+
+
+
+    </div>
+
+    <footer id="site-footer" class="site-footer" role="contentinfo">
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\\(","\\)"]] } });
+</script>
+<script async
+src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/r.min.js"></script>
+
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+
+	<h1>
+    
+    <a href=""> 東京の資産運用会社で働く社会人が研究に没頭するブログ </a>
+    
+	</h1>
+
+			
+			<p class="site-description">院卒2年目の社会人が夜な夜な更新中。本ブログの内容は筆者が所属する組織の公式見解とは全く関係ありません。</p>
+			
+
+		<div id="menu-footer" class="menu-container menu-footer" role="navigation">
+		<div class="menu">
+
+      <ul id="menu-footer-items" class="menu-footer-items">
+        
+</ul>
+
+</div>	</div>
+
+<ul class="social-media-icons">
+
+        
+				<li>
+					<a class="facebook" target="_blank"
+					   href="https://www.facebook.com/ASSIY" >
+						<i class="fab fa-facebook-f" title="facebook"></i>
+						<span class="screen-reader-text">facebook</span>
+					</a>
+				</li>
+        
+
+        
+
+
+        
+
+        
+
+        
+        <li>
+        <a href="mailto:assiy119@yahoo.co.jp"  class="email">
+            <i class="fas fa-envelope" title="email"></i>
+            <span class="screen-reader-text">email</span>
+        </a>
+        </li>
+        
+
+        
+
+        
+
+
+        
+        <li>
+        <a href="https://github.com/AyatoAshihara/my_blog"  class="github" target="_blank">
+            <i class="fab fa-github" title="github"></i>
+            <span class="screen-reader-text">github</span>
+        </a>
+        </li>
+        
+
+
+        
+
+        
+        <li>
+        <a href="/my_blog/index.xml" data-animate-hover="pulse" class="rss" target="_blank">
+            <i class="fas fa-rss" title="rss"></i>
+            <span class="screen-reader-text">rss</span>
+        </a>
+        </li>
+        
+
+				</ul>	<div class="design-credit">
+		
+		<p>&copy; 2018 Göran Svensson</p>
+		
+		<p>Nederburg Hugo Theme by <a href="https://appernetic.io">Appernetic</a>.</p>
+		
+		<p>A port of Tracks by Compete Themes.</p>
+		
+	</div>
+</footer>
+
+  </div>
+  <script src="/my_blog/js/jquery.min.js"></script>
+<script src="/my_blog/js/jquerymigrate.js"></script>
+<script src="/my_blog/js/production.min.js?v=1572458778"></script>
+
+</body>
+</html>

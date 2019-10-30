@@ -1,0 +1,179 @@
+---
+title: 確率分布についてまとめてみる
+author: Ayato Ashihara
+date: '2019-10-30'
+slug: post18
+categories:
+  - 統計
+tags:
+  - 統計学検定
+---
+
+<!--more-->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+```
+
+```{r,include=FALSE}
+library(reticulate)
+conda_path <- "C:\\Users\\aashi\\Anaconda3"
+use_condaenv(conda_path)
+```
+
+おはこんばんにちは。PythonやRを用いた統計解析をメインで行うこのブログですが、備忘録として諸確率分布についてここでまとめておきたいと思います。
+
+##### 1. 離散型確率分布
+
+###### 1.1 離散一様分布
+確率変数$X$が$1,...,n$をとるとします。確率関数
+
+$$
+P(X=x) = \frac{1}{n}
+$$
+
+を持つ分布を離散一様分布といいます。pythonで分布を書くと以下のような形をしています。
+
+```{python,include=FALSE}
+import os
+
+os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = 'C:/Users/aashi/Anaconda3/Library/plugins/platforms'
+```
+
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+plt.style.use('ggplot')
+
+s = np.random.uniform(1,10,20)
+plt.hist(s,bins=10)
+
+```
+
+・期待値の導出
+
+定義に沿って、期待値を導出します。その前に、等差数列の和の公式についておさらいをしておきましょう。
+初項$a$、交差$d$、項数$n$であるような等差数列の和は、
+$$
+S = \frac{1}{2}n(2a+(n-1)d)
+$$
+で求められます。
+
+（証明）
+数列を二通りで書きます。1つはそのまま、2つ目は逆順です。
+
+$$
+S = a + (a+d) + (a+2d) + ... + \{a + (n-2)d\} + \{a + (n-1)d\} \\
+S = \{a + (n-1)d\} + \{a + (n-2)d\} + ... + (a+2d) +(a+d) + a
+$$
+この2本の方程式を縦に見て、同じ位置の項を足し合わせると、$2a + (n-d)$がn個できちゃいます。
+
+$$
+\begin{eqnarray}
+2S &=& 2a + (n-1)d + 2a + (n-1)d + ... + 2a + (n-1)d \\
+&=& n(2a + (n-1)d)
+\end{eqnarray}
+$$
+よって、
+
+$$
+S = \frac{1}{2}n(2a + (n-1)d)
+$$
+離散確率関数の期待値は
+
+$$
+E[X] = \sum_{i=1}^nxP(X=x)
+$$
+なので、
+
+$$
+\begin{eqnarray}
+E[X] &=& \sum_{i=1}^n \frac{x_i}{n} \\
+&=& \frac{1}{n}\sum_{i=1}^ni \\
+&=& \frac{1}{n}\frac{1}{2}n(n+1) \\
+&=&\frac{(n+1)}{2}
+\end{eqnarray}
+$$
+$\sum_{i=1}^ni$は初項1、交差1、項数$n$の等差数列ですので、先ほどの定理より$\frac{1}{2}n(n+1)$となります。
+
+・分散の導出
+
+確率分布の分散は一般的に、
+
+$$
+\begin{eqnarray}
+V(X) &=& E[X-\mu]^2 \\
+&=&E[(X-\mu)(X-\mu)] \\
+&=&E[X^2]-2E[X]\mu+\mu^2 \\
+&=&E[X^2]-2\mu^2+\mu^2 \\
+&=&E[X^2]-\mu^2
+\end{eqnarray}
+$$
+となります。ここで、$\mu$は期待値$E[X]$を表しています。離散一様分布の分散を求めるためには、$E[X^2]$を計算すればよいことがわかります。　　
+$E[X^2]$の計算において、$\sum_{i=1}^ni^2$の計算が必要ですので、まずはそちらから見ていきましょう。
+
+$$
+$\sum_{i=1}^ni^2$ = \frac{n(n+1)(2n+1)}{6}
+$$
+
+（証明）
+$(k+1)^3-k^3=3k^2+3k+1$に順に$k=1,2,...,n$を代入し、縦に揃えます。
+
+$$
+\begin{eqnarray}
+2^3-1^3&=&3・1^2+3・1+1 \\
+3^3-2^3&=&3・2^2+3・2+1 \\
+4^3-3^3&=&3・3^2+3・3+1 \\
+....\\
+(n+1)^3-n^3&=&3・n^2+3・n+1
+
+\end{eqnarray}
+$$
+
+これら方程式を縦に見て、足し合わせると左辺がすっきりして、
+
+$$
+(n+1)^3-1=3\sum_{k=1}^nk^2+3\sum_{k=1}^nk+n \\
+$$
+$\sum_{k=1}^nk=\frac{n(n+1)}{2}$は先ほど求めているので代入すると、
+
+$$
+(n+1)^3-1=3\sum_{k=1}^nk^2+3\frac{n(n+1)}{2}+n \\
+$$
+ここから
+
+$$
+\begin{eqnarray}
+3\sum_{k=1}^nk^2&=&(n+1)^3-1-(3\frac{n(n+1)}{2}+n)\\
+\sum_{k=1}^nk^2&=&\frac{1}{3}\{(n+1)^3-1-(3\frac{n(n+1)}{2}+n)\}\\
+&=&\frac{1}{6}\{2(n+1)^3-2-3n(n+1)-2n\}\\
+&=&\frac{1}{6}\{2n^3+6n^2+6n+2-2-3n^2-3n-2n\}\\
+&=&\frac{1}{6}\{2n^3+3n^2+n\}\\
+&=&\frac{1}{6}n\{2n^2+3n+1\}\\
+&=&\frac{1}{6}n(n+1)(2n+1)\\
+\end{eqnarray}
+$$
+では、離散一様分布の分散を計算していきます。
+
+$$
+E[X^2] = \sum_{i=1}^n\frac{x^2}{n}=\frac{1}{n}\sum_{i=1}^ni^2=\frac{1}{n}\frac{n(n+1)(2n+1)}{6}=\frac{(n+1)(2n+1)}{6}
+$$
+ここから、
+
+$$
+\begin{eqnarray}
+V[X]&=&E[X^2]-\mu \\
+&=&\frac{(n+1)(2n+1)}{6}-\{\frac{(n+1)}{2}\}^2 \\
+&=&\frac{(n+1)(2n+1)}{6}-\frac{(n+1)^2}{4} \\
+&=&\frac{2(n+1)(2n+1)}{12}-\frac{3(n+1)^2}{12} \\
+&=&\frac{(n+1)(4n+2-3n-3)}{12} \\
+&=&\frac{(n+1)(n-1)}{12} \\
+&=&\frac{n^2-1}{12} \\
+\end{eqnarray}
+$$
+となります。
+
+
