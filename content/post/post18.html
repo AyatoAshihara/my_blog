@@ -1,5 +1,5 @@
 ---
-title: 確率分布についてまとめてみる
+title: 確率分布についてまとめてみる（離散確率分布編）
 author: Ayato Ashihara
 date: '2019-10-30'
 slug: post18
@@ -29,11 +29,13 @@ plt.style.use(&#39;ggplot&#39;)
 
 s = np.random.uniform(1,10,20)
 plt.hist(s,bins=10)</code></pre>
-<pre><code>## (array([4., 4., 2., 1., 0., 3., 2., 0., 1., 3.]), array([1.43987795, 2.17753323, 2.9151885 , 3.65284378, 4.39049905,
-##        5.12815433, 5.86580961, 6.60346488, 7.34112016, 8.07877544,
-##        8.81643071]), &lt;a list of 10 Patch objects&gt;)</code></pre>
+<pre><code>## (array([1., 4., 3., 1., 2., 3., 2., 1., 2., 1.]), array([1.26743874, 2.11265557, 2.95787239, 3.80308921, 4.64830604,
+##        5.49352286, 6.33873968, 7.18395651, 8.02917333, 8.87439015,
+##        9.71960698]), &lt;a list of 10 Patch objects&gt;)</code></pre>
 <p>・期待値の導出</p>
-<p>定義に沿って、期待値を導出します。その前に、等差数列の和の公式についておさらいをしておきましょう。
+<p>定義に沿って、期待値を導出します。</p>
+<details>
+<p><summary>その前に、等差数列の和の公式についておさらいが必要な人は見てください。</summary>
 初項<span class="math inline">\(a\)</span>、交差<span class="math inline">\(d\)</span>、項数<span class="math inline">\(n\)</span>であるような等差数列の和は、
 <span class="math display">\[
 S = \frac{1}{2}n(2a+(n-1)d)
@@ -53,10 +55,11 @@ S = \{a + (n-1)d\} + \{a + (n-2)d\} + ... + (a+2d) +(a+d) + a
 \end{eqnarray}
 \]</span>
 よって、</p>
-<p><span class="math display">\[
+<span class="math display">\[
 S = \frac{1}{2}n(2a + (n-1)d)
 \]</span>
-離散確率関数の期待値は</p>
+</details>
+<p>離散確率関数の期待値は</p>
 <p><span class="math display">\[
 E[X] = \sum_{i=1}^nxP(X=x)
 \]</span>
@@ -81,8 +84,9 @@ V(X) &amp;=&amp; E[X-\mu]^2 \\
 &amp;=&amp;E[X^2]-\mu^2
 \end{eqnarray}
 \]</span>
-となります。ここで、<span class="math inline">\(\mu\)</span>は期待値<span class="math inline">\(E[X]\)</span>を表しています。離散一様分布の分散を求めるためには、<span class="math inline">\(E[X^2]\)</span>を計算すればよいことがわかります。　　
-<span class="math inline">\(E[X^2]\)</span>の計算において、<span class="math inline">\(\sum_{i=1}^ni^2\)</span>の計算が必要ですので、まずはそちらから見ていきましょう。</p>
+となります。ここで、<span class="math inline">\(\mu\)</span>は期待値<span class="math inline">\(E[X]\)</span>を表しています。離散一様分布の分散を求めるためには、<span class="math inline">\(E[X^2]\)</span>を計算すればよいことがわかります。</p>
+<details>
+<p><summary><span class="math inline">\(E[X^2]\)</span>の計算において、<span class="math inline">\(\sum_{i=1}^ni^2\)</span>の計算が必要ですので、必要な人は見てください。&lt;&gt;</p>
 <p><span class="math display">\[
 $\sum_{i=1}^ni^2$ = \frac{n(n+1)(2n+1)}{6}
 \]</span></p>
@@ -118,7 +122,8 @@ $$</p>
 &amp;=&amp;\frac{1}{6}n(n+1)(2n+1)\\
 \end{eqnarray}
 \]</span>
-では、離散一様分布の分散を計算していきます。</p>
+&lt;&gt;</p>
+<p>では、離散一様分布の分散を計算していきます。</p>
 <p><span class="math display">\[
 E[X^2] = \sum_{i=1}^n\frac{x^2}{n}=\frac{1}{n}\sum_{i=1}^ni^2=\frac{1}{n}\frac{n(n+1)(2n+1)}{6}=\frac{(n+1)(2n+1)}{6}
 \]</span>
