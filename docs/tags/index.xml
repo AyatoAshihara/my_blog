@@ -6,10 +6,28 @@
     <description>Recent content in Tags on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 30 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 28 Jan 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/my_blog/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Python</title>
+      <link>/my_blog/tags/python/</link>
+      <pubDate>Tue, 28 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/tags/python/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>前処理</title>
+      <link>/my_blog/tags/%E5%89%8D%E5%87%A6%E7%90%86/</link>
+      <pubDate>Tue, 28 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/tags/%E5%89%8D%E5%87%A6%E7%90%86/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>統計学検定</title>
@@ -53,24 +71,6 @@
       <pubDate>Thu, 15 Aug 2019 00:00:00 +0000</pubDate>
       
       <guid>/my_blog/tags/earth-engine/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Python</title>
-      <link>/my_blog/tags/python/</link>
-      <pubDate>Thu, 15 Aug 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/my_blog/tags/python/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>前処理</title>
-      <link>/my_blog/tags/%E5%89%8D%E5%87%A6%E7%90%86/</link>
-      <pubDate>Tue, 16 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/my_blog/tags/%E5%89%8D%E5%87%A6%E7%90%86/</guid>
       <description></description>
     </item>
     

@@ -1,0 +1,70 @@
+---
+title: Pythonのpandas_datareaderから色々なデータを取得してみる。
+author: Ayato Ashihara
+date: '2020-01-28'
+slug: post19
+categories:
+  - 単発
+tags:
+  - Python
+  - 前処理
+output:
+  html_document
+editor_options:
+  chunk_output_type: console
+---
+
+
+
+<!--more-->
+<p>おはこんばんにちは。最近会社のPCにAnacondaを入れてもらいました。業務で使用することはないのですが、ワークショップで使用するので色々勉強しています。以前、Googleが提供しているEarth Engineから衛星画像を取得して解析した際にPythonを使用しましたが、今回はPythonから様々なデータが取得できるpandas_datareaderを使用したいと思います。</p>
+<p>なお、このブログではRstuioとblogdownパッケージ、gitを組み合わせてgithub上に記事を投稿しています。ですが、Rstudioとreticulateパッケージのおかげで、pythonを使用した記事もrmdで作成し、htmlとして出力できています。ここでまず、reticulateパッケージを用いてconda仮想環境へ接続する方法を紹介しておきます。</p>
+<pre class="r"><code>library(reticulate)
+conda_path &lt;- &quot;C:\\Users\\hoge\\Anaconda3\\envs\\環境名&quot;
+use_condaenv(conda_path)</code></pre>
+<p>これで接続できます。conda_pathには仮想環境へのパスを入力してください。</p>
+<pre class="python"><code>import sys
+sys.version</code></pre>
+<pre><code>## &#39;3.7.6 (default, Jan  8 2020, 20:23:39) [MSC v.1916 64 bit (AMD64)]&#39;</code></pre>
+<pre class="python"><code>
+import pandas as pd
+from matplotlib import pyplot as plt
+import pandas_datareader.data as web
+from datetime import datetime
+import seaborn as sns
+import os
+
+os.environ[&#39;QT_QPA_PLATFORM_PLUGIN_PATH&#39;] = &#39;C:/Users/aashi/Anaconda3/envs/financialtech/Library/plugins/platforms&#39;
+
+start = datetime(1980,1,1)
+end = datetime(2019,12,31)
+
+# parameters for data from econdb
+country = [&#39;US&#39;,&#39;BR&#39;]
+indicator = [&#39;RGDP&#39;,&#39;CPI&#39;,&#39;URATE&#39;,&#39;CA&#39;,&#39;HOU&#39;,&#39;POP&#39;,&#39;RETA&#39;,&#39;IP&#39;]
+
+# Parse API from econdb
+econ = pd.DataFrame()
+for cnty in country:
+    temp2 = pd.DataFrame()
+    for idctr in indicator:
+        temp = web.DataReader(&#39;ticker=&#39; + idctr + cnty,&#39;econdb&#39;,start,end)
+        temp.columns = [idctr]
+        temp2 = pd.concat([temp2,temp],join=&#39;outer&#39;,axis=1)
+    temp2 = temp2.assign(kuni=cnty,kijyundate=temp2.index)
+    econ = pd.concat([econ,temp2],join=&#39;outer&#39;)
+    econ = econ.reset_index(drop=True)
+
+sns.set</code></pre>
+<pre><code>## &lt;function set at 0x0000000022506C18&gt;</code></pre>
+<pre class="python"><code>sns.relplot(data=econ,x=&#39;kijyundate&#39;,y=&#39;IP&#39;,hue=&#39;kuni&#39;,kind=&#39;line&#39;)</code></pre>
+<pre><code>## &lt;seaborn.axisgrid.FacetGrid object at 0x000000002518E808&gt;
+## 
+## C:\Users\aashi\Anaconda3\envs\financialtech\lib\site-packages\pandas\plotting\_matplotlib\converter.py:103: FutureWarning: Using an implicitly registered datetime converter for a matplotlib plotting method. The converter was registered by pandas on import. Future versions of pandas will require you to explicitly register matplotlib converters.
+## 
+## To register the converters:
+##  &gt;&gt;&gt; from pandas.plotting import register_matplotlib_converters
+##  &gt;&gt;&gt; register_matplotlib_converters()
+##   warnings.warn(msg, FutureWarning)</code></pre>
+<pre class="python"><code>plt.show()</code></pre>
+<p><img src="/my_blog/post/post19_files/figure-html/unnamed-chunk-4-1.png" width="556" /></p>

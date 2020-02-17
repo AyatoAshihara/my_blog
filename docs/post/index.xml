@@ -6,10 +6,22 @@
     <description>Recent content in Posts on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 30 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 28 Jan 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/my_blog/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Pythonのpandas_datareaderから色々なデータを取得してみる。</title>
+      <link>/my_blog/post/post19/</link>
+      <pubDate>Tue, 28 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post/post19/</guid>
+      <description>
+
+
+</description>
+    </item>
     
     <item>
       <title>確率分布についてまとめてみる（離散確率分布編）</title>
