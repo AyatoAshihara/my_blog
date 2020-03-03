@@ -1,0 +1,196 @@
+---
+title: LightGBMを使用して競馬結果を予想してみる
+author: Ayato Ashihara
+date: '2020-02-29'
+slug: post20
+categories:
+  - 競馬
+tags:
+  - Python
+  - 機械学習
+  - 前処理
+image: ''
+showonlyimage: no
+keywords:
+  - key
+  - words
+topics:
+  - topic 1
+weight: 1
+output:
+  html_document
+editor_options:
+  chunk_output_type: console
+---
+
+
+
+<!--more-->
+<p>おはこんばんにちは。かなり久しぶりではありますが、Pythonの勉強をかねて以前yahoo.keibaで収集した競馬のレース結果データから、レース結果を予想するモデルを作成したいと思います。</p>
+<div id="データインポート" class="section level4">
+<h4>1.データインポート</h4>
+<p>まず、前回Sqliteに保存したレース結果データをpandasデータフレームへ保存します。</p>
+<pre class="python"><code>conn = sqlite3.connect(r&#39;C:\hogehoge\horse_data.db&#39;)
+sql = r&#39;SELECT * FROM race_result&#39;
+df = pd.read_sql(con=conn,sql=sql)</code></pre>
+<p>データの中身を確認してみましょう。列は以下のようになっています。orderが着順となっています。</p>
+<pre class="python"><code>df.columns</code></pre>
+<pre><code>## Index([&#39;order&#39;, &#39;frame_number&#39;, &#39;horse_number&#39;, &#39;trainer&#39;, &#39;passing_rank&#39;,
+##        &#39;last_3F&#39;, &#39;time&#39;, &#39;margin&#39;, &#39;horse_name&#39;, &#39;horse_age&#39;, &#39;horse_sex&#39;,
+##        &#39;horse_weight&#39;, &#39;horse_weight_change&#39;, &#39;brinker&#39;, &#39;jockey&#39;,
+##        &#39;jockey_weight&#39;, &#39;jockey_weight_change&#39;, &#39;odds&#39;, &#39;popularity&#39;,
+##        &#39;race_date&#39;, &#39;race_course&#39;, &#39;race_name&#39;, &#39;race_distance&#39;, &#39;type&#39;,
+##        &#39;race_turn&#39;, &#39;race_condition&#39;, &#39;race_weather&#39;, &#39;colour&#39;, &#39;owner&#39;,
+##        &#39;farm&#39;, &#39;locality&#39;, &#39;horse_birthday&#39;, &#39;father&#39;, &#39;mother&#39;, &#39;prize&#39;,
+##        &#39;http&#39;],
+##       dtype=&#39;object&#39;)</code></pre>
+<p>orderの中身を確認してみると、括弧（）がついている物が多く、また取消や中止、失格などが存在するため、文字型に認識されていることがわかります。ちなみに括弧（）内の順位は入線順位というやつで、他馬の走行を妨害したりして順位が降着させられたことを意味します（<a href="http://www.jra.go.jp/judge/" class="uri">http://www.jra.go.jp/judge/</a>）。</p>
+<pre class="python"><code>df.loc[:,&#39;order&#39;].unique()</code></pre>
+<pre><code>## array([&#39;10&#39;, &#39;11&#39;, &#39;2&#39;, &#39;6&#39;, &#39;16&#39;, &#39;3&#39;, &#39;7&#39;, &#39;8&#39;, &#39;4&#39;, &#39;5&#39;, &#39;15&#39;, &#39;14&#39;,
+##        &#39;12&#39;, &#39;13&#39;, &#39;1&#39;, &#39;9&#39;, &#39;取消&#39;, &#39;17&#39;, &#39;中止&#39;, &#39;除外&#39;, &#39;18&#39;, &#39;3(2)&#39;,
+##        &#39;10(9)&#39;, &#39;4(3)&#39;, &#39;2(1)&#39;, &#39;5(4)&#39;, &#39;6(4)&#39;, &#39;失格&#39;, &#39;9(8)&#39;, &#39;16(6)&#39;,
+##        &#39;12(12)&#39;, &#39;13(9)&#39;, &#39;6(3)&#39;, &#39;10(7)&#39;, &#39;6(5)&#39;, &#39;9(3)&#39;, &#39;11(8)&#39;,
+##        &#39;13(2)&#39;, &#39;12(9)&#39;, &#39;14(7)&#39;, &#39;10(1)&#39;, &#39;16(8)&#39;, &#39;14(6)&#39;, &#39;10(3)&#39;,
+##        &#39;12(1)&#39;, &#39;13(6)&#39;, &#39;7(1)&#39;, &#39;12(6)&#39;, &#39;11(4)&#39;, &#39;6(2)&#39;, &#39;11(2)&#39;,
+##        &#39;15(6)&#39;, &#39;13(10)&#39;, &#39;14(4)&#39;, &#39;7(5)&#39;, &#39;17(4)&#39;, &#39;9(7)&#39;, &#39;5(2)&#39;,
+##        &#39;16(14)&#39;, &#39;12(11)&#39;, &#39;14(2)&#39;, &#39;8(2)&#39;, &#39;9(5)&#39;, &#39;18(11)&#39;, &#39;11(5)&#39;,
+##        &#39;12(7)&#39;, &#39;11(1)&#39;, &#39;12(8)&#39;, &#39;7(4)&#39;, &#39;4(2)&#39;, &#39;18(15)&#39;, &#39;13(12)&#39;,
+##        &#39;14(3)&#39;, &#39;10(2)&#39;, &#39;11(10)&#39;, &#39;18(3)&#39;, &#39;10(4)&#39;, &#39;10(8)&#39;, &#39;18(8)&#39;,
+##        &#39;15(8)&#39;, &#39;8(3)&#39;, &#39;5(1)&#39;, &#39;10(5)&#39;, &#39;7(3)&#39;, &#39;9(1)&#39;, &#39;13(3)&#39;,
+##        &#39;16(11)&#39;, &#39;11(3)&#39;, &#39;11(6)&#39;, &#39;10(6)&#39;, &#39;14(12)&#39;, &#39;12(5)&#39;, &#39;15(14)&#39;,
+##        &#39;17(8)&#39;, &#39;18(6)&#39;, &#39;18(10)&#39;, &#39;16(7)&#39;, &#39;13(1)&#39;, &#39;16(10)&#39;, &#39;15(7)&#39;,
+##        &#39;9(4)&#39;, &#39;15(5)&#39;, &#39;12(3)&#39;, &#39;8(7)&#39;, &#39;15(2)&#39;, &#39;12(10)&#39;, &#39;14(9)&#39;,
+##        &#39;3(1)&#39;, &#39;6(1)&#39;, &#39;14(5)&#39;, &#39;15(4)&#39;, &#39;4(1)&#39;, &#39;14(8)&#39;, &#39;12(4)&#39;,
+##        &#39;16(4)&#39;, &#39;9(2)&#39;, &#39;13(5)&#39;, &#39;12(2)&#39;, &#39;15(1)&#39;, &#39;14(13)&#39;, &#39;14(1)&#39;,
+##        &#39;13(7)&#39;, &#39;5(3)&#39;, &#39;8(6)&#39;, &#39;15(13)&#39;, &#39;7(2)&#39;, &#39;15(11)&#39;, &#39;11(9)&#39;,
+##        &#39;8(4)&#39;, &#39;15(3)&#39;, &#39;13(4)&#39;, &#39;16(12)&#39;, &#39;16(5)&#39;, &#39;16(9)&#39;, &#39;8(5)&#39;,
+##        &#39;8(1)&#39;, &#39;14(11)&#39;, &#39;9(6)&#39;, &#39;16(13)&#39;, &#39;16(15)&#39;, &#39;7(7)&#39;, &#39;11(11)&#39;,
+##        &#39;15(10)&#39;, &#39;7(6)&#39;], dtype=object)</code></pre>
+<p>まずここを修正しましょう。括弧を除去してint型に型変更し、入線順位は新たな列「arriving order」として追加します。</p>
+<pre class="python"><code>df[&#39;arriving order&#39;] = df[df.order.str.contains(r&#39;\d*\(\d*\)&#39;,regex=True)][&#39;order&#39;].replace(r&#39;\d+\(&#39;,r&#39;&#39;,regex=True).replace(r&#39;\)&#39;,r&#39;&#39;,regex=True).astype(&#39;float64&#39;)
+df[&#39;arriving order&#39;].unique()</code></pre>
+<pre><code>## array([nan,  2.,  9.,  3.,  1.,  4.,  8.,  6., 12.,  7.,  5., 10., 14.,
+##        11., 15., 13.])</code></pre>
+<pre class="python"><code>df[&#39;order&#39;] = df[&#39;order&#39;].replace(r&#39;\(\d+\)&#39;,r&#39;&#39;,regex=True)
+df = df[lambda df: ~df.order.str.contains(r&#39;(取消|中止|除外|失格)&#39;,regex=True)]</code></pre>
+<pre><code>## C:\Users\aashi\Anaconda3\envs\umanalytics\lib\site-packages\pandas\core\strings.py:1952: UserWarning: This pattern has match groups. To actually get the groups, use str.extract.
+##   return func(self, *args, **kwargs)</code></pre>
+<pre class="python"><code>df[&#39;order&#39;] = df[&#39;order&#39;].astype(&#39;float64&#39;)
+df[&#39;order&#39;].unique()</code></pre>
+<pre><code>## array([10., 11.,  2.,  6., 16.,  3.,  7.,  8.,  4.,  5., 15., 14., 12.,
+##        13.,  1.,  9., 17., 18.])</code></pre>
+<p>きれいなfloat型に処理することができました。では、次にラスト3Fのタイムの前処理に移ります。前走のラスト3Fのタイムを予測に使用します。</p>
+<pre class="python"><code>import numpy as np
+df[&#39;race_date&#39;] =  pd.to_datetime(&#39;1970/1/1&#39;) + pd.to_timedelta(df[&#39;race_date&#39;], unit=&#39;days&#39;) # convert serial to datetime
+df[&#39;last_3F&#39;] = df[&#39;last_3F&#39;].replace(r&#39;character(0)&#39;,np.nan,regex=False).astype(&#39;float64&#39;)
+df[&#39;last_3F&#39;] = df.groupby(&#39;horse_name&#39;)[&#39;last_3F&#39;].shift(-1)</code></pre>
+<p>前走のレースと順位、追加順位もデータセットへ含めましょう。</p>
+<pre class="python"><code>df[&#39;prerace&#39;] = df.groupby(&#39;horse_name&#39;)[&#39;race_name&#39;].shift(-1)
+df[&#39;preorder&#39;] = df.groupby(&#39;horse_name&#39;)[&#39;order&#39;].shift(-1)
+df[&#39;prepassing&#39;] = df.groupby(&#39;horse_name&#39;)[&#39;passing_rank&#39;].shift(-1)</code></pre>
+<p>出走時点で獲得している累積賞金額も追加します。</p>
+<pre class="python"><code>df[&#39;preprize&#39;] = df.groupby(&#39;horse_name&#39;)[&#39;prize&#39;].shift(-1)
+df[&#39;preprize&#39;] = df[&#39;preprize&#39;].fillna(0)
+df[&#39;margin&#39;] = df.groupby(&#39;horse_name&#39;)[&#39;margin&#39;].shift(-1)</code></pre>
+<p>その他、欠損値やデータ型の修正、カテゴリデータのラベルエンコーディングです。</p>
+<pre class="python"><code>df[&#39;horse_weight&#39;] = df[&#39;horse_weight&#39;].astype(&#39;float64&#39;)
+df[&#39;margin&#39;] = df[&#39;margin&#39;].replace(r&#39;character(0)&#39;,np.nan,regex=False)
+df[&#39;horse_age&#39;] = df[&#39;horse_age&#39;].astype(&#39;float64&#39;)
+df[&#39;horse_weight_change&#39;] = df[&#39;horse_weight_change&#39;].astype(&#39;float64&#39;)
+df[&#39;jockey_weight&#39;] = df[&#39;jockey_weight&#39;].astype(&#39;float64&#39;)
+df[&#39;race_distance&#39;] = df[&#39;race_distance&#39;].replace(r&#39;m&#39;,r&#39;&#39;,regex=True).astype(&#39;float64&#39;)
+df[&#39;race_turn&#39;] = df[&#39;race_turn&#39;].replace(r&#39;character(0)&#39;,np.nan,regex=False)
+df.loc[df[&#39;order&#39;]!=1,&#39;order&#39;] = 0
+
+df[&#39;race_turn&#39;] = df[&#39;race_turn&#39;].fillna(&#39;missing&#39;)
+df[&#39;colour&#39;] = df[&#39;colour&#39;].fillna(&#39;missing&#39;)
+df[&#39;prepassing&#39;] = df[&#39;prepassing&#39;].fillna(&#39;missing&#39;)
+df[&#39;prerace&#39;] = df[&#39;prerace&#39;].fillna(&#39;missing&#39;)
+df[&#39;father&#39;] = df[&#39;father&#39;].fillna(&#39;missing&#39;)
+df[&#39;mother&#39;] = df[&#39;mother&#39;].fillna(&#39;missing&#39;)
+
+from sklearn import preprocessing
+cat_list = [&#39;trainer&#39;, &#39;horse_name&#39;, &#39;horse_sex&#39;, &#39;brinker&#39;, &#39;jockey&#39;, &#39;race_course&#39;, &#39;race_name&#39;, &#39;type&#39;, &#39;race_turn&#39;, &#39;race_condition&#39;, &#39;race_weather&#39;, &#39;colour&#39;, &#39;father&#39;, &#39;mother&#39;, &#39;prerace&#39;, &#39;prepassing&#39;]
+for column in cat_list:
+    target_column = df[column]
+    le = preprocessing.LabelEncoder()
+    le.fit(target_column)
+    label_encoded_column = le.transform(target_column)
+    df[column] = pd.Series(label_encoded_column).astype(&#39;category&#39;)</code></pre>
+<pre><code>## LabelEncoder()
+## LabelEncoder()
+## LabelEncoder()
+## LabelEncoder()
+## LabelEncoder()
+## LabelEncoder()
+## LabelEncoder()
+## LabelEncoder()
+## LabelEncoder()
+## LabelEncoder()
+## LabelEncoder()
+## LabelEncoder()
+## LabelEncoder()
+## LabelEncoder()
+## LabelEncoder()
+## LabelEncoder()</code></pre>
+<pre class="python"><code>import pandas_profiling as pdq
+profile = pdq.ProfileReport(df)
+profile</code></pre>
+<p>ではlightgbmで予測モデルを作ってみます。optunaのlightgbmを使用して、ハイパーパラメータチューニングを行い、学習したモデルを用いて計算したテストデータの予測値と実績値のconfusion matrixならびに正解率を算出します。</p>
+<pre class="python"><code>import optuna.integration.lightgbm as lgb
+from sklearn.model_selection import train_test_split
+
+y = df[&#39;order&#39;]
+x = df.drop([&#39;order&#39;,&#39;passing_rank&#39;,&#39;time&#39;,&#39;odds&#39;,&#39;popularity&#39;,&#39;owner&#39;,&#39;farm&#39;,&#39;locality&#39;,&#39;horse_birthday&#39;,&#39;http&#39;,&#39;prize&#39;,&#39;race_date&#39;,&#39;margin&#39;],axis=1)
+
+X_train, X_test, y_train, y_test = train_test_split(x, y)
+X_train, x_val, y_train, y_val = train_test_split(X_train, y_train)
+
+lgb_train = lgb.Dataset(X_train, y_train)
+lgb_eval = lgb.Dataset(x_val, y_val)
+lgb_test = lgb.Dataset(X_test, y_test, reference=lgb_train)
+
+lgbm_params = {
+        &#39;objective&#39;: &#39;binary&#39;,
+        &#39;metric&#39;: &#39;auc&#39;
+    }
+
+best_params, history = {}, []
+model = lgb.train(lgbm_params, lgb_train, categorical_feature = cat_list,valid_sets = lgb_eval, num_boost_round=100,early_stopping_rounds=20,best_params=best_params,tuning_history=history, verbose_eval=False)
+best_params
+
+y_pred = np.vectorize(lambda x: 1 if x &gt; 0.49 else 0)(model.predict(X_test, num_iteration=model.best_iteration))</code></pre>
+<p>可視化パートです。</p>
+<pre class="python"><code>from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, accuracy_score, precision_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+confusion_matrix(y_test, y_pred)</code></pre>
+<pre><code>## array([[203394,     99],
+##        [ 14846,    701]], dtype=int64)</code></pre>
+<pre class="python"><code>labels = sorted(list(set(y_test)))
+#ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred),labels).plot()
+
+accuracy_score(y_test, y_pred)</code></pre>
+<pre><code>## 0.9317704528853178</code></pre>
+<pre class="python"><code>precision_score(y_test, y_pred)</code></pre>
+<pre><code>## 0.87625</code></pre>
+<p>accuracy_score（予測制度）が90%を超え、precision_Score（陽=1着と予想したデータの正解率）もいい感じです。
+shapで要因分解もしてみましょう。</p>
+<pre class="python"><code>import shap
+
+shap.initjs()</code></pre>
+<pre><code>## &lt;IPython.core.display.HTML object&gt;</code></pre>
+<pre class="python"><code>explainer = shap.TreeExplainer(model)</code></pre>
+<pre><code>## Setting feature_perturbation = &quot;tree_path_dependent&quot; because no background data was given.</code></pre>
+<pre class="python"><code>shap_values = explainer.shap_values(X_test)</code></pre>
+<pre><code>## LightGBM binary classifier with TreeExplainer shap values output has changed to a list of ndarray</code></pre>
+<pre class="python"><code>shap.summary_plot(shap_values, X_test)</code></pre>
+<p><img src="/my_blog/post/post20_files/figure-html/unnamed-chunk-17-1.png" width="768" /></p>
+<pre class="python"><code>shap.summary_plot(shap_values[1], X_test)</code></pre>
+<p><img src="/my_blog/post/post20_files/figure-html/unnamed-chunk-17-2.png" width="768" /></p>
+<pre class="python"><code>shap.dependence_plot(ind=&quot;preprize&quot;, shap_values=shap_values[1], features=X_test)</code></pre>
+<p><img src="/my_blog/post/post20_files/figure-html/unnamed-chunk-17-3.png" width="720" /></p>
+<pre class="python"><code>shap.dependence_plot(ind=&quot;preorder&quot;, shap_values=shap_values[1], features=X_test)</code></pre>
+<p><img src="/my_blog/post/post20_files/figure-html/unnamed-chunk-17-4.png" width="720" /></p>
+</div>

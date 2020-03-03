@@ -3,20 +3,55 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/my_blog/post/post20/</loc>
+    <lastmod>2020-02-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/my_blog/categories/</loc>
-    <lastmod>2020-01-28T00:00:00+00:00</lastmod>
+    <lastmod>2020-02-29T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/my_blog/post/</loc>
-    <lastmod>2020-01-28T00:00:00+00:00</lastmod>
+    <lastmod>2020-02-29T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/my_blog/tags/python/</loc>
-    <lastmod>2020-01-28T00:00:00+00:00</lastmod>
+    <lastmod>2020-02-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/tags/</loc>
+    <lastmod>2020-02-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/tags/%E5%89%8D%E5%87%A6%E7%90%86/</loc>
+    <lastmod>2020-02-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/</loc>
+    <lastmod>2020-02-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/tags/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92/</loc>
+    <lastmod>2020-02-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/categories/%E7%AB%B6%E9%A6%AC/</loc>
+    <lastmod>2020-02-29T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -26,25 +61,7 @@
   </url>
   
   <url>
-    <loc>/my_blog/tags/</loc>
-    <lastmod>2020-01-28T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/tags/%E5%89%8D%E5%87%A6%E7%90%86/</loc>
-    <lastmod>2020-01-28T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/my_blog/categories/%E5%8D%98%E7%99%BA/</loc>
-    <lastmod>2020-01-28T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/</loc>
     <lastmod>2020-01-28T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -131,12 +148,6 @@
   <url>
     <loc>/my_blog/post/post13/</loc>
     <lastmod>2019-07-13T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/my_blog/categories/%E7%AB%B6%E9%A6%AC/</loc>
-    <lastmod>2019-07-13T00:00:00+00:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
