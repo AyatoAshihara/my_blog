@@ -174,8 +174,7 @@ lgb_eval = lgb.Dataset(x_val, y_val)
 lgb_test = lgb.Dataset(X_test, y_test, reference=lgb_train)
 
 lgbm_params = {
-        'objective': 'binary',
-        'metric': 'auc'
+        'objective': 'binary'
     }
 
 best_params, history = {}, []
@@ -202,7 +201,7 @@ lgb_test = lgb.Dataset(X_test, y_test, reference=lgb_train)
 
 lgbm_params = {
         'objective': 'binary',
-        'metric': 'auc'
+        'metric': 'log_loss'
     }
 
 best_params, history = {}, []
@@ -229,7 +228,7 @@ precision_score(y_test, y_pred)
 
 ```
 
-accuracy_score（予測制度）が90%を超え、precision_Score（陽=1着と予想したデータの正解率）もいい感じです。
+accuracy_score（予測精度）が90%を超え、precision_Score（陽=1着と予想したデータの正解率）もいい感じです。
 shapで要因分解もしてみましょう。
 
 ```{python}

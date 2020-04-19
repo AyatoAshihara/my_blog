@@ -6,10 +6,19 @@
     <description>Recent content in Categories on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 29 Feb 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 19 Apr 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/my_blog/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>単発</title>
+      <link>/my_blog/categories/%E5%8D%98%E7%99%BA/</link>
+      <pubDate>Sun, 19 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/categories/%E5%8D%98%E7%99%BA/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>競馬</title>
@@ -17,15 +26,6 @@
       <pubDate>Sat, 29 Feb 2020 00:00:00 +0000</pubDate>
       
       <guid>/my_blog/categories/%E7%AB%B6%E9%A6%AC/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>単発</title>
-      <link>/my_blog/categories/%E5%8D%98%E7%99%BA/</link>
-      <pubDate>Tue, 28 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/my_blog/categories/%E5%8D%98%E7%99%BA/</guid>
       <description></description>
     </item>
     

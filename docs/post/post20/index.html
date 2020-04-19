@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1583255364" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1587283270" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1583255364" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1587283270" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -380,7 +380,7 @@ lgb_test = lgb.Dataset(X_test, y_test, reference=lgb_train)
 
 lgbm_params = {
         &#39;objective&#39;: &#39;binary&#39;,
-        &#39;metric&#39;: &#39;auc&#39;
+        &#39;metric&#39;: &#39;log_loss&#39;
     }
 
 best_params, history = {}, []
@@ -394,16 +394,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 confusion_matrix(y_test, y_pred)</code></pre>
-<pre><code>## array([[203394,     99],
-##        [ 14846,    701]], dtype=int64)</code></pre>
+<pre><code>## array([[203462,     98],
+##        [ 14823,    657]], dtype=int64)</code></pre>
 <pre class="python"><code>labels = sorted(list(set(y_test)))
 #ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred),labels).plot()
 
 accuracy_score(y_test, y_pred)</code></pre>
-<pre><code>## 0.9317704528853178</code></pre>
+<pre><code>## 0.9318800219138057</code></pre>
 <pre class="python"><code>precision_score(y_test, y_pred)</code></pre>
-<pre><code>## 0.87625</code></pre>
-<p>accuracy_score（予測制度）が90%を超え、precision_Score（陽=1着と予想したデータの正解率）もいい感じです。
+<pre><code>## 0.8701986754966887</code></pre>
+<p>accuracy_score（予測精度）が90%を超え、precision_Score（陽=1着と予想したデータの正解率）もいい感じです。
 shapで要因分解もしてみましょう。</p>
 <pre class="python"><code>import shap
 
@@ -630,7 +630,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1583255364"></script>
+<script src="/my_blog/js/production.min.js?v=1587283270"></script>
 
 </body>
 </html>

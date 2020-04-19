@@ -152,7 +152,7 @@ lgb_test = lgb.Dataset(X_test, y_test, reference=lgb_train)
 
 lgbm_params = {
         &#39;objective&#39;: &#39;binary&#39;,
-        &#39;metric&#39;: &#39;auc&#39;
+        &#39;metric&#39;: &#39;log_loss&#39;
     }
 
 best_params, history = {}, []
@@ -166,16 +166,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 confusion_matrix(y_test, y_pred)</code></pre>
-<pre><code>## array([[203394,     99],
-##        [ 14846,    701]], dtype=int64)</code></pre>
+<pre><code>## array([[203462,     98],
+##        [ 14823,    657]], dtype=int64)</code></pre>
 <pre class="python"><code>labels = sorted(list(set(y_test)))
 #ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred),labels).plot()
 
 accuracy_score(y_test, y_pred)</code></pre>
-<pre><code>## 0.9317704528853178</code></pre>
+<pre><code>## 0.9318800219138057</code></pre>
 <pre class="python"><code>precision_score(y_test, y_pred)</code></pre>
-<pre><code>## 0.87625</code></pre>
-<p>accuracy_score（予測制度）が90%を超え、precision_Score（陽=1着と予想したデータの正解率）もいい感じです。
+<pre><code>## 0.8701986754966887</code></pre>
+<p>accuracy_score（予測精度）が90%を超え、precision_Score（陽=1着と予想したデータの正解率）もいい感じです。
 shapで要因分解もしてみましょう。</p>
 <pre class="python"><code>import shap
 

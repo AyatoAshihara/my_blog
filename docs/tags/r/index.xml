@@ -6,10 +6,22 @@
     <description>Recent content in R on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 29 Aug 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 19 Apr 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/my_blog/tags/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>WindowsにNEologd辞書をインストールして、RMeCabを実行する方法</title>
+      <link>/my_blog/post/post21/</link>
+      <pubDate>Sun, 19 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post/post21/</guid>
+      <description>
+
+
+</description>
+    </item>
     
     <item>
       <title>【単発】10年物長期金利をフィッティングしてみる</title>

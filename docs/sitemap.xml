@@ -3,19 +3,48 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/my_blog/post/post21/</loc>
+    <lastmod>2020-04-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/my_blog/post/post20/</loc>
     <lastmod>2020-02-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/my_blog/categories/</loc>
-    <lastmod>2020-02-29T00:00:00+00:00</lastmod>
+    <lastmod>2020-04-19T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/my_blog/post/</loc>
-    <lastmod>2020-02-29T00:00:00+00:00</lastmod>
+    <lastmod>2020-04-19T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/tags/r/</loc>
+    <lastmod>2020-04-19T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/tags/</loc>
+    <lastmod>2020-04-19T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/categories/%E5%8D%98%E7%99%BA/</loc>
+    <lastmod>2020-04-19T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/my_blog/</loc>
+    <lastmod>2020-04-19T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -26,19 +55,7 @@
   </url>
   
   <url>
-    <loc>/my_blog/tags/</loc>
-    <lastmod>2020-02-29T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/my_blog/tags/%E5%89%8D%E5%87%A6%E7%90%86/</loc>
-    <lastmod>2020-02-29T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/my_blog/</loc>
     <lastmod>2020-02-29T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -61,12 +78,6 @@
   </url>
   
   <url>
-    <loc>/my_blog/categories/%E5%8D%98%E7%99%BA/</loc>
-    <lastmod>2020-01-28T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/my_blog/post/post18/</loc>
     <lastmod>2019-10-30T00:00:00+00:00</lastmod>
   </url>
@@ -86,12 +97,6 @@
   <url>
     <loc>/my_blog/post17/</loc>
     <lastmod>2019-09-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/my_blog/tags/r/</loc>
-    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
