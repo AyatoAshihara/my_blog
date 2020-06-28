@@ -26,7 +26,7 @@
         "datePublished": "2020-04-19 00:00:00 \x2b0000 UTC",
         "dateModified" : "2020-04-19 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post21\/",
-        "wordCount" : "348",
+        "wordCount" : "359",
         "image" : "/my_blog/C:\\\\Users\\\\aashi\\\\Desktop\\\\my_blog\\\\static\\\\img\\\\portfolio\\\\D5iYB1fWsAAkSt-.jpg"",
         "keywords" : [ ""R"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1593237725" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1593320102" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1593237725" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1593320102" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -328,7 +328,7 @@ RMeCabC(&quot;これはペンです。&quot;) %&gt;% unlist()</code></pre>
 <h4>1. Windows Subsystem for Linuxのインストール</h4>
 <p>Windows Power Shellを<em>管理者権限</em>で開き、「Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux」を実行する。WSLをインストールすることができます。</p>
 <div class="figure">
-<img src="/post/post21_files/powershell.PNG" alt="powerShellでの実行の様子" style="width:100.0%" />
+<img src="/myblog/post/post21_files/powershell.PNG" alt="powerShellでの実行の様子" style="width:100.0%" />
 <p class="caption">powerShellでの実行の様子</p>
 </div>
 </div>
@@ -336,7 +336,7 @@ RMeCabC(&quot;これはペンです。&quot;) %&gt;% unlist()</code></pre>
 <h4>2. Ubuntu Linuxのインストール</h4>
 <p>Microsoft Storeよりubuntuをダウンロードする。</p>
 <div class="figure">
-<img src="/post/post21_files/ubuntu.PNG" alt="ubuntuの画面" style="width:100.0%" />
+<img src="/myblog/post/post21_files/ubuntu.PNG" alt="ubuntuの画面" style="width:100.0%" />
 <p class="caption">ubuntuの画面</p>
 </div>
 <p>インストールが完了したらubuntuを起動し、初期設定を完了させる(ID、パスワード)。</p>
@@ -344,38 +344,32 @@ RMeCabC(&quot;これはペンです。&quot;) %&gt;% unlist()</code></pre>
 <div id="ubuntu-linuxにmecabをインストール" class="section level4">
 <h4>3. Ubuntu LinuxにMeCabをインストール</h4>
 <p>ubuntuのコマンドプロンプトで、</p>
-<blockquote>
-<p>$ sudo apt-get update
-$ sudo apt install mecab
-$ sudo apt install libmecab-dev
-$ sudo apt install mecab-ipadic-utf8</p>
-</blockquote>
+<pre class="r"><code>&gt; \$ sudo apt-get update
+&gt; \$ sudo apt install mecab
+&gt; \$ sudo apt install libmecab-dev
+&gt; \$ sudo apt install mecab-ipadic-utf8</code></pre>
 <p>を入力し、MeCabをインストール。</p>
 <div class="figure">
-<img src="/post/post21_files/ubuntumecab.PNG" alt="ubuntuでmecabをインストール" style="width:100.0%" />
+<img src="/myblog/post/post21_files/ubuntumecab.PNG" alt="ubuntuでmecabをインストール" style="width:100.0%" />
 <p class="caption">ubuntuでmecabをインストール</p>
 </div>
 </div>
 <div id="ubuntu-for-linuxにneologd辞書をインストール" class="section level4">
 <h4>4. Ubuntu for LinuxにNEologd辞書をインストール</h4>
 <p>ubuntuのコマンドプロンプトで</p>
-<blockquote>
-<p>$ sudo apt install make
-$ git clone –depth 1 <a href="https://github.com/neologd/mecab-ipadic-neologd.git" class="uri">https://github.com/neologd/mecab-ipadic-neologd.git</a>
-$ cd mecab-ipadic-neologd
-$ sudo bin/install-mecab-ipadic-neologd -n -a</p>
-</blockquote>
+<pre class="r"><code>&gt; \$ sudo apt install make
+&gt; \$ git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git
+&gt; \$ cd mecab-ipadic-neologd
+&gt; \$ sudo bin/install-mecab-ipadic-neologd -n -a</code></pre>
 <p>を実行。Neologd辞書ファイルが(/usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd/)にインストールできる。</p>
 </div>
 <div id="ubuntu-for-linuxからwindowsへ辞書ファイルをコピー" class="section level4">
 <h4>5. Ubuntu for LinuxからWindowsへ辞書ファイルをコピー</h4>
 <p>ubuntuのコマンドプロンプトで</p>
-<blockquote>
-<p>$ explorer.exe .</p>
-</blockquote>
+<pre class="r"><code>&gt; \$ explorer.exe .</code></pre>
 <p>を入力。エクスプローラーが立ち上がるので、/usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd/(ディレクトリ)をWindowsの任意のディレクトリにコピーする。完了したらUbuntuは閉じる。</p>
 <div class="figure">
-<img src="/post/post21_files/explorer.PNG" alt="エクスプローラーでubuntu内部ディレクトリを確認する図" style="width:100.0%" />
+<img src="/myblog/post/post21_files/explorer.PNG" alt="エクスプローラーでubuntu内部ディレクトリを確認する図" style="width:100.0%" />
 <p class="caption">エクスプローラーでubuntu内部ディレクトリを確認する図</p>
 </div>
 </div>
@@ -393,11 +387,9 @@ $ sudo bin/install-mecab-ipadic-neologd -n -a</p>
 -MeCab
 -bin
 -mecab-dict-index.exe</p>
-<p><img src="/post/post21_files/mecab_dict_index.PNG" style="width:100.0%" /></p>
+<p><img src="/myblog/post/post21_files/mecab_dict_index.PNG" style="width:100.0%" /></p>
 <p>コマンドプロンプトを立ち上げ、</p>
-<blockquote>
-<p>C:Files (x86)-dict-index.exe -d …/mecab-ipadic-neologd/buildmecab/ipadic-2.7.0-20070801-neologd-yyyymmdd(ファイルの保存場所) -u NEologd.yyyymmdd.dic -f utf-8 -t shift-jis mecab-ipadic-neologd-2.7.0-20070801-neologd-yyyymmdd-user-dict-seed.yyyymmdd.csv</p>
-</blockquote>
+<pre class="r"><code>&gt; C:\Program Files (x86)\MeCab\bin\mecab-dict-index.exe -d .../mecab-ipadic-neologd/buildmecab/ipadic-2.7.0-20070801-neologd-yyyymmdd(ファイルの保存場所) -u NEologd.yyyymmdd.dic -f utf-8 -t shift-jis mecab-ipadic-neologd\buildmecab\ipadic-2.7.0-20070801-neologd-yyyymmdd\mecab-user-dict-seed.yyyymmdd.csv </code></pre>
 <p>を適宜変更の上、入力。…/mecab-ipadic-neologd/buildmecab/ipadic-2.7.0-20070801-neologd-yyyymmddに辞書がコンパイルされ、NEologd.yyyymmdd.dicができる。</p>
 </div>
 </div>
@@ -620,7 +612,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1593237725"></script>
+<script src="/my_blog/js/production.min.js?v=1593320102"></script>
 
 </body>
 </html>
