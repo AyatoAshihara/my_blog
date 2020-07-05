@@ -9,7 +9,7 @@ tags:
   - Python
   - 機械学習
   - 前処理
-image: ''
+image: 'https://www.photock.jp/photo/middle/photo0000-4277.jpg'
 showonlyimage: no
 keywords:
   - key

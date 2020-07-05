@@ -15,7 +15,7 @@
         "articleSection" : "post",
         "name" : "LightGBMを使用して競馬結果を予想してみる",
         "headline" : "LightGBMを使用して競馬結果を予想してみる",
-        "description" : "\r\n\r\n\r\n",
+        "description" : "\r\n\x3cscript src=\x22\/my_blog\/rmarkdown-libs\/header-attrs\/header-attrs.js\x22\x3e\x3c\/script\x3e\r\n\r\n\r\n",
         "inLanguage" : "en",
         "author" : "Ayato Ashihara",
         "creator" : "Ayato Ashihara",
@@ -27,7 +27,7 @@
         "dateModified" : "2020-02-29 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post20\/",
         "wordCount" : "659",
-        "image" : "/my_blog/"",
+        "image" : "/my_blog/https://www.photock.jp/photo/middle/photo0000-4277.jpg"",
         "keywords" : [ ""Python"",""機械学習"",""前処理"","Blog" ]   
     }
     </script>
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1593954976" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1593957591" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1593954976" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1593957591" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -226,10 +226,11 @@ if (!doNotTrack) {
   
   <div id="loop-container" class="loop-container">
     
+    <div class="post type-post status-publish format-standard has-post-thumbnail hentry category-design tag-design tag-standard-2 tag-tagalicious tag-travel entry full-without-featured odd excerpt-1">
 
-      <div class="post type-post status-publish format-standard hentry category-standard category-travel entry full-without-featured odd excerpt-1">
-
-        
+      <div class='featured-image lazy lazy-bg-image'  data-background="https://www.photock.jp/photo/middle/photo0000-4277.jpg">
+      </div>
+      
         <div class="entry-meta">
           <span class="date">29 February</span>	<span> / </span>
 
@@ -301,7 +302,7 @@ df[&#39;arriving order&#39;].unique()</code></pre>
 ##        11., 15., 13.])</code></pre>
 <pre class="python"><code>df[&#39;order&#39;] = df[&#39;order&#39;].replace(r&#39;\(\d+\)&#39;,r&#39;&#39;,regex=True)
 df = df[lambda df: ~df.order.str.contains(r&#39;(取消|中止|除外|失格)&#39;,regex=True)]</code></pre>
-<pre><code>## C:\Users\aashi\Anaconda3\envs\umanalytics\lib\site-packages\pandas\core\strings.py:1952: UserWarning: This pattern has match groups. To actually get the groups, use str.extract.
+<pre><code>## C:\Users\aashi\Anaconda3\envs\umanalytics\lib\site-packages\pandas\core\strings.py:1954: UserWarning: This pattern has match groups. To actually get the groups, use str.extract.
 ##   return func(self, *args, **kwargs)</code></pre>
 <pre class="python"><code>df[&#39;order&#39;] = df[&#39;order&#39;].astype(&#39;float64&#39;)
 df[&#39;order&#39;].unique()</code></pre>
@@ -397,15 +398,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 confusion_matrix(y_test, y_pred)</code></pre>
-<pre><code>## array([[203598,    110],
-##        [ 14605,    727]], dtype=int64)</code></pre>
+<pre><code>## array([[203505,    137],
+##        [ 14644,    754]], dtype=int64)</code></pre>
 <pre class="python"><code>labels = sorted(list(set(y_test)))
 #ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred),labels).plot()
 
 accuracy_score(y_test, y_pred)</code></pre>
-<pre><code>## 0.9328204894083273</code></pre>
+<pre><code>## 0.9325191745799853</code></pre>
 <pre class="python"><code>precision_score(y_test, y_pred)</code></pre>
-<pre><code>## 0.8685782556750299</code></pre>
+<pre><code>## 0.8462401795735129</code></pre>
 <p>accuracy_score（予測精度）が90%を超え、precision_Score（陽=1着と予想したデータの正解率）もいい感じです。
 shapで要因分解もしてみましょう。</p>
 </div>
@@ -648,7 +649,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1593954976"></script>
+<script src="/my_blog/js/production.min.js?v=1593957591"></script>
 
 </body>
 </html>
