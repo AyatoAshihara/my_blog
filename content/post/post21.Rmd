@@ -7,7 +7,7 @@ categories:
   - 単発
 tags:
   - R
-image: "C:/Users/aashi/Desktop/my_blog/static/img/portfolio/NEologd.jpg"
+image: "https://raw.githubusercontent.com/neologd/mecab-ipadic-neologd/images/neologd-logo-September2016.png"
 ---
 
 <!--more-->

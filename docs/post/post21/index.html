@@ -15,7 +15,7 @@
         "articleSection" : "post",
         "name" : "WindowsにNEologd辞書をインストールして、RMeCabを実行する方法",
         "headline" : "WindowsにNEologd辞書をインストールして、RMeCabを実行する方法",
-        "description" : "\r\n\r\n\r\n",
+        "description" : "\r\n\x3cscript src=\x22\/my_blog\/rmarkdown-libs\/header-attrs\/header-attrs.js\x22\x3e\x3c\/script\x3e\r\n\r\n\r\n",
         "inLanguage" : "en",
         "author" : "AyatoAshihara",
         "creator" : "AyatoAshihara",
@@ -27,7 +27,7 @@
         "dateModified" : "2020-04-19 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post21\/",
         "wordCount" : "349",
-        "image" : "/my_blog/C:/Users/aashi/Desktop/my_blog/static/img/portfolio/NEologd.jpg"",
+        "image" : "/my_blog/https://raw.githubusercontent.com/neologd/mecab-ipadic-neologd/images/neologd-logo-September2016.png"",
         "keywords" : [ ""R"","Blog" ]   
     }
     </script>
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1593954733" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1593954976" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1593954733" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1593954976" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -228,7 +228,7 @@ if (!doNotTrack) {
     
     <div class="post type-post status-publish format-standard has-post-thumbnail hentry category-design tag-design tag-standard-2 tag-tagalicious tag-travel entry full-without-featured odd excerpt-1">
 
-      <div class='featured-image lazy lazy-bg-image'  data-background="#ZgotmplZ">
+      <div class='featured-image lazy lazy-bg-image'  data-background="https://raw.githubusercontent.com/neologd/mecab-ipadic-neologd/images/neologd-logo-September2016.png">
       </div>
       
         <div class="entry-meta">
@@ -328,7 +328,7 @@ RMeCabC(&quot;これはペンです。&quot;) %&gt;% unlist()</code></pre>
 <h4>1. Windows Subsystem for Linuxのインストール</h4>
 <p>Windows Power Shellを<em>管理者権限</em>で開き、「Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux」を実行する。WSLをインストールすることができます。</p>
 <div class="figure">
-<img src="/my_blog/post/post21_files/powershell.PNG" alt="powerShellでの実行の様子" style="width:100.0%" />
+<img src="/my_blog/post/post21_files/powershell.PNG" style="width:100.0%" alt="" />
 <p class="caption">powerShellでの実行の様子</p>
 </div>
 </div>
@@ -336,7 +336,7 @@ RMeCabC(&quot;これはペンです。&quot;) %&gt;% unlist()</code></pre>
 <h4>2. Ubuntu Linuxのインストール</h4>
 <p>Microsoft Storeよりubuntuをダウンロードする。</p>
 <div class="figure">
-<img src="/my_blog/post/post21_files/ubuntu.PNG" alt="ubuntuの画面" style="width:100.0%" />
+<img src="/my_blog/post/post21_files/ubuntu.PNG" style="width:100.0%" alt="" />
 <p class="caption">ubuntuの画面</p>
 </div>
 <p>インストールが完了したらubuntuを起動し、初期設定を完了させる(ID、パスワード)。</p>
@@ -350,7 +350,7 @@ $ sudo apt install libmecab-dev
 $ sudo apt install mecab-ipadic-utf8</code></pre>
 <p>を入力し、MeCabをインストール。</p>
 <div class="figure">
-<img src="/my_blog/post/post21_files/ubuntumecab.PNG" alt="ubuntuでmecabをインストール" style="width:100.0%" />
+<img src="/my_blog/post/post21_files/ubuntumecab.PNG" style="width:100.0%" alt="" />
 <p class="caption">ubuntuでmecabをインストール</p>
 </div>
 </div>
@@ -369,7 +369,7 @@ $ sudo bin/install-mecab-ipadic-neologd -n -a</code></pre>
 <pre class="bash"><code>$ explorer.exe .</code></pre>
 <p>を入力。エクスプローラーが立ち上がるので、/usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd/(ディレクトリ)をWindowsの任意のディレクトリにコピーする。完了したらUbuntuは閉じる。</p>
 <div class="figure">
-<img src="/my_blog/post/post21_files/explorer.PNG" alt="エクスプローラーでubuntu内部ディレクトリを確認する図" style="width:100.0%" />
+<img src="/my_blog/post/post21_files/explorer.PNG" style="width:100.0%" alt="" />
 <p class="caption">エクスプローラーでubuntu内部ディレクトリを確認する図</p>
 </div>
 </div>
@@ -404,8 +404,8 @@ Ubuntu for Linuxを使用しなくてもダウンロードできそうな方法�
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>MeCab内部の仕組みについてはこちらの記事が参考になります。<a href="https://techlife.cookpad.com/entry/2016/05/11/170000" class="uri">https://techlife.cookpad.com/entry/2016/05/11/170000</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>2020/4/19時点の最近版は2020/3/15更新の辞書です。<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>MeCab内部の仕組みについてはこちらの記事が参考になります。<a href="https://techlife.cookpad.com/entry/2016/05/11/170000" class="uri">https://techlife.cookpad.com/entry/2016/05/11/170000</a><a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>2020/4/19時点の最近版は2020/3/15更新の辞書です。<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
@@ -612,7 +612,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1593954733"></script>
+<script src="/my_blog/js/production.min.js?v=1593954976"></script>
 
 </body>
 </html>
