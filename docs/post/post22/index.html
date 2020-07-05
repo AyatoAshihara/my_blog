@@ -26,7 +26,7 @@
         "datePublished": "2020-07-05 00:00:00 \x2b0000 UTC",
         "dateModified" : "2020-07-05 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post22\/",
-        "wordCount" : "652",
+        "wordCount" : "840",
         "image" : "/my_blog/https://www.photock.jp/photo/middle/photo0000-1555.jpg"",
         "keywords" : [ ""Python"",""Webスクレイピング"",""機械学習"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1593957591" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1593970153" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1593957591" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1593970153" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -295,7 +295,7 @@ driver.get(url)
 driver.implicitly_wait(15) # オブジェクトのロード待ちの最大時間でこれを越えるとエラー
 sleep(5) # webページの遷移を行うので1秒sleep
 
-# 角レース毎に画像データ保存
+# 各レース毎に画像データ保存
 selector0 = &quot;body &gt; div &gt; main &gt; div &gt; div.primaryContents &gt; article &gt; div &gt; section &gt; a&quot;
 elements = driver.find_elements_by_css_selector(selector0)
 for i in range(0,len(elements)):
@@ -360,6 +360,7 @@ import glob
 import matplotlib.pyplot as plt
 import time
 import os</code></pre>
+<pre class="python"><code>os.environ[&#39;QT_QPA_PLATFORM_PLUGIN_PATH&#39;] = &#39;C:/Users/aashi/Anaconda3/envs/umanalytics/Library/plugins/platforms&#39;</code></pre>
 <p>まず最初に収集してきた画像データを数値データに変換し学習データを作成します。
 ディレクトリ構造は以下のようになっており、上位画像とその他画像が別ディレクトリに保存されています。各ディレクトリから画像を読み込む際に、上位画像には1、その他には0というカテゴリ変数を与えます。</p>
 <p>馬体写真</p>
@@ -370,7 +371,7 @@ import os</code></pre>
 <pre class="python"><code>#フォルダを指定
 folders = os.listdir(r&quot;C:\Users\aashi\競馬統計解析\馬体写真&quot;)
 #画総数を指定(今回は50×50×3)。
-image_size = 50
+image_size = 225
 dense_size = len(folders)
 
 X = []
@@ -394,7 +395,7 @@ Y = np.array(Y)
 X = X.astype(&#39;float32&#39;)
 X = X / 255.0 # 0~1へ変換
 X.shape</code></pre>
-<pre><code>## (260, 50, 50, 3)</code></pre>
+<pre><code>## (260, 225, 225, 3)</code></pre>
 <pre class="python"><code>Y = np_utils.to_categorical(Y, dense_size)
 
 #訓練データとテストデータへ変換
@@ -427,33 +428,33 @@ model.summary()</code></pre>
 ## _________________________________________________________________
 ## Layer (type)                 Output Shape              Param #   
 ## =================================================================
-## conv2d (Conv2D)              (None, 50, 50, 32)        896       
+## conv2d (Conv2D)              (None, 225, 225, 32)      896       
 ## _________________________________________________________________
-## activation (Activation)      (None, 50, 50, 32)        0         
+## activation (Activation)      (None, 225, 225, 32)      0         
 ## _________________________________________________________________
-## conv2d_1 (Conv2D)            (None, 48, 48, 32)        9248      
+## conv2d_1 (Conv2D)            (None, 223, 223, 32)      9248      
 ## _________________________________________________________________
-## activation_1 (Activation)    (None, 48, 48, 32)        0         
+## activation_1 (Activation)    (None, 223, 223, 32)      0         
 ## _________________________________________________________________
-## max_pooling2d (MaxPooling2D) (None, 24, 24, 32)        0         
+## max_pooling2d (MaxPooling2D) (None, 111, 111, 32)      0         
 ## _________________________________________________________________
-## dropout (Dropout)            (None, 24, 24, 32)        0         
+## dropout (Dropout)            (None, 111, 111, 32)      0         
 ## _________________________________________________________________
-## conv2d_2 (Conv2D)            (None, 24, 24, 64)        18496     
+## conv2d_2 (Conv2D)            (None, 111, 111, 64)      18496     
 ## _________________________________________________________________
-## activation_2 (Activation)    (None, 24, 24, 64)        0         
+## activation_2 (Activation)    (None, 111, 111, 64)      0         
 ## _________________________________________________________________
-## conv2d_3 (Conv2D)            (None, 22, 22, 64)        36928     
+## conv2d_3 (Conv2D)            (None, 109, 109, 64)      36928     
 ## _________________________________________________________________
-## activation_3 (Activation)    (None, 22, 22, 64)        0         
+## activation_3 (Activation)    (None, 109, 109, 64)      0         
 ## _________________________________________________________________
-## max_pooling2d_1 (MaxPooling2 (None, 11, 11, 64)        0         
+## max_pooling2d_1 (MaxPooling2 (None, 54, 54, 64)        0         
 ## _________________________________________________________________
-## dropout_1 (Dropout)          (None, 11, 11, 64)        0         
+## dropout_1 (Dropout)          (None, 54, 54, 64)        0         
 ## _________________________________________________________________
-## flatten (Flatten)            (None, 7744)              0         
+## flatten (Flatten)            (None, 186624)            0         
 ## _________________________________________________________________
-## dense (Dense)                (None, 512)               3965440   
+## dense (Dense)                (None, 512)               95552000  
 ## _________________________________________________________________
 ## activation_4 (Activation)    (None, 512)               0         
 ## _________________________________________________________________
@@ -463,8 +464,8 @@ model.summary()</code></pre>
 ## _________________________________________________________________
 ## activation_5 (Activation)    (None, 2)                 0         
 ## =================================================================
-## Total params: 4,032,034
-## Trainable params: 4,032,034
+## Total params: 95,618,594
+## Trainable params: 95,618,594
 ## Non-trainable params: 0
 ## _________________________________________________________________</code></pre>
 <p>では、学習パートに入ります。アルゴリズムにはAdadeltaを使用します。よくわかってないんですけどね。。。</p>
@@ -473,12 +474,81 @@ results = {}
 epochs = 200
 model.compile(loss=&#39;categorical_crossentropy&#39;, optimizer=optimizers, metrics=[&#39;accuracy&#39;])
 results= model.fit(X_train, y_train, validation_split=0.5, epochs=epochs)</code></pre>
+<pre class="python"><code>optimizers =&quot;Adadelta&quot;
+results = {}
+epochs = 200
+model.compile(loss=&#39;categorical_crossentropy&#39;, optimizer=optimizers, metrics=[&#39;accuracy&#39;])
+model.load_weights(r&quot;C:\Users\aashi\競馬統計解析\horse_photo_weights.h5&quot;)</code></pre>
 <p>Testデータでの正答率は以下のようになりました。</p>
-<pre class="python"><code>score = model.evaluate(X_test, y_test, verbose=0)
+<pre class="python"><code>from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+score = model.evaluate(X_test, y_test, verbose=0)
 print(&#39;Test accuracy:&#39;, score[1])</code></pre>
-<pre><code>## Test accuracy: 0.7692307829856873</code></pre>
-<p>75~80%の正答率でまあまあ悪くないかなと思います。
-とりあえず、今日はここまでにしたいと思います。shap値を用いた解釈など時間があればやりたいと思います。</p>
+<pre><code>## Test accuracy: 0.7538461685180664</code></pre>
+<p>75~80%の正答率でまあまあ悪くないかなと思います。</p>
+</div>
+<div id="shap値を用いた結果解釈" class="section level4">
+<h4>3. Shap値を用いた結果解釈</h4>
+<p>今学習したモデルのshap値を考え、結果の解釈をしたいと思います。shap値については時間があれば、説明を追記したいと思います。簡単に言えば、CNNが画像のどの部分に特徴を捉え、馬が上位に入るかを予想したかを可視化で捉えることができます。この馬の解析をすることにします。</p>
+<pre class="python"><code>plt.imshow(X_test[0])
+plt.show()</code></pre>
+<p><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="python"><code>import shap
+background = X_train[np.random.choice(X_train.shape[0],100,replace=False)]
+
+e = shap.GradientExplainer(model,background)
+
+shap_values = e.shap_values(X_test[[0]])
+shap.image_plot(shap_values,-X_test[[0]])</code></pre>
+<pre><code>## Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).</code></pre>
+<p><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-11-1.png" width="864" /></p>
+<p>非常に微妙ですが、足や臀部などを評価しているようにみえます。
+各層において画像のどの側面を捉えているかを可視化してみたいと思います。</p>
+<pre class="python"><code>from keras import models
+
+layer_outputs = [layer.output for layer in model.layers[:8]]
+layer_names = []
+for layer in model.layers[:8]:
+    layer_names.append(layer.name)
+images_per_row = 16
+
+activation_model = models.Model(inputs=model.input, outputs=layer_outputs)
+activations = activation_model.predict(X_train[[0]])
+
+for layer_name, layer_activation in zip(layer_names, activations):
+    n_features = layer_activation.shape[-1]
+
+    size = layer_activation.shape[1]
+
+    n_cols = n_features // images_per_row
+    display_grid = np.zeros((size * n_cols, images_per_row * size))
+
+    for col in range(n_cols):
+        for row in range(images_per_row):
+            channel_image = layer_activation[0,
+                                             :, :,
+                                             col * images_per_row + row]
+            channel_image -= channel_image.mean()
+            channel_image /= channel_image.std()
+            channel_image *= 64
+            channel_image += 128
+            channel_image = np.clip(channel_image, 0, 255).astype(&#39;uint8&#39;)
+            display_grid[col * size : (col + 1) * size,
+                         row * size : (row + 1) * size] = channel_image
+
+    scale = 1. / size
+    plt.figure(figsize=(scale * display_grid.shape[1],
+                        scale * display_grid.shape[0]))
+    plt.title(layer_name)
+    plt.grid(False)
+    plt.imshow(display_grid, cmap=&#39;viridis&#39;)
+    plt.show()</code></pre>
+<p><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-1.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-2.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-3.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-4.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-5.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-6.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-7.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-8.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-9.png" width="1536" /></p>
+<p>自分が未熟なこともあり、解釈が難しいですね。</p>
+</div>
+<div id="最後に" class="section level4">
+<h4>4. 最後に</h4>
+<p>正直まったく上手くいかないと思っていた馬体解析ですが、思ったよりやるやんという感じでしょうか。ただ、馬体から順位予想ができたところで、それが回収率を上げるかは別問題ですので、そこはきちんと調べる必要があります。CNNが上位と判断した馬のオッズが低ければ、わざわざ非構造データを用いた意味がありません。馬体を見て、馬券買える人はなかなかの通なのでそんなにいないとは思うのですが。
+また、Youtubeからパドック動画を取得して、Encoder-Decoderモデルで解析するというのも自分の実力が十分上がれば是非やってみたいと思いいます(いつになることやら)。それまでには、PCのスペックを上げないといけません。定額給付金を使うかな。。。</p>
 </div>
 
             </article>
@@ -688,7 +758,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1593957591"></script>
+<script src="/my_blog/js/production.min.js?v=1593970153"></script>
 
 </body>
 </html>

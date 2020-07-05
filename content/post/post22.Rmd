@@ -71,7 +71,7 @@ driver.get(url)
 driver.implicitly_wait(15) # オブジェクトのロード待ちの最大時間でこれを越えるとエラー
 sleep(5) # webページの遷移を行うので1秒sleep
 
-# 角レース毎に画像データ保存
+# 各レース毎に画像データ保存
 selector0 = "body > div > main > div > div.primaryContents > article > div > section > a"
 elements = driver.find_elements_by_css_selector(selector0)
 for i in range(0,len(elements)):
@@ -142,6 +142,10 @@ import time
 import os
 ```
 
+```{python}
+os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = 'C:/Users/aashi/Anaconda3/envs/umanalytics/Library/plugins/platforms'
+```
+
 まず最初に収集してきた画像データを数値データに変換し学習データを作成します。
 ディレクトリ構造は以下のようになっており、上位画像とその他画像が別ディレクトリに保存されています。各ディレクトリから画像を読み込む際に、上位画像には1、その他には0というカテゴリ変数を与えます。
 
@@ -154,7 +158,7 @@ import os
 #フォルダを指定
 folders = os.listdir(r"C:\Users\aashi\競馬統計解析\馬体写真")
 #画総数を指定(今回は50×50×3)。
-image_size = 50
+image_size = 225
 dense_size = len(folders)
 
 X = []
@@ -222,7 +226,7 @@ model.compile(loss='categorical_crossentropy', optimizer=optimizers, metrics=['a
 results= model.fit(X_train, y_train, validation_split=0.5, epochs=epochs)
 ```
 
-```{python, include=FALSE}
+```{python}
 optimizers ="Adadelta"
 results = {}
 epochs = 200
@@ -233,10 +237,84 @@ model.load_weights(r"C:\Users\aashi\競馬統計解析\horse_photo_weights.h5")
 Testデータでの正答率は以下のようになりました。
 
 ```{python}
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 score = model.evaluate(X_test, y_test, verbose=0)
 print('Test accuracy:', score[1])
 ```
 
 75~80%の正答率でまあまあ悪くないかなと思います。
-とりあえず、今日はここまでにしたいと思います。shap値を用いた解釈など時間があればやりたいと思います。
+
+#### 3. Shap値を用いた結果解釈
+
+今学習したモデルのshap値を考え、結果の解釈をしたいと思います。shap値については時間があれば、説明を追記したいと思います。簡単に言えば、CNNが画像のどの部分に特徴を捉え、馬が上位に入るかを予想したかを可視化で捉えることができます。この馬の解析をすることにします。
+
+```{python}
+plt.imshow(X_test[0])
+plt.show()
+```
+
+```{python}
+import shap
+background = X_train[np.random.choice(X_train.shape[0],100,replace=False)]
+
+e = shap.GradientExplainer(model,background)
+
+shap_values = e.shap_values(X_test[[0]])
+shap.image_plot(shap_values,-X_test[[0]])
+```
+
+非常に微妙ですが、足や臀部などを評価しているようにみえます。
+各層において画像のどの側面を捉えているかを可視化してみたいと思います。
+
+```{python}
+from keras import models
+
+layer_outputs = [layer.output for layer in model.layers[:8]]
+layer_names = []
+for layer in model.layers[:8]:
+    layer_names.append(layer.name)
+images_per_row = 16
+
+activation_model = models.Model(inputs=model.input, outputs=layer_outputs)
+activations = activation_model.predict(X_train[[0]])
+
+for layer_name, layer_activation in zip(layer_names, activations):
+    n_features = layer_activation.shape[-1]
+
+    size = layer_activation.shape[1]
+
+    n_cols = n_features // images_per_row
+    display_grid = np.zeros((size * n_cols, images_per_row * size))
+
+    for col in range(n_cols):
+        for row in range(images_per_row):
+            channel_image = layer_activation[0,
+                                             :, :,
+                                             col * images_per_row + row]
+            channel_image -= channel_image.mean()
+            channel_image /= channel_image.std()
+            channel_image *= 64
+            channel_image += 128
+            channel_image = np.clip(channel_image, 0, 255).astype('uint8')
+            display_grid[col * size : (col + 1) * size,
+                         row * size : (row + 1) * size] = channel_image
+
+    scale = 1. / size
+    plt.figure(figsize=(scale * display_grid.shape[1],
+                        scale * display_grid.shape[0]))
+    plt.title(layer_name)
+    plt.grid(False)
+    plt.imshow(display_grid, cmap='viridis')
+    plt.show()
+```
+
+自分が未熟なこともあり、解釈が難しいですね。
+
+#### 4. 最後に
+
+正直まったく上手くいかないと思っていた馬体解析ですが、思ったよりやるやんという感じでしょうか。ただ、馬体から順位予想ができたところで、それが回収率を上げるかは別問題ですので、そこはきちんと調べる必要があります。CNNが上位と判断した馬のオッズが低ければ、わざわざ非構造データを用いた意味がありません。馬体を見て、馬券買える人はなかなかの通なのでそんなにいないとは思うのですが。
+また、Youtubeからパドック動画を取得して、Encoder-Decoderモデルで解析するというのも自分の実力が十分上がれば是非やってみたいと思いいます(いつになることやら)。それまでには、PCのスペックを上げないといけません。定額給付金を使うかな。。。
+
+
+
 
