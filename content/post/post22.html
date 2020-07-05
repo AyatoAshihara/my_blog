@@ -1,0 +1,245 @@
+---
+title: CNNを使って馬体写真から順位予想してみた
+author: AyatoAshihara
+date: '2020-07-05'
+slug: post22
+categories:
+  - 競馬
+tags:
+  - Python
+  - Webスクレイピング
+  - 機械学習
+image: "https://www.photock.jp/photo/middle/photo0000-1555.jpg"
+editor_options:
+  chunk_output_type: console
+---
+
+<script src="/my_blog/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<!--more-->
+<p>おはこんばんにちは。今回は競馬予想についての記事を書きたいと思います。前回、LightGBMを用いてyahoo競馬から取得したレース結果データ(テーブルデータ)を用いて、競馬順位予想モデルを作成しました。前回は構造データを用いましたが、このご時世ですからこんな分析は誰にでもできるわけです。時代は非構造データ、というわけで今回は馬体画像から特徴量を抽出し、順位予想を行う畳み込みニューラルネットワーク(Convolutional Neural Network, CNN)を作成してみました。画像解析はEarth Engineを用いた衛星画像の解析に続いて2回目、深層学習はこのブログでは初めてと言うことになります。なお、Pythonを使用しています。</p>
+<div id="データ収集のためのクローリング" class="section level4">
+<h4>1. データ収集のためのクローリング</h4>
+<p>まず、馬体画像をネットから収集することから始めます。1番良いのはレース当日のパドックの写真を使用することでしょう。ただ、パドックの写真をまとまった形で掲載してくれているサイトは調べた限りは存在しませんでした。もしかしたら、Youtubeに競馬ファンの方がパドック動画を上げていらっしゃるかも知れませんので、それを画像に切り抜いて使う or 動画としてCNN→RNNのEncoder-Decoderモデルに適用すると面白いかもしれません。しかし、そこまでの能力は今の自分にはありません。
+そこで、今回は<a href="https://www.daily.co.jp/horse/horsecheck/photo/">デイリーのWebサイト</a>からデータを取得しています。ここには直近1年間?のG1レースに出馬する競走馬のレース前の馬体写真が掲載されています。実際のレース場へ行けない馬券師さんたちはこの写真を見て馬の状態を分析していると思われます。<br />
+なお、このサイトには出馬全頭の馬体写真が掲載されているわけではありません。また、G1の限られたレースのみですので、そもそも全ての馬が仕上がっている可能性もあり、差がつかないことも十分予想されます。ただ、手っ取り早くやってみることを優先し、今回はこのデータを使用することにしたいと思います。</p>
+<p>クローリングにはseleniumを使用します。今回はCNNがメインなのでWebクローリングについては説明しません。使用したコードは以下です。<br />
+【注意】以下のコードを使用される場合は自己責任でお願いします。</p>
+<pre class="python"><code>from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.select import Select
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.alert import Alert
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.action_chains import ActionChains
+from time import sleep
+from urllib import request
+import random
+
+# seleniumのオプション設定（おまじない）
+options = Options()
+options.add_argument(&#39;--disable-gpu&#39;);
+options.add_argument(&#39;--disable-extensions&#39;);
+options.add_argument(&#39;--proxy-server=&quot;direct://&quot;&#39;);
+options.add_argument(&#39;--proxy-bypass-list=*&#39;);
+options.add_argument(&#39;--start-maximized&#39;);
+
+# driver指定
+DRIVER_PATH = r&#39;C:/Users/aashi/Desktop/chromedriver_win32/chromedriver.exe&#39;
+driver = webdriver.Chrome(executable_path=DRIVER_PATH, chrome_options=options)
+
+# urlを渡し、サイトへアクセス
+url = &#39;https://www.daily.co.jp/horse/horsecheck/photo/&#39;
+driver.get(url)
+driver.implicitly_wait(15) # オブジェクトのロード待ちの最大時間でこれを越えるとエラー
+sleep(5) # webページの遷移を行うので1秒sleep
+
+# 角レース毎に画像データ保存
+selector0 = &quot;body &gt; div &gt; main &gt; div &gt; div.primaryContents &gt; article &gt; div &gt; section &gt; a&quot;
+elements = driver.find_elements_by_css_selector(selector0)
+for i in range(0,len(elements)):
+    elements = driver.find_elements_by_css_selector(selector0)
+    element = elements[i]
+    element.click()
+    sleep(5) # webページの遷移を行うので5秒sleep
+
+    target = driver.find_element_by_link_text(&#39;Ｇ１馬体診断写真集のTOP&#39;)
+    actions = ActionChains(driver)
+    actions.move_to_element(target)
+    actions.perform()
+    sleep(5) # webページの遷移を行うので5秒sleep
+    selector = &quot;body &gt; div.wrapper.horse.is-fixedHeader.is-fixedAnimation &gt; main &gt; div &gt; div.primaryContents &gt; article &gt; article &gt; div.photoDetail-wrapper &gt; section &gt; div &gt; figure&quot;
+    figures = driver.find_elements_by_css_selector(selector)
+    download_dir = r&#39;C:\Users\aashi\競馬統計解析\馬体写真&#39;
+    selector = &quot;body &gt; div &gt; main &gt; div &gt; div.primaryContents &gt; article &gt; article &gt; div.photoDetail-wrapper &gt; section &gt; h1&quot;
+    race_name = driver.find_element_by_css_selector(selector).text
+    for figure in figures:
+        img_name = figure.find_element_by_tag_name(&#39;figcaption&#39;).text
+        horse_src = figure.find_element_by_tag_name(&#39;img&#39;).get_attribute(&quot;src&quot;)    
+        save_name = download_dir + &#39;/&#39; + race_name + &#39;_&#39; + img_name + &#39;.jpg&#39;
+        request.urlretrieve(horse_src,save_name)
+    driver.back()</code></pre>
+<p>保存した画像を実際のレース結果と突合し、手作業で上位3位以内グループとそれ以外のグループに分けました。以下のような感じで画像が保存されています。</p>
+<div class="figure">
+<img src="/my_blog/post/post22_files/horse_photo.PNG" alt="" />
+<p class="caption">保存された馬体画像</p>
+</div>
+<p>これで元データの収集が完了しました。</p>
+</div>
+<div id="kerasを用いてcnnを学習させる" class="section level4">
+<h4>2. Kerasを用いてCNNを学習させる</h4>
+<p>さて、次にKerasを使ってCNNを学習させましょう。まず、KerasとはTensorflowやTheano上で動くNeural Networkライブラリの1つです。Kerasは比較的短いコードでモデルを組むことができ、また学習アルゴリズムが多いことが特徴のようです。
+CNNは画像解析を行う際によく使用される(Deep) Neural Networkの1種で、その名の通りConvolution(畳み込み)を追加した物となっています。畳み込みとは以下のような処理のことを言います。</p>
+<div class="figure">
+<img src="https://cdn-ak.f.st-hatena.com/images/fotolife/t/tdualdir/20180501/20180501211957.png" alt="" />
+<p class="caption">畳み込み層の処理</p>
+</div>
+<p>ここのインプットとは画像データのことです。画像解析では画像を数値として認識し、解析を行います。コンピュータ上の画像はRGB値という、赤(Red)、緑(Green)、青(Blue)の3色の0~255までの数値の強弱で表現されています。赤255、緑0、青0といった形で3層のベクトルになっており、この場合完全な赤が表現されます。上図の場合、a,b,cなどが各ピクセルのRGB値のいずれかを表していると考えることができます。畳み込みはこのRGB値をカーネルと呼ばれる行列との内積をとることで画像の特徴量を計算します。畳み込み層の意味は以下の動画がわかりやすいです。</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/vU-JfZNBdYU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+</iframe>
+<p>カーネルを上手くその画像の特徴的な部分を取得できるように学習することで、画像の識別が可能になります。畳み込み層はCNNの最重要部分だと思います。</p>
+<div class="figure">
+<img src="https://th.bing.com/th/id/OIP.F2Ik_XFzmu5jZF-byiAKQQHaCg?w=342&amp;h=118&amp;c=7&amp;o=5&amp;dpr=1.25&amp;pid=1.7" alt="" />
+<p class="caption">CNNの全体像</p>
+</div>
+<p>上図のようにCNNは畳み込み意外にももちろん入力層や出力層など通常のNeural Networkと同じ層も持っています。なお、MaxPooling層について知りたい人は以下の動画を参照されてください。</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/MLixg9K6oeU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+</iframe>
+<p>深層学習の学習方法については誤差逆伝播法がオーソドックスなものとして知られていますが、それ以外にもAdamなど色々なアルゴリズムが提案されているそうです。そこら辺はまだ追えていません。。。</p>
+<p>では、実際にコーディングしていきます。</p>
+<pre class="python"><code>from keras.utils import np_utils
+from keras.models import Sequential
+from keras.layers.convolutional import MaxPooling2D
+from keras.layers import Activation, Conv2D, Flatten, Dense,Dropout
+from sklearn.model_selection import train_test_split
+from keras.optimizers import SGD, Adadelta, Adagrad, Adam, Adamax, RMSprop, Nadam
+from PIL import Image
+import numpy as np
+import glob
+import matplotlib.pyplot as plt
+import time
+import os</code></pre>
+<p>まず最初に収集してきた画像データを数値データに変換し学習データを作成します。
+ディレクトリ構造は以下のようになっており、上位画像とその他画像が別ディレクトリに保存されています。各ディレクトリから画像を読み込む際に、上位画像には1、その他には0というカテゴリ変数を与えます。</p>
+<p>馬体写真</p>
+<ul>
+<li>上位</li>
+<li>その他</li>
+</ul>
+<pre class="python"><code>#フォルダを指定
+folders = os.listdir(r&quot;C:\Users\aashi\競馬統計解析\馬体写真&quot;)
+#画総数を指定(今回は50×50×3)。
+image_size = 50
+dense_size = len(folders)
+
+X = []
+Y = []
+
+#それぞれのフォルダから画像を読み込み、Image関数を使用してRGB値ベクトル(numpy array)へ変換
+for i, folder in enumerate(folders):
+  files = glob.glob(&quot;C:/Users/aashi/競馬統計解析/馬体写真/&quot; + folder + &quot;/*.jpg&quot;)
+  index = i
+  for k, file in enumerate(files):
+    image = Image.open(file)
+    image = image.convert(&quot;RGB&quot;)
+    image = image.resize((image_size, image_size)) #画素数を落としている
+ 
+    data = np.asarray(image)
+    X.append(data)
+    Y.append(index)
+
+X = np.array(X)
+Y = np.array(Y)
+X = X.astype(&#39;float32&#39;)
+X = X / 255.0 # 0~1へ変換
+X.shape</code></pre>
+<pre><code>## (260, 50, 50, 3)</code></pre>
+<pre class="python"><code>Y = np_utils.to_categorical(Y, dense_size)
+
+#訓練データとテストデータへ変換
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.50)</code></pre>
+<p>次に、CNNを構築していきます。kerasでは、sequential modelを指定し、addメソッドで層を追加して行くことでモデルを定義します。</p>
+<pre class="python"><code>model = Sequential()
+model.add(Conv2D(32, (3, 3), padding=&#39;same&#39;,input_shape=X_train.shape[1:]))
+model.add(Activation(&#39;relu&#39;))
+model.add(Conv2D(32, (3, 3)))
+model.add(Activation(&#39;relu&#39;))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
+
+model.add(Conv2D(64, (3, 3), padding=&#39;same&#39;))
+model.add(Activation(&#39;relu&#39;))
+model.add(Conv2D(64, (3, 3)))
+model.add(Activation(&#39;relu&#39;))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
+
+model.add(Flatten())
+model.add(Dense(512))
+model.add(Activation(&#39;relu&#39;))
+model.add(Dropout(0.5))
+model.add(Dense(dense_size))
+model.add(Activation(&#39;softmax&#39;))
+
+model.summary()</code></pre>
+<pre><code>## Model: &quot;sequential&quot;
+## _________________________________________________________________
+## Layer (type)                 Output Shape              Param #   
+## =================================================================
+## conv2d (Conv2D)              (None, 50, 50, 32)        896       
+## _________________________________________________________________
+## activation (Activation)      (None, 50, 50, 32)        0         
+## _________________________________________________________________
+## conv2d_1 (Conv2D)            (None, 48, 48, 32)        9248      
+## _________________________________________________________________
+## activation_1 (Activation)    (None, 48, 48, 32)        0         
+## _________________________________________________________________
+## max_pooling2d (MaxPooling2D) (None, 24, 24, 32)        0         
+## _________________________________________________________________
+## dropout (Dropout)            (None, 24, 24, 32)        0         
+## _________________________________________________________________
+## conv2d_2 (Conv2D)            (None, 24, 24, 64)        18496     
+## _________________________________________________________________
+## activation_2 (Activation)    (None, 24, 24, 64)        0         
+## _________________________________________________________________
+## conv2d_3 (Conv2D)            (None, 22, 22, 64)        36928     
+## _________________________________________________________________
+## activation_3 (Activation)    (None, 22, 22, 64)        0         
+## _________________________________________________________________
+## max_pooling2d_1 (MaxPooling2 (None, 11, 11, 64)        0         
+## _________________________________________________________________
+## dropout_1 (Dropout)          (None, 11, 11, 64)        0         
+## _________________________________________________________________
+## flatten (Flatten)            (None, 7744)              0         
+## _________________________________________________________________
+## dense (Dense)                (None, 512)               3965440   
+## _________________________________________________________________
+## activation_4 (Activation)    (None, 512)               0         
+## _________________________________________________________________
+## dropout_2 (Dropout)          (None, 512)               0         
+## _________________________________________________________________
+## dense_1 (Dense)              (None, 2)                 1026      
+## _________________________________________________________________
+## activation_5 (Activation)    (None, 2)                 0         
+## =================================================================
+## Total params: 4,032,034
+## Trainable params: 4,032,034
+## Non-trainable params: 0
+## _________________________________________________________________</code></pre>
+<p>では、学習パートに入ります。アルゴリズムにはAdadeltaを使用します。よくわかってないんですけどね。。。</p>
+<pre class="python"><code>optimizers =&quot;Adadelta&quot;
+results = {}
+epochs = 200
+model.compile(loss=&#39;categorical_crossentropy&#39;, optimizer=optimizers, metrics=[&#39;accuracy&#39;])
+results= model.fit(X_train, y_train, validation_split=0.5, epochs=epochs)</code></pre>
+<p>Testデータでの正答率は以下のようになりました。</p>
+<pre class="python"><code>score = model.evaluate(X_test, y_test, verbose=0)
+print(&#39;Test accuracy:&#39;, score[1])</code></pre>
+<pre><code>## Test accuracy: 0.7692307829856873</code></pre>
+<p>75~80%の正答率でまあまあ悪くないかなと思います。
+とりあえず、今日はここまでにしたいと思います。shap値を用いた解釈など時間があればやりたいと思います。</p>
+</div>

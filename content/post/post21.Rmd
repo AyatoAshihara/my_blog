@@ -7,14 +7,7 @@ categories:
   - 単発
 tags:
   - R
-image: 'C:\\Users\\aashi\\Desktop\\my_blog\\static\\img\\portfolio\\D5iYB1fWsAAkSt-.jpg'
-showonlyimage: no
-keywords:
-  - key
-  - words
-topics:
-  - topic 1
-weight: 1
+image: "C:/Users/aashi/Desktop/my_blog/static/img/portfolio/NEologd.jpg"
 ---
 
 <!--more-->
@@ -112,11 +105,11 @@ Microsoft Storeよりubuntuをダウンロードする。
 
 ubuntuのコマンドプロンプトで、
 
-```{r,eval=FALSE}
-> \$ sudo apt-get update
-> \$ sudo apt install mecab
-> \$ sudo apt install libmecab-dev
-> \$ sudo apt install mecab-ipadic-utf8
+```{bash,eval=FALSE}
+$ sudo apt-get update
+$ sudo apt install mecab
+$ sudo apt install libmecab-dev
+$ sudo apt install mecab-ipadic-utf8
 ```
 
 を入力し、MeCabをインストール。
@@ -127,11 +120,11 @@ ubuntuのコマンドプロンプトで、
 
 ubuntuのコマンドプロンプトで
 
-```{r,eval=FALSE}
-> \$ sudo apt install make
-> \$ git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git
-> \$ cd mecab-ipadic-neologd
-> \$ sudo bin/install-mecab-ipadic-neologd -n -a
+```{bash,eval=FALSE}
+$ sudo apt install make
+$ git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git
+$ cd mecab-ipadic-neologd
+$ sudo bin/install-mecab-ipadic-neologd -n -a
 ```
 
 を実行。Neologd辞書ファイルが(/usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd/)にインストールできる。
@@ -140,8 +133,8 @@ ubuntuのコマンドプロンプトで
 
 ubuntuのコマンドプロンプトで
 
-```{r,eval=FALSE}
-> \$ explorer.exe .
+```{bash,eval=FALSE}
+$ explorer.exe .
 ```
 
 を入力。エクスプローラーが立ち上がるので、/usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd/(ディレクトリ)をWindowsの任意のディレクトリにコピーする。完了したらUbuntuは閉じる。
@@ -170,8 +163,8 @@ C:
 
 コマンドプロンプトを立ち上げ、
 
-```{r,eval=FALSE}
-> C:\Program Files (x86)\MeCab\bin\mecab-dict-index.exe -d .../mecab-ipadic-neologd/buildmecab/ipadic-2.7.0-20070801-neologd-yyyymmdd(ファイルの保存場所) -u NEologd.yyyymmdd.dic -f utf-8 -t shift-jis mecab-ipadic-neologd\buildmecab\ipadic-2.7.0-20070801-neologd-yyyymmdd\mecab-user-dict-seed.yyyymmdd.csv 
+```{bash,eval=FALSE}
+C:\Program Files (x86)\MeCab\bin\mecab-dict-index.exe -d .../mecab-ipadic-neologd/buildmecab/ipadic-2.7.0-20070801-neologd-yyyymmdd(ファイルの保存場所) -u NEologd.yyyymmdd.dic -f utf-8 -t shift-jis mecab-ipadic-neologd\buildmecab\ipadic-2.7.0-20070801-neologd-yyyymmdd\mecab-user-dict-seed.yyyymmdd.csv 
 ```
 
 を適宜変更の上、入力。.../mecab-ipadic-neologd/buildmecab/ipadic-2.7.0-20070801-neologd-yyyymmddに辞書がコンパイルされ、NEologd.yyyymmdd.dicができる。

@@ -7,14 +7,7 @@ categories:
   - 単発
 tags:
   - R
-image: 'C:\\Users\\aashi\\Desktop\\my_blog\\static\\img\\portfolio\\D5iYB1fWsAAkSt-.jpg'
-showonlyimage: no
-keywords:
-  - key
-  - words
-topics:
-  - topic 1
-weight: 1
+image: "C:/Users/aashi/Desktop/my_blog/static/img/portfolio/NEologd.jpg"
 ---
 
 
@@ -109,10 +102,10 @@ RMeCabC(&quot;これはペンです。&quot;) %&gt;% unlist()</code></pre>
 <div id="ubuntu-linuxにmecabをインストール" class="section level4">
 <h4>3. Ubuntu LinuxにMeCabをインストール</h4>
 <p>ubuntuのコマンドプロンプトで、</p>
-<pre class="r"><code>&gt; \$ sudo apt-get update
-&gt; \$ sudo apt install mecab
-&gt; \$ sudo apt install libmecab-dev
-&gt; \$ sudo apt install mecab-ipadic-utf8</code></pre>
+<pre class="bash"><code>$ sudo apt-get update
+$ sudo apt install mecab
+$ sudo apt install libmecab-dev
+$ sudo apt install mecab-ipadic-utf8</code></pre>
 <p>を入力し、MeCabをインストール。</p>
 <div class="figure">
 <img src="/my_blog/post/post21_files/ubuntumecab.PNG" alt="ubuntuでmecabをインストール" style="width:100.0%" />
@@ -122,16 +115,16 @@ RMeCabC(&quot;これはペンです。&quot;) %&gt;% unlist()</code></pre>
 <div id="ubuntu-for-linuxにneologd辞書をインストール" class="section level4">
 <h4>4. Ubuntu for LinuxにNEologd辞書をインストール</h4>
 <p>ubuntuのコマンドプロンプトで</p>
-<pre class="r"><code>&gt; \$ sudo apt install make
-&gt; \$ git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git
-&gt; \$ cd mecab-ipadic-neologd
-&gt; \$ sudo bin/install-mecab-ipadic-neologd -n -a</code></pre>
+<pre class="bash"><code>$ sudo apt install make
+$ git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git
+$ cd mecab-ipadic-neologd
+$ sudo bin/install-mecab-ipadic-neologd -n -a</code></pre>
 <p>を実行。Neologd辞書ファイルが(/usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd/)にインストールできる。</p>
 </div>
 <div id="ubuntu-for-linuxからwindowsへ辞書ファイルをコピー" class="section level4">
 <h4>5. Ubuntu for LinuxからWindowsへ辞書ファイルをコピー</h4>
 <p>ubuntuのコマンドプロンプトで</p>
-<pre class="r"><code>&gt; \$ explorer.exe .</code></pre>
+<pre class="bash"><code>$ explorer.exe .</code></pre>
 <p>を入力。エクスプローラーが立ち上がるので、/usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd/(ディレクトリ)をWindowsの任意のディレクトリにコピーする。完了したらUbuntuは閉じる。</p>
 <div class="figure">
 <img src="/my_blog/post/post21_files/explorer.PNG" alt="エクスプローラーでubuntu内部ディレクトリを確認する図" style="width:100.0%" />
@@ -154,7 +147,7 @@ RMeCabC(&quot;これはペンです。&quot;) %&gt;% unlist()</code></pre>
 -mecab-dict-index.exe</p>
 <p><img src="/my_blog/post/post21_files/mecab_dict_index.PNG" style="width:100.0%" /></p>
 <p>コマンドプロンプトを立ち上げ、</p>
-<pre class="r"><code>&gt; C:\Program Files (x86)\MeCab\bin\mecab-dict-index.exe -d .../mecab-ipadic-neologd/buildmecab/ipadic-2.7.0-20070801-neologd-yyyymmdd(ファイルの保存場所) -u NEologd.yyyymmdd.dic -f utf-8 -t shift-jis mecab-ipadic-neologd\buildmecab\ipadic-2.7.0-20070801-neologd-yyyymmdd\mecab-user-dict-seed.yyyymmdd.csv </code></pre>
+<pre class="bash"><code>C:\Program Files (x86)\MeCab\bin\mecab-dict-index.exe -d .../mecab-ipadic-neologd/buildmecab/ipadic-2.7.0-20070801-neologd-yyyymmdd(ファイルの保存場所) -u NEologd.yyyymmdd.dic -f utf-8 -t shift-jis mecab-ipadic-neologd\buildmecab\ipadic-2.7.0-20070801-neologd-yyyymmdd\mecab-user-dict-seed.yyyymmdd.csv </code></pre>
 <p>を適宜変更の上、入力。…/mecab-ipadic-neologd/buildmecab/ipadic-2.7.0-20070801-neologd-yyyymmddに辞書がコンパイルされ、NEologd.yyyymmdd.dicができる。</p>
 </div>
 </div>
