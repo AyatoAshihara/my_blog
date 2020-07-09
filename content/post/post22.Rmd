@@ -142,7 +142,7 @@ import time
 import os
 ```
 
-```{python}
+```{python,include=FALSE}
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = 'C:/Users/aashi/Anaconda3/envs/umanalytics/Library/plugins/platforms'
 ```
 
@@ -170,7 +170,8 @@ for i, folder in enumerate(folders):
   index = i
   for k, file in enumerate(files):
     image = Image.open(file)
-    image = image.convert("RGB")
+    #image = image.convert("RGB")
+    image = image.convert("L").convert("RGB")
     image = image.resize((image_size, image_size)) #画素数を落としている
  
     data = np.asarray(image)
@@ -185,7 +186,11 @@ X.shape
 Y = np_utils.to_categorical(Y, dense_size)
 
 #訓練データとテストデータへ変換
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.50)
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.20)
+index_zero = np.random.choice(np.array(np.where(y_train[:,1]==0))[0,],np.count_nonzero(y_train[:,1]==1),replace=False)
+index_one = np.array(np.where(y_train[:,1]==1))[0]
+y_resampled = y_train[np.hstack((index_one,index_zero))]
+X_resampled = X_train[np.hstack((index_one,index_zero))]
 ```
 
 次に、CNNを構築していきます。kerasでは、sequential modelを指定し、addメソッドで層を追加して行くことでモデルを定義します。
@@ -221,15 +226,25 @@ model.summary()
 ```{python,eval=FALSE}
 optimizers ="Adadelta"
 results = {}
-epochs = 200
+epochs = 100
 model.compile(loss='categorical_crossentropy', optimizer=optimizers, metrics=['accuracy'])
-results= model.fit(X_train, y_train, validation_split=0.5, epochs=epochs)
+results = model.fit(X_resampled, y_resampled, validation_split=0.2, epochs=epochs)
 ```
 
-```{python}
+```{python,include=FALSE}
+#x = range(epochs)
+#plt.plot(x, results.history['accuracy'], label=k)
+#plt.show()
+#plt.close()
+
+#plt.plot(x, results.history['val_accuracy'], label=k)
+#plt.show()
+#plt.close()
+```
+
+
+```{python,include=FALSE}
 optimizers ="Adadelta"
-results = {}
-epochs = 200
 model.compile(loss='categorical_crossentropy', optimizer=optimizers, metrics=['accuracy'])
 model.load_weights(r"C:\Users\aashi\競馬統計解析\horse_photo_weights.h5")
 ```
@@ -240,6 +255,10 @@ Testデータでの正答率は以下のようになりました。
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 score = model.evaluate(X_test, y_test, verbose=0)
 print('Test accuracy:', score[1])
+y_pred = np.argmax(model.predict(X_test),axis=1)
+ConfusionMatrixDisplay(confusion_matrix(np.argmax(y_test,axis=1), y_pred)).plot()
+plt.show()
+plt.close()
 ```
 
 75~80%の正答率でまあまあ悪くないかなと思います。
@@ -251,6 +270,7 @@ print('Test accuracy:', score[1])
 ```{python}
 plt.imshow(X_test[0])
 plt.show()
+plt.close()
 ```
 
 ```{python}
@@ -306,6 +326,7 @@ for layer_name, layer_activation in zip(layer_names, activations):
     plt.grid(False)
     plt.imshow(display_grid, cmap='viridis')
     plt.show()
+    plt.close()
 ```
 
 自分が未熟なこともあり、解釈が難しいですね。

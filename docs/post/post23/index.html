@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/xcode.min.css" rel="stylesheet">
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<script type="application/ld+json">
+    {
+        "@context" : "http://schema.org",
+        "@type" : "BlogPosting",
+        "mainEntityOfPage": {
+             "@type": "WebPage",
+             "@id": "\/my_blog\/"
+        },
+        "articleSection" : "post",
+        "name" : "そのバックテスト本当に再現性ありますか？",
+        "headline" : "そのバックテスト本当に再現性ありますか？",
+        "description" : "\r\n\x3cscript src=\x22\/my_blog\/rmarkdown-libs\/header-attrs\/header-attrs.js\x22\x3e\x3c\/script\x3e\r\n\r\n\r\n\x3cp\x3e金融であればクオンツの方は新規運用戦略の立案をする際に、バックテストを行ってパフォーマンスの確認をすることがあると思います。今回は、バックテストのオーバーフィッティングがアウトオブサンプル・パフォーマンスに及ぼす影響について調べたので備忘録をかねてまとめてみました。\x3c\/p\x3e\r\n",
+        "inLanguage" : "en",
+        "author" : "AyatoAshihara",
+        "creator" : "AyatoAshihara",
+        "publisher": "AyatoAshihara",
+        "accountablePerson" : "AyatoAshihara",
+        "copyrightHolder" : "AyatoAshihara",
+        "copyrightYear" : "2020",
+        "datePublished": "2020-07-08 00:00:00 \x2b0000 UTC",
+        "dateModified" : "2020-07-08 00:00:00 \x2b0000 UTC",
+        "url" : "\/my_blog\/post\/post23\/",
+        "wordCount" : "439",
+        "image" : "/my_blog/https://nycdsa-blog-files.s3.us-east-2.amazonaws.com/2018/02/Screen-Shot-2018-02-04-at-11.12.39-PM.png"",
+        "keywords" : [ ""機械学習"",""金融"",""時系列解析"","Blog" ]   
+    }
+    </script>
+
+
+ <title>そのバックテスト本当に再現性ありますか？ </title>
+
+
+<meta name="description" content="マクロ経済、機械学習系の記事を投稿しています。" />
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="all,follow">
+<meta name="googlebot" content="index,follow,snippet,archive">
+<link rel="stylesheet" id="ct-tracks-google-fonts-css" href="//fonts.googleapis.com/css?family=Raleway%3A400%2C700&amp;subset=latin%2Clatin-ext&amp;ver=4.7.2" type="text/css" media="all">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+<link href="/my_blog/css/style.css?v=1594304747" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+
+<link href="/my_blog/css/custom.css?v=1594304747" rel="stylesheet" type='text/css' media='all'>
+<link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-140804055-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+
+<body class="post-template-default single single-post single-format-standard ct-body singular singular-post not-front standard">
+
+  <div id="overflow-container" class="overflow-container">
+    <a class="skip-content" href="#main">Skip to content</a>
+    <header id="site-header" class="site-header" role="banner">
+      <div class='top-navigation'>
+        <div class='container'>
+
+  <div id="menu-secondary" class="menu-container menu-secondary" role="navigation">
+    <button id="toggle-secondary-navigation" class="toggle-secondary-navigation"><i class="fas fa-plus"></i></button>
+
+    <div class="menu">
+
+      <ul id="menu-secondary-items" class="menu-secondary-items">
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E4%BB%95%E4%BA%8B%E9%96%A2%E9%80%A3">仕事関連</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E5%8D%98%E7%99%BA">単発</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E6%97%A5%E6%AC%A1gdp">日次gdp</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E7%AB%B6%E9%A6%AC">競馬</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E7%B5%B1%E8%A8%88">統計</a>
+        </li>
+        
+
+      </ul>
+
+    </div>
+
+  </div>
+
+
+  <ul class="social-media-icons">
+
+
+    
+    <li>
+      <a href="https://www.facebook.com/ASSIY" data-animate-hover="pulse" class="facebook" target="_blank">
+        <i class="fab fa-facebook-square" title="facebook"></i>
+        <span class="screen-reader-text">facebook</span>
+      </a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+    <li>
+      <a href="mailto:assiy119@yahoo.co.jp" data-animate-hover="pulse" class="email">
+        <i class="fas fa-envelope" title="email"></i>
+        <span class="screen-reader-text">email</span>
+      </a>
+    </li>
+    
+
+    
+
+    
+
+
+    
+    <li>
+      <a href="https://github.com/AyatoAshihara/my_blog" data-animate-hover="pulse" class="github" target="_blank">
+        <i class="fab fa-github" title="github"></i>
+        <span class="screen-reader-text">github</span>
+      </a>
+    </li>
+    
+
+
+    
+
+    
+    <li>
+      <a href="/my_blog/index.xml" data-animate-hover="pulse" class="rss" target="_blank">
+        <i class="fas fa-rss" title="rss"></i>
+        <span class="screen-reader-text">rss</span>
+      </a>
+    </li>
+    
+
+
+  </ul></div>
+
+      </div>
+
+      <div class="container">
+        
+
+
+<div id="title-info" class="title-info">
+  <div id='site-title' class='site-title'>
+    
+    <a href="/my_blog"> 東京の資産運用会社で働く社会人が研究に没頭するブログ </a>
+    </div>
+  </div>
+  <button id="toggle-navigation" class="toggle-navigation">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div id="menu-primary-tracks" class="menu-primary-tracks"></div>
+  <div id="menu-primary" class="menu-container menu-primary" role="navigation">
+    
+    <p class="site-description">院卒3年目の社会人が夜な夜な更新中。本ブログの内容は筆者が所属する組織の公式見解とは全く関係ありません。</p>
+    
+
+    <div class="menu">
+      <ul id="menu-primary-items" class="menu-primary-items">
+        
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/">Home</a>
+          
+        </li>
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/about/">About</a>
+          
+        </li>
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/contact/">Get in touch</a>
+          
+        </li>
+        
+      </ul>
+    </div>
+
+  </div>
+
+      </div>
+    </header>
+
+    <div id="main" class="main" role="main">
+
+      
+  
+  
+    
+  
+  
+  <div id="loop-container" class="loop-container">
+    
+    <div class="post type-post status-publish format-standard has-post-thumbnail hentry category-design tag-design tag-standard-2 tag-tagalicious tag-travel entry full-without-featured odd excerpt-1">
+
+      <div class='featured-image lazy lazy-bg-image'  data-background="https://nycdsa-blog-files.s3.us-east-2.amazonaws.com/2018/02/Screen-Shot-2018-02-04-at-11.12.39-PM.png">
+      </div>
+      
+        <div class="entry-meta">
+          <span class="date">08 July</span>	<span> / </span>
+
+          <span class="author">
+            <a href="/my_blog/" title="Posts by " rel="author"></a>
+          </span>
+
+
+          
+          <span class="category">
+            <span> / </span>
+
+            <a href="/categories/%E5%8D%98%E7%99%BA">単発</a>
+          </span>
+          
+          <span class="category">
+            <span> / </span>
+
+            <a href="/categories/%E4%BB%95%E4%BA%8B%E9%96%A2%E9%80%A3">仕事関連</a>
+          </span>
+          
+          <span class="category">
+            <span> / </span>
+
+            <a href="/categories/%E7%B5%B1%E8%A8%88">統計</a>
+          </span>
+          
+
+
+        </div>
+        <div class='entry-header'>
+          <h1 class='entry-title'> そのバックテスト本当に再現性ありますか？</h1>
+        </div>
+        <div class="entry-container">
+          <div class="entry-content">
+            <article>
+              <div id="今回のテーマバックテストとは" class="section level4">
+<h4>1. 今回のテーマ「バックテスト」とは？</h4>
+<p>バックテストは、アルゴリズムによる投資戦略のヒストリカルシミュレーションです。バックテストは、立案した投資戦略がある期間にわたって実行されていた場合に発生したであろう利益と損失をアルゴリズムを用いて計算します。その際、シャープレシオやインフォメーションレシオなどの投資戦略のパフォーマンスを評価する一般的な統計量が使用されています。投資家は通常、これらのバックテストの統計量を調査し、最高のパフォーマンスを発揮する投資(運用)戦略に資産配分を決定するため、資産運用会社は良好なパフォーマンスを血のにじむような回数のバックテストを試行錯誤し、資料を作ってプレゼンしたりするわけです。</p>
+<div class="figure">
+<img src="https://stat.ameba.jp/user_images/20190212/22/nash210/51/5f/j/o0705061514355131242.jpg" alt="" />
+<p class="caption">3倍3分法のバックテスト</p>
+</div>
+<p>投資家の立場に立つなら、バックテストされた投資戦略のパフォーマンスについては、インサンプル(IS)とアウトオブサンプル(OOS)を区別することが重要です。ISのパフォーマンスは、投資戦略の設計に使用したサンプル（機械学習の文献では「学習期間」や「訓練セット」と呼ばれる物です）でシミュレートしたものです。一方、OOSパフォーマンスは、投資戦略の設計に使用されなかったサンプル（別名「テストセット」）でシミュレーションされたものです。バックテストは、そのパフォーマンスを持ってその投資戦略の有効性を占う物ですので、ISのパフォーマンスがOOSのパフォーマンスと一致している場合に再現性が担保され、現実的であるということができます。ただ、アウトサンプルの結果はこれからの結果であるので、バックテストを受け取った時点でそのバックテストが信頼に足るものか判断することは難しいです。hold-out法などで、以下のように学習データとテストデータを分け、OOSでのテストを行っているものもありますが、OOSの結果をフィードバックして戦略の改善ができる以上、純粋なアウトサンプルとは呼べません。</p>
+<p><img src="http://www.triton.biz/blog1/wp-content/uploads/2018/04/pic001.png" /></p>
+<p>ですので、ファンドマネージャーから良い結果のバックテストを受け取った場合、そのシミュレーションがどれだけ現実的であるかをなんとかして評価することが非常に重要となります。また、ファンドマネージャーも自身のバックテスト結果が持つ不確実性を理解しておくことが重要です。今回はバックテストのシミュレーションの現実性をどのようにして評価するのか、再現性のあるバックテストを行うためには何に注意すれば良いのかを調べてみたいと思います。</p>
+</div>
+<div id="バックテストはオーバーフィットする" class="section level4">
+<h4>2. バックテストはオーバーフィットする</h4>
+<p><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2308659">Bailey, Borwein, López de Prado and Zhu(2015)</a>は、どのような金融時系列でも、バックテストのシミュレーションをオーバーフィット(過学習)させることが(比較的)簡単にできると主張しています。ここで、オーバーフィットとは、機械学習の概念であり，モデルが一般的な構造よりも特定の観察データ(ISデータ)にフォーカスしてしまう状況を表します。</p>
+<p>Bailey et. al.(2015)では、この主張の一例として株式戦略のバックテスト結果が芳しくない状況が挙げられています。バックテストではその名の通り過去データを使用しているので、具体的に損失が発生している銘柄を特定することが可能で、その銘柄の推奨を削除するためにいくつかのパラメータを追加し、取引システムを設計することで、パフォーマンスを向上させることができるというわけです（「データ・スヌーピング」として知られているテクニック）。数回シミュレーションを繰り返えせば、特定のサンプルに存在するが、母集団の中では稀であるかもしれない特徴から利益を得る「最適なパラメータ」を導くことができます。</p>
+<p>機械学習の文献では、オーバーフィッティングの問題を研究するための膨大な研究があります。ですが、Bailey et. al.(2015)は、機械学習の文脈で提案されている手法は一般的に複数の投資問題には適用できないと主張します。その理由は以下4点のようです。</p>
+<ol style="list-style-type: decimal">
+<li><p>機械学習でオーバーフィッティングを防ぐ手法は、予測の説明力や質を評価するために、その事象の定義域において明示的な点推定と信頼度バンドを必要としますが、このような明確な予測を行う投資戦略はほとんどないため。</p>
+<ul>
+<li>例えば、「E-mini S&amp;P500は、金曜日の終値で1標準偏差5ポイントで1,600前後になると予測されています」とはあまり言われず、むしろ「買い」または「強い買い」といった定性的な推奨が提供されることが一般的です。しかも、この予想はいわば予測の有効期限もなく、なにか予期せぬ事象が発生した際に変更がなされます。定量予測では金曜日の終値と明記されています。</li>
+</ul></li>
+<li><p>仮に特定の投資戦略が予測式に依存していたとしても、投資戦略の他の構成要素がオーバーフィットされている可能性がある。</p>
+<ul>
+<li>言い換えれば、単に予測式を調整する以外にも、投資戦略をオーバーフィットさせる方法はたくさんあるということです。</li>
+</ul></li>
+<li><p>回帰のオーバーフィットの方法はパラメトリックであり、金融の場合観察不可能なデータに関する多くの仮定を含むため。</p></li>
+<li><p>いくつかの手法は試行回数をコントロールしていないため。</p></li>
+</ol>
+<p>Bailey et. al.(2015)では、バックテストのパフォーマンスが比較的低い投資戦略を特定するためには、<strong>比較的少ない試行回数</strong>が必要であることを示しています。なお、ここでの試行回数とは試行錯誤の回数だと思ってください。また、投資家が試行回数に応じて必要とするthe minimum backtest length（MinBTL）を計算しています。パフォーマンスを評価するために常にシャープレシオが使用されていますが、他のパフォーマンス指標にも応用できるそうです。その内容を見てみましょう。</p>
+</div>
+<div id="シャープレシオが従う分布とは" class="section level4">
+<h4>3. シャープレシオが従う分布とは</h4>
+<p>MinBTLを導出するために、まずシャープレシオの(漸近)分布を導出します。そもそも投資戦略の設計は、通常、特定のパターンが金融変数の将来値を予測するのに役立つかもしれないという事前知識または信念から始まります。例えば、さまざまな満期の債券間のリードラグ効果を認識している場合は、イールドカーブが上昇した場合に均衡値への回帰に賭ける戦略を設計することができます。このモデルは、cointegration equation、ベクトル誤差補正モデル、確率微分方程式のシステムなどの形をとることが考えられます。</p>
+<p>このようなモデル構成（または試行）の数は膨大であり、ファンドマネージャーは当然、戦略のパフォーマンスを最大化するものを選択したいと考え、そのためにヒストリカルシミュレーション（バックテスト）を行います(前述)。バックテストでは、最適なサンプルサイズ、シグナルの更新頻度、リスクサイジング、ストップロス、最大保有期間などなどを他の変数との兼ね合いの中で評価します。</p>
+<p>この論文中でパフォーマンス評価の尺度として使用されるシャープレシオは、過去のリターンのサンプルに基づいて、戦略のパフォーマンスを評価する統計量で、BMに対する平均超過リターン/標準偏差(リスク)として定義されます。通常には、「リスク1標準偏差に対するリターン」と解釈され、資産クラスにもよりますが1を上回っていると非常に良い戦略であると見なせます。以下では、ある戦略の超過リターン<span class="math inline">\(r_t\)</span>がi.i.d.の確率変数であり、正規分布に従うと仮定します。つまり、<span class="math inline">\(r_t\)</span>の分布は<span class="math inline">\(r_s(t\neq s)\)</span>と独立であることを仮定しています。あまり現実的な仮定ではありませんが。。。</p>
+<p><span class="math display">\[
+r_t \sim \mathcal{N}(\mu,\sigma^2)
+\]</span>
+ここで、<span class="math inline">\(\mathcal{N}\)</span>は平均<span class="math inline">\(\mu\)</span>、分散<span class="math inline">\(\sigma^2\)</span>の正規分布を表しています。今、時点t~t-q+1の超過リターン<span class="math inline">\(r_{t}(q)\)</span>を</p>
+<p><span class="math display">\[
+r_{t}(q) \equiv r_{t} + r_{t-1} + ... + r_{t-q+1}
+\]</span>
+と定義すると(複利部分を無視してます)、年率化されたシャープレシオは</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+SR(q) &amp;=&amp; \frac{E[r_{t}(q)]}{\sqrt{Var(r_{t}(q))}}\\
+&amp;=&amp; \frac{q\mu}{\sqrt{q}\sigma}\\
+&amp;=&amp; \frac{\mu}{\sigma}\sqrt{q}
+\end{eqnarray}
+\]</span>
+と表すことができます。ここで、<span class="math inline">\(q\)</span>は年毎のリターンの数(頻度)です。例えば、日次リターンの場合<span class="math inline">\(q=365\)</span>となります(閏年を除く)。
+<span class="math inline">\(\mu\)</span>と<span class="math inline">\(\sigma\)</span>は一般に未知ですので、<span class="math inline">\(SR\)</span>の真値を知ることはできません。なので、<span class="math inline">\(R_t\)</span>を標本リターン、リスクフリーレート<span class="math inline">\(R^f\)</span>(定数)とすると、標本平均<span class="math inline">\(\hat{\mu}=1/T\sum_{t=1}^T R_{t}-R^f\)</span>と標本標準偏差<span class="math inline">\(\hat{\sigma}=\sqrt{1/T\sum_{t=1}^{T}(R_{t}-\hat{\mu})}\)</span>を用いてシャープレシオの推定値を計算することになります(<span class="math inline">\(T\)</span>はバックテストを行うサンプルサイズ)。</p>
+<p><span class="math display">\[
+\hat{SR}(q) = \frac{\hat{\mu}}{\hat{\sigma}}\sqrt{q}
+\]</span>
+必然的な結果として、<span class="math inline">\(SR\)</span>の計算はかなりの推定誤差が伴う可能性が高くなります。。。では、本節の本題、<span class="math inline">\(\hat{SR}\)</span>の漸近分布を導出してみましょう。まず、<span class="math inline">\(\hat{\mu}\)</span>と<span class="math inline">\(\hat{\sigma}^2\)</span>の漸近分布はi.i.d.と<span class="math inline">\(\mu, \sigma\)</span>が有限な値をとることから中心極限定理を適用することにより、</p>
+<p><span class="math display">\[
+\hat{\mu}\sim^{a}\mathcal{N}(\mu,\frac{\sigma^2}{T}), \\
+\hat{\sigma}^2\sim^a\mathcal{N}(\sigma^2,\frac{2\sigma^4}{T})
+\]</span>
+となります。シャープレシオはこの<span class="math inline">\(\hat{\mu}\)</span>と<span class="math inline">\(\hat{\sigma}^2\)</span>から計算される確率変数であるので、この関数を<span class="math inline">\(g(\hat{{\boldsymbol \theta}})\)</span>と表しましょう。ここで、列ベクトルを<span class="math inline">\(\hat{{\boldsymbol \theta}}=(\hat{\mu},\hat{\sigma}^2)&#39;\)</span>です。今、i.i.d.であるので<span class="math inline">\(\hat{{\boldsymbol \theta}}\)</span>は互いに独立となり、上記の議論から漸近同時分布は</p>
+<p><span class="math display">\[
+\hat{{\boldsymbol \theta}} \sim^a \mathcal{N}({\boldsymbol \theta},{\boldsymbol V_{\boldsymbol \theta}})
+\]</span>
+と書けます。ここで、<span class="math inline">\({\boldsymbol V_{\boldsymbol \theta}}\)</span>は</p>
+<p><span class="math display">\[
+{\boldsymbol V_{\boldsymbol \theta}} = \left( 
+    \begin{array}{cccc}
+      \sigma^2 &amp; 0\\
+      0 &amp; 2\sigma^4\\
+    \end{array}
+  \right)
+\]</span>
+です。シャープレシオの推定値は今<span class="math inline">\(g(\hat{{\boldsymbol \theta}})\)</span>と<span class="math inline">\(\hat{{\boldsymbol \theta}}\)</span>だけの関数になっていますのでデルタ法より、</p>
+<p><span class="math display">\[
+\hat{SR} = g(\hat{{\boldsymbol \theta}}) \sim^a \mathcal{N}(g({\boldsymbol \theta}),\boldsymbol V_g)
+\]</span>
+と漸近的に正規分布に従います。ここで、<span class="math inline">\(\boldsymbol V_g\)</span>は</p>
+<p><span class="math display">\[
+\boldsymbol V_g=\frac{\partial g}{\partial{\boldsymbol \theta}}{\boldsymbol V_{\boldsymbol \theta}}\frac{\partial g}{\partial{\boldsymbol \theta}&#39;}
+\]</span>
+です。<span class="math inline">\(g({\boldsymbol \theta})=\mu/\sigma\)</span>なので、</p>
+<p><span class="math display">\[
+\frac{\partial g}{\partial{\boldsymbol \theta}&#39;} = \left[ 
+    \begin{array}{cccc}
+      \frac{\partial g}{\partial \mu}\\
+      \frac{\partial g}{\partial \sigma}\\
+    \end{array}
+  \right]
+  = \left[ 
+    \begin{array}{cccc}
+      \frac{1}{\sigma}\\
+      -\frac{\mu}{2\sigma^3}\\
+    \end{array}
+  \right]
+\]</span>
+よって、</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\boldsymbol V_g &amp;=&amp; \left(
+    \begin{array}{cccc}
+      \frac{\partial g}{\partial \mu}, \frac{\partial g}{\partial \sigma}\\
+    \end{array}
+  \right)
+  \left( 
+    \begin{array}{cccc}
+      \sigma^2 &amp; 0\\
+      0 &amp; 2\sigma^4\\
+    \end{array}
+  \right)
+  \left(
+    \begin{array}{cccc}
+      \frac{\partial g}{\partial \mu}\\
+      \frac{\partial g}{\partial \sigma}\\
+    \end{array}
+  \right) \\
+  &amp;=&amp; \left(
+    \begin{array}{cccc}
+      \frac{\partial g}{\partial \mu}\sigma^2, \frac{\partial g}{\partial \sigma}2\sigma^4\\
+    \end{array}
+  \right)
+    \left(
+    \begin{array}{cccc}
+      \frac{\partial g}{\partial \mu}\\
+      \frac{\partial g}{\partial \sigma}\\
+    \end{array}
+  \right) \\
+  &amp;=&amp; (\frac{\partial g}{\partial \mu})^2\sigma^2 + (\frac{\partial g}{\partial \sigma})^2\sigma^4 \\
+  &amp;=&amp; 1 + \frac{\mu^2}{2\sigma^2} \\
+  &amp;=&amp; 1 + \frac{1}{2}SR^2
+\end{eqnarray}
+\]</span>
+と導出することができます。シャープレシオの絶対値が大きくなるほど指数的に分散が大きくなる傾向があるので良いパフォーマンスを見た時には注意が必要かも。年率化されたシャープレシオの推定値<span class="math inline">\(\hat{SR}(q)\)</span>が従う分布はここから</p>
+<p><span class="math display">\[
+\hat{SR}(q)\sim^a \mathcal{N}(\sqrt{q}SR,\frac{V(q)}{T}) \\
+V(q) = q{\boldsymbol V}_g = q(1 + \frac{1}{2}SR^2)
+\]</span>
+となります。今、<span class="math inline">\(y\)</span>をバックテストを行う年数とすると<span class="math inline">\(T=yq\)</span>と書け、これを用いて上式を以下のように書き換えることができます(日次リターンで3年計測の場合、サンプルサイズ<span class="math inline">\(T\)</span>は<span class="math inline">\(T=3×365=1095\)</span>)。</p>
+<p><span class="math display">\[
+\hat{SR}(q)\sim^a \mathcal{N}(\sqrt{q}SR,\frac{1+\frac{1}{2}SR^2}{y}) \tag{1}
+\]</span>
+頻度<span class="math inline">\(q\)</span>はシャープレシオの平均には影響しますが分散には影響を及ぼしません。これでシャープレシオの推定値の漸近分布を導出することができました。さて、これを使ってなにをしたかったのかということですが、私たちは今バックテストの信頼性について考えていたのでした。つまり、FMが新商品を開発するために頭をひねって考え出した<span class="math inline">\(N\)</span>個の投資戦略案のバックテストをした際に、それらのシャープレシオの真値がどれも0であるにも関わらず、非常に高い(良い)値が出る確率はいかほどなのかということです。Bailey et. al.(2015)では以下のように記述されていました。</p>
+<p><em>How high is the expected maximum Sharpe ratio IS among a set of strategy configurations where the true Sharpe ratio is zero?</em></p>
+<p>また、その確率を引き下げる、もしくは期待最大シャープレシオの値を小さくするためには、いったいどれほどの期間バックテストをすべきなのかも知りたいわけです。</p>
+</div>
+<div id="the-minimum-backtest-lengthを導出してみる" class="section level4">
+<h4>4. the minimum backtest lengthを導出してみる</h4>
+<p>今考えている状況は、<span class="math inline">\(\mu=0\)</span>で<span class="math inline">\(y\)</span>を簡単化のために1年とすると(1)式より<span class="math inline">\(\hat{SR}(q)\)</span>は標準正規分布<span class="math inline">\(\mathcal{N}(0,1)\)</span>に従います。さて、今から私たちは<span class="math inline">\(\hat{SR}_n\)</span>の最大値<span class="math inline">\(\max[\hat{SR}]_N\)</span>(<span class="math inline">\(N\)</span>は投資戦略数)の期待値について考えていくのですが、勘の良い人ならお気づきの通り、議論は極値統計の文脈に入っていくことになります。<span class="math inline">\(\hat{SR}_n\sim\mathcal{N}(0,1)\)</span>はi.i.d.なので、その最大統計量の極値分布はFisher-Tippett-Gnedenko定理よりガンベル分布になります(証明追えてないです、ごめんなさい)。</p>
+<p><span class="math display">\[
+\lim_{N\rightarrow\infty}prob[\frac{\max[\hat{SR}]_N-\alpha}{\beta}\leq x] = G(x) = e^{-e^{-x}}
+\]</span>
+ここで、<span class="math inline">\(\alpha=Z(x)^{-1}[1-1/N], \beta=Z(x)^{-1}[1-1/Ne^{-1}]-\alpha\)</span>で、<span class="math inline">\(Z(x)\)</span>は標準正規分布の累積分布関数を表しています。ガンベル分布のモーメント母関数<span class="math inline">\(M_x(t)\)</span>は</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+M_x(t) &amp;=&amp; E[e^{tx}] = \int_{-\infty}^\infty e^{tx}e^{-x}e^{-e^{-x}}dx \\
+\end{eqnarray}
+\]</span>
+と書け、<span class="math inline">\(x=-\log(y)\)</span>と変数変換すると<span class="math inline">\(dx/dy=-1/y\)</span>なので、</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+M_x(t) &amp;=&amp; \int_{\infty}^0-e^{-t\log(y)}e^{-y}dy \\
+&amp;=&amp; \int_{0}^\infty y^{-t}e^{-y}dy \\
+&amp;=&amp; \Gamma(1-t)
+\end{eqnarray}
+\]</span>
+となります。<span class="math inline">\(\Gamma(x)\)</span>はガンマ関数です。ここから、標準化された最大統計量の期待値(平均)は</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\lim_{N\rightarrow\infty} E[\frac{\max[\hat{SR}]_N-\alpha}{\beta}] &amp;=&amp; M_x&#39;(t)|_{t=0} \\
+&amp;=&amp; (-1)\Gamma&#39;(1) \\
+&amp;=&amp; (-1)(-\gamma) = \gamma
+\end{eqnarray}
+\]</span>
+となります。ここで、<span class="math inline">\(\gamma\approx0.5772156649...\)</span>はEuler-Mascheroni定数です。よって、<span class="math inline">\(N\)</span>が大きいとき、i.i.d.の標準正規分布の最大統計量の期待値は</p>
+<p><span class="math display">\[
+E[\max[\hat{SR}]] \approx \alpha + \gamma\beta = (1-\gamma)Z^{-1}[1-\frac{1}{N}]+\gamma Z^{-1}[1-\frac{1}{N}e^{-1}] \tag{2}
+\]</span>
+となります(<span class="math inline">\(N&gt;1\)</span>)。これがBailey et. al.(2015)のProposition 1.になります。<span class="math inline">\(E[\max[\hat{SR}]]\)</span>を戦略数(試行錯誤数)<span class="math inline">\(N\)</span>の関数としてプロットしたのが以下になります。</p>
+<pre class="r"><code>library(ggplot2)
+ExMaxSR = function(N){
+  gamma_ct = -digamma(1)
+  Z = pnorm(0)
+  return((1-gamma_ct)*Z^{-1}*(1-1/N) + gamma_ct*Z^{-1}*(1-1/N*exp(1)^{-1}))
+}
+N = list(1:1000)
+result = purrr::map(N,ExMaxSR)
+ggplot2::ggplot(data.frame(ExpMaxSR = unlist(result),N = unlist(N)),aes(x=N,y=ExpMaxSR)) +
+  geom_line(size=1)</code></pre>
+<p><img src="/my_blog/post/post23_files/figure-html/unnamed-chunk-1-1.png" width="672" />
+小さい<span class="math inline">\(N\)</span>に対して急激に<span class="math inline">\(\max[\hat{SR}]\)</span>の期待値が上昇していることがわかると思います。<span class="math inline">\(N=10\)</span>の時、<span class="math inline">\(\max[\hat{SR}]=1.87\)</span>となっており、全ての戦略のシャープレシオの真値が0にも拘わらず、少なくとも1つは見かけ上かなり良いパフォーマンスの戦略が見つかることが期待されます。金融ではhold-out法でのバックテストはしばしば使用されるかと思いますが、この方法は試行(錯誤)回数を考慮に入れていないため、<span class="math inline">\(N\)</span>が大きいときには信頼に足る結果を返してくれないわけです。バックテストの結果を向上させるため、闇雲にあれやこれやとシミュレーションを行うことは非常に危険だと思いませんか？</p>
+<p>では、どうすれば良いのかという部分ですが、Bailey et. al.(2015)では、Minimum Backtest Lengthを計算しています。要は試行(錯誤)数<span class="math inline">\(N\)</span>を増やすにつれて、バックテストの年数<span class="math inline">\(y\)</span>も伸ばしていけよと戒めているわけです。<span class="math inline">\(N\)</span>とMinimum Backtest Lengthの関係性を示していきましょう。先ほどと同じく<span class="math inline">\(\mu=0\)</span>を仮定しますが、<span class="math inline">\(y\neq 1\)</span>であるケースを考えます。年率化シャープレシオの最大統計量の期待値は(2)式より、</p>
+<p><span class="math display">\[
+E[\max[\hat{SR}(q)]_N] \approx y^{-1/2}((1-\gamma)Z^{-1}[1-\frac{1}{N}]+\gamma Z^{-1}[1-\frac{1}{N}e^{-1}])
+\]</span>
+となります。これを<span class="math inline">\(y\)</span>に対して解いてやることでMinBTLが求まります。</p>
+<p><span class="math display">\[
+MinBTL \approx (\frac{(1-\gamma)Z^{-1}[1-\frac{1}{N}]+\gamma Z^{-1}[1-\frac{1}{N}e^{-1}]}{\bar{E[\max[\hat{SR}(q)]_N]}})^2
+\]</span>
+ここで、<span class="math inline">\(\bar{E[\max[\hat{SR}(q)]_N]}\)</span>は<span class="math inline">\(E[\max[\hat{SR}(q)]_N]\)</span>の上限値で、シャープレシオの真値が0である<span class="math inline">\(N\)</span>戦略で偶然シャープレシオの最大統計量のこの値を抑えます。その際に、必要なバックテスト年数<span class="math inline">\(y\)</span>がMinBTLとして導出されるのです。<span class="math inline">\(\bar{E[\max[\hat{SR}(q)]_N]}=1\)</span>として、MinBTLを<span class="math inline">\(N\)</span>の関数としてプロットしたものが以下です。</p>
+<pre class="r"><code>MinBTL &lt;- function(N,MaxSR){
+  return((ExMaxSR(N)/MaxSR)^2)
+}
+N = list(1:1000)
+result = purrr::map2(N,1,MinBTL)
+ggplot2::ggplot(data.frame(MinBTL = unlist(result),N = unlist(N)),aes(x=N,y=MinBTL)) +
+  geom_line(size=1)</code></pre>
+<p><img src="/my_blog/post/post23_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>仮にバックテスト年数が3年以内しかできない場合は試行(錯誤)回数<span class="math inline">\(N\)</span>は5までとなります。注意しないといけないのは、MinBTLの範囲内でバックテストを行っていたとしてもオーバーフィットすることは考えられるということです。つまり、MinBTLは必要条件であって十分条件でないというわけです。</p>
+</div>
+<div id="終わりに" class="section level4">
+<h4>4. 終わりに</h4>
+<p>いつもとは違う観点で、少しメタ的なトピックに取り組んでみました。仕事柄バックテスト結果などを見ることも多いですし、このブログでもしばしばhold-out法でのバックテストをしています。得られた結果の不確実性を理解して、評価できるよう今後もこのトピックの研究を追っていきたいと思います。</p>
+</div>
+
+            </article>
+          </div>
+          
+      <div class='entry-meta-bottom'>
+        
+
+  <div class="entry-categories"><p><span>Categories</span>
+    
+    <a href="/my_blog/categories/%E5%8D%98%E7%99%BA" title="View all posts in 単発">単発</a>
+    <a href="/my_blog/categories/%E4%BB%95%E4%BA%8B%E9%96%A2%E9%80%A3" title="View all posts in 仕事関連">仕事関連</a>
+    <a href="/my_blog/categories/%E7%B5%B1%E8%A8%88" title="View all posts in 統計">統計</a>
+  </p>
+</div>
+
+
+
+<div class="entry-tags"><p><span>Tags</span>
+  
+  <a href="/my_blog/tags/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92" title="View all posts tagged 機械学習">機械学習</a>
+  
+  <a href="/my_blog/tags/%E9%87%91%E8%9E%8D" title="View all posts tagged 金融">金融</a>
+  
+  <a href="/my_blog/tags/%E6%99%82%E7%B3%BB%E5%88%97%E8%A7%A3%E6%9E%90" title="View all posts tagged 時系列解析">時系列解析</a>
+  
+
+</p></div>	</div>
+
+	
+<div class="author-meta">
+
+  <div class="author">
+    	
+      <img alt='Ayato Ashihara' src="https://www.gravatar.com/avatar/0334adec0ab8bf709927e209f83de319?s=100&d=identicon" class='avatar avatar-72 photo' height='72' width='72'>
+    
+    <span>
+      Written by:<a href="https://ayatoashihara.github.io/my_blog/about/" title="Posts by Ayato Ashihara" rel="author">Ayato Ashihara</a> </span>
+    </div>
+    <div class="bio">
+      
+      
+      <p></p>
+      
+      
+	
+
+<a class="facebook" target="_blank"
+href="https://www.facebook.com/ASSIY">
+<i class="fab fa-facebook-f"
+title="facebook icon"></i>
+</a>
+
+
+
+
+
+
+
+
+
+<a class="email" target="_blank"
+href="mailto:assiy119@yahoo.co.jp">
+<i class="fas fa-envelope"
+title="email icon"></i>
+</a>
+
+
+
+
+
+
+
+<a class="github" target="_blank"
+href="https://github.com/AyatoAshihara/my_blog">
+<i class="fab fa-github"
+title="github icon"></i>
+</a>
+
+
+
+
+
+
+
+</div>
+</div>
+
+</div>
+</div>
+
+<section id="comments" class="comments">
+  
+
+  
+
+
+
+
+</section>
+</div>
+
+ 
+
+
+
+    </div>
+
+    <footer id="site-footer" class="site-footer" role="contentinfo">
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\\(","\\)"]] } });
+</script>
+<script async
+src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/r.min.js"></script>
+
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+
+	<h1>
+    
+    <a href=""> 東京の資産運用会社で働く社会人が研究に没頭するブログ </a>
+    
+	</h1>
+
+			
+			<p class="site-description">院卒3年目の社会人が夜な夜な更新中。本ブログの内容は筆者が所属する組織の公式見解とは全く関係ありません。</p>
+			
+
+		<div id="menu-footer" class="menu-container menu-footer" role="navigation">
+		<div class="menu">
+
+      <ul id="menu-footer-items" class="menu-footer-items">
+        
+</ul>
+
+</div>	</div>
+
+<ul class="social-media-icons">
+
+        
+				<li>
+					<a class="facebook" target="_blank"
+					   href="https://www.facebook.com/ASSIY" >
+						<i class="fab fa-facebook-f" title="facebook"></i>
+						<span class="screen-reader-text">facebook</span>
+					</a>
+				</li>
+        
+
+        
+
+
+        
+
+        
+
+        
+        <li>
+        <a href="mailto:assiy119@yahoo.co.jp"  class="email">
+            <i class="fas fa-envelope" title="email"></i>
+            <span class="screen-reader-text">email</span>
+        </a>
+        </li>
+        
+
+        
+
+        
+
+
+        
+        <li>
+        <a href="https://github.com/AyatoAshihara/my_blog"  class="github" target="_blank">
+            <i class="fab fa-github" title="github"></i>
+            <span class="screen-reader-text">github</span>
+        </a>
+        </li>
+        
+
+
+        
+
+        
+        <li>
+        <a href="/my_blog/index.xml" data-animate-hover="pulse" class="rss" target="_blank">
+            <i class="fas fa-rss" title="rss"></i>
+            <span class="screen-reader-text">rss</span>
+        </a>
+        </li>
+        
+
+				</ul>	<div class="design-credit">
+		
+		<p>&copy; 2018 Göran Svensson</p>
+		
+		<p>Nederburg Hugo Theme by <a href="https://appernetic.io">Appernetic</a>.</p>
+		
+		<p>A port of Tracks by Compete Themes.</p>
+		
+	</div>
+</footer>
+
+  </div>
+  <script src="/my_blog/js/jquery.min.js"></script>
+<script src="/my_blog/js/jquerymigrate.js"></script>
+<script src="/my_blog/js/production.min.js?v=1594304747"></script>
+
+</body>
+</html>

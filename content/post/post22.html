@@ -123,7 +123,6 @@ import glob
 import matplotlib.pyplot as plt
 import time
 import os</code></pre>
-<pre class="python"><code>os.environ[&#39;QT_QPA_PLATFORM_PLUGIN_PATH&#39;] = &#39;C:/Users/aashi/Anaconda3/envs/umanalytics/Library/plugins/platforms&#39;</code></pre>
 <p>まず最初に収集してきた画像データを数値データに変換し学習データを作成します。
 ディレクトリ構造は以下のようになっており、上位画像とその他画像が別ディレクトリに保存されています。各ディレクトリから画像を読み込む際に、上位画像には1、その他には0というカテゴリ変数を与えます。</p>
 <p>馬体写真</p>
@@ -146,7 +145,8 @@ for i, folder in enumerate(folders):
   index = i
   for k, file in enumerate(files):
     image = Image.open(file)
-    image = image.convert(&quot;RGB&quot;)
+    #image = image.convert(&quot;RGB&quot;)
+    image = image.convert(&quot;L&quot;).convert(&quot;RGB&quot;)
     image = image.resize((image_size, image_size)) #画素数を落としている
  
     data = np.asarray(image)
@@ -162,7 +162,11 @@ X.shape</code></pre>
 <pre class="python"><code>Y = np_utils.to_categorical(Y, dense_size)
 
 #訓練データとテストデータへ変換
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.50)</code></pre>
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.20)
+index_zero = np.random.choice(np.array(np.where(y_train[:,1]==0))[0,],np.count_nonzero(y_train[:,1]==1),replace=False)
+index_one = np.array(np.where(y_train[:,1]==1))[0]
+y_resampled = y_train[np.hstack((index_one,index_zero))]
+X_resampled = X_train[np.hstack((index_one,index_zero))]</code></pre>
 <p>次に、CNNを構築していきます。kerasでは、sequential modelを指定し、addメソッドで層を追加して行くことでモデルを定義します。</p>
 <pre class="python"><code>model = Sequential()
 model.add(Conv2D(32, (3, 3), padding=&#39;same&#39;,input_shape=X_train.shape[1:]))
@@ -234,19 +238,20 @@ model.summary()</code></pre>
 <p>では、学習パートに入ります。アルゴリズムにはAdadeltaを使用します。よくわかってないんですけどね。。。</p>
 <pre class="python"><code>optimizers =&quot;Adadelta&quot;
 results = {}
-epochs = 200
+epochs = 100
 model.compile(loss=&#39;categorical_crossentropy&#39;, optimizer=optimizers, metrics=[&#39;accuracy&#39;])
-results= model.fit(X_train, y_train, validation_split=0.5, epochs=epochs)</code></pre>
-<pre class="python"><code>optimizers =&quot;Adadelta&quot;
-results = {}
-epochs = 200
-model.compile(loss=&#39;categorical_crossentropy&#39;, optimizer=optimizers, metrics=[&#39;accuracy&#39;])
-model.load_weights(r&quot;C:\Users\aashi\競馬統計解析\horse_photo_weights.h5&quot;)</code></pre>
+results = model.fit(X_resampled, y_resampled, validation_split=0.2, epochs=epochs)</code></pre>
 <p>Testデータでの正答率は以下のようになりました。</p>
 <pre class="python"><code>from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 score = model.evaluate(X_test, y_test, verbose=0)
 print(&#39;Test accuracy:&#39;, score[1])</code></pre>
-<pre><code>## Test accuracy: 0.7538461685180664</code></pre>
+<pre><code>## Test accuracy: 0.6730769276618958</code></pre>
+<pre class="python"><code>y_pred = np.argmax(model.predict(X_test),axis=1)
+ConfusionMatrixDisplay(confusion_matrix(np.argmax(y_test,axis=1), y_pred)).plot()</code></pre>
+<pre><code>## &lt;sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay object at 0x000000005B5CA508&gt;</code></pre>
+<pre class="python"><code>plt.show()</code></pre>
+<p><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="python"><code>plt.close()</code></pre>
 <p>75~80%の正答率でまあまあ悪くないかなと思います。</p>
 </div>
 <div id="shap値を用いた結果解釈" class="section level4">
@@ -254,7 +259,8 @@ print(&#39;Test accuracy:&#39;, score[1])</code></pre>
 <p>今学習したモデルのshap値を考え、結果の解釈をしたいと思います。shap値については時間があれば、説明を追記したいと思います。簡単に言えば、CNNが画像のどの部分に特徴を捉え、馬が上位に入るかを予想したかを可視化で捉えることができます。この馬の解析をすることにします。</p>
 <pre class="python"><code>plt.imshow(X_test[0])
 plt.show()</code></pre>
-<p><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="python"><code>plt.close()</code></pre>
 <pre class="python"><code>import shap
 background = X_train[np.random.choice(X_train.shape[0],100,replace=False)]
 
@@ -263,7 +269,7 @@ e = shap.GradientExplainer(model,background)
 shap_values = e.shap_values(X_test[[0]])
 shap.image_plot(shap_values,-X_test[[0]])</code></pre>
 <pre><code>## Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).</code></pre>
-<p><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-11-1.png" width="864" /></p>
+<p><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-1.png" width="864" /></p>
 <p>非常に微妙ですが、足や臀部などを評価しているようにみえます。
 各層において画像のどの側面を捉えているかを可視化してみたいと思います。</p>
 <pre class="python"><code>from keras import models
@@ -304,8 +310,9 @@ for layer_name, layer_activation in zip(layer_names, activations):
     plt.title(layer_name)
     plt.grid(False)
     plt.imshow(display_grid, cmap=&#39;viridis&#39;)
-    plt.show()</code></pre>
-<p><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-1.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-2.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-3.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-4.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-5.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-6.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-7.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-8.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-12-9.png" width="1536" /></p>
+    plt.show()
+    plt.close()</code></pre>
+<p><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-13-1.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-13-2.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-13-3.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-13-4.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-13-5.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-13-6.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-13-7.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-13-8.png" width="1536" /><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-13-9.png" width="864" /></p>
 <p>自分が未熟なこともあり、解釈が難しいですね。</p>
 </div>
 <div id="最後に" class="section level4">
