@@ -217,7 +217,7 @@ E[\max[\hat{SR}(q)]_N] \approx y^{-1/2}((1-\gamma)Z^{-1}[1-\frac{1}{N}]+\gamma Z
 <p><span class="math display">\[
 MinBTL \approx (\frac{(1-\gamma)Z^{-1}[1-\frac{1}{N}]+\gamma Z^{-1}[1-\frac{1}{N}e^{-1}]}{\bar{E[\max[\hat{SR}(q)]_N]}})^2
 \]</span>
-ここで、<span class="math inline">\(\bar{E[\max[\hat{SR}(q)]_N]}\)</span>は<span class="math inline">\(E[\max[\hat{SR}(q)]_N]\)</span>の上限値で、シャープレシオの真値が0である<span class="math inline">\(N\)</span>戦略で偶然シャープレシオの最大統計量のこの値を抑えます。その際に、必要なバックテスト年数<span class="math inline">\(y\)</span>がMinBTLとして導出されるのです。<span class="math inline">\(\bar{E[\max[\hat{SR}(q)]_N]}=1\)</span>として、MinBTLを<span class="math inline">\(N\)</span>の関数としてプロットしたものが以下です。</p>
+ここで、<span class="math inline">\(\bar{E[\max[\hat{SR}(q)]_N]}\)</span>は<span class="math inline">\(E[\max[\hat{SR}(q)]_N]\)</span>の上限値で、シャープレシオの真値が0である<span class="math inline">\(N\)</span>戦略でシャープレシオの最大統計量が取りうる値を抑えます。その際に、必要なバックテスト年数<span class="math inline">\(y\)</span>がMinBTLとして導出されるのです。<span class="math inline">\(\bar{E[\max[\hat{SR}(q)]_N]}=1\)</span>として、MinBTLを<span class="math inline">\(N\)</span>の関数としてプロットしたものが以下です。</p>
 <pre class="r"><code>MinBTL &lt;- function(N,MaxSR){
   return((ExMaxSR(N)/MaxSR)^2)
 }

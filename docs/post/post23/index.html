@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1594304747" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1594305654" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1594304747" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1594305654" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -465,7 +465,7 @@ E[\max[\hat{SR}(q)]_N] \approx y^{-1/2}((1-\gamma)Z^{-1}[1-\frac{1}{N}]+\gamma Z
 <p><span class="math display">\[
 MinBTL \approx (\frac{(1-\gamma)Z^{-1}[1-\frac{1}{N}]+\gamma Z^{-1}[1-\frac{1}{N}e^{-1}]}{\bar{E[\max[\hat{SR}(q)]_N]}})^2
 \]</span>
-ここで、<span class="math inline">\(\bar{E[\max[\hat{SR}(q)]_N]}\)</span>は<span class="math inline">\(E[\max[\hat{SR}(q)]_N]\)</span>の上限値で、シャープレシオの真値が0である<span class="math inline">\(N\)</span>戦略で偶然シャープレシオの最大統計量のこの値を抑えます。その際に、必要なバックテスト年数<span class="math inline">\(y\)</span>がMinBTLとして導出されるのです。<span class="math inline">\(\bar{E[\max[\hat{SR}(q)]_N]}=1\)</span>として、MinBTLを<span class="math inline">\(N\)</span>の関数としてプロットしたものが以下です。</p>
+ここで、<span class="math inline">\(\bar{E[\max[\hat{SR}(q)]_N]}\)</span>は<span class="math inline">\(E[\max[\hat{SR}(q)]_N]\)</span>の上限値で、シャープレシオの真値が0である<span class="math inline">\(N\)</span>戦略でシャープレシオの最大統計量が取りうる値を抑えます。その際に、必要なバックテスト年数<span class="math inline">\(y\)</span>がMinBTLとして導出されるのです。<span class="math inline">\(\bar{E[\max[\hat{SR}(q)]_N]}=1\)</span>として、MinBTLを<span class="math inline">\(N\)</span>の関数としてプロットしたものが以下です。</p>
 <pre class="r"><code>MinBTL &lt;- function(N,MaxSR){
   return((ExMaxSR(N)/MaxSR)^2)
 }
@@ -690,7 +690,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1594304747"></script>
+<script src="/my_blog/js/production.min.js?v=1594305654"></script>
 
 </body>
 </html>
