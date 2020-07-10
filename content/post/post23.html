@@ -203,7 +203,7 @@ ExMaxSR = function(N){
   Z = qnorm(0.99)
   return((1-gamma_ct)*Z*(1-1/N) + gamma_ct*Z*(1-1/N*exp(1)^{-1}))
 }
-N = list(1:100)
+N = list(0:100)
 result = purrr::map(N,ExMaxSR)
 ggplot2::ggplot(data.frame(ExpMaxSR = unlist(result),N = unlist(N)),aes(x=N,y=ExpMaxSR)) +
   geom_line(size=1) + ylim(0,3)</code></pre>
