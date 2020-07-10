@@ -206,7 +206,7 @@ ExMaxSR = function(N){
 N = list(1:100)
 result = purrr::map(N,ExMaxSR)
 ggplot2::ggplot(data.frame(ExpMaxSR = unlist(result),N = unlist(N)),aes(x=N,y=ExpMaxSR)) +
-  geom_line(size=1)</code></pre>
+  geom_line(size=1) + ylim(0,3)</code></pre>
 <p><img src="/my_blog/post/post23_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 <p>小さい<span class="math inline">\(N\)</span>に対して急激に<span class="math inline">\(\max[\hat{SR}]\)</span>の期待値が上昇していることがわかると思います。<span class="math inline">\(N=10\)</span>の時、<span class="math inline">\(\max[\hat{SR}]=1.54\)</span>となっており、全ての戦略のシャープレシオの真値が0にも拘わらず、少なくとも1つは見かけ上かなり良いパフォーマンスの戦略が見つかることが期待されます。金融ではhold-out法でのバックテストはしばしば使用されるかと思いますが、この方法は試行(錯誤)回数を考慮に入れていないため、<span class="math inline">\(N\)</span>が大きいときには信頼に足る結果を返してくれないわけです。バックテストの結果を向上させるため、闇雲にあれやこれやとシミュレーションを行うことは非常に危険だと思いませんか？最終的にプレゼン資料に上がってくるのは<span class="math inline">\(N\)</span>個の戦略のうち、最もパフォーマンスが良いもののみですから、今回の例のように10個戦略を考えただけでもどれかはシャープレシオが1.87付近に分布しているわけです。試行錯誤数なんてもちろん資料には記載しませんから、非常にミスリーディングなわけです。こういった資料を評価する際にはまず偽陽性を疑ってかかった方がいいかもしれません。</p>
 <p>では、どうすれば良いのかという話ですが、Bailey et. al.(2015)では、Minimum Backtest Lengthを計算しています。要は試行(錯誤)数<span class="math inline">\(N\)</span>を増やすにつれて、バックテストの年数<span class="math inline">\(y\)</span>も伸ばしていけよと戒めているわけです。<span class="math inline">\(N\)</span>とMinimum Backtest Lengthの関係性を示していきましょう。先ほどと同じく<span class="math inline">\(\mu=0\)</span>を仮定しますが、<span class="math inline">\(y\neq 1\)</span>であるケースを考えます。年率化シャープレシオの最大統計量の期待値は(2)式より、</p>
@@ -224,8 +224,12 @@ MinBTL \approx (\frac{(1-\gamma)Z^{-1}[1-\frac{1}{N}]+\gamma Z^{-1}[1-\frac{1}{N
 N = list(1:100)
 result = purrr::map2(N,1,MinBTL)
 ggplot2::ggplot(data.frame(MinBTL = unlist(result),N = unlist(N)),aes(x=N,y=MinBTL)) +
-  geom_line(size=1)</code></pre>
+  geom_line(size=1) + ylim(0,6)</code></pre>
 <p><img src="/my_blog/post/post23_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>simSR &lt;- function(T1){
+    r = rnorm(T1)
+    return(mean(r)/sd(r))
+}</code></pre>
 <p>仮にバックテスト年数が3年以内しかできない場合は試行(錯誤)回数<span class="math inline">\(N\)</span>はほぼ1回に抑えないといけないことになります。3年以内の場合は一発で当ててねという厳しめの制約です。注意しないといけないのは、MinBTLの範囲内でバックテストを行っていたとしてもオーバーフィットすることは考えられるということです。つまり、MinBTLは必要条件であって十分条件でないというわけです。</p>
 </div>
 <div id="終わりに" class="section level4">
