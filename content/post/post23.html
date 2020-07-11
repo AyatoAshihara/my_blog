@@ -234,5 +234,22 @@ ggplot2::ggplot(data.frame(MinBTL = unlist(result),N = unlist(N)),aes(x=N,y=MinB
 </div>
 <div id="終わりに" class="section level4">
 <h4>4. 終わりに</h4>
-<p>いつもとは違う観点で、少しメタ的なトピックに取り組んでみました。仕事柄バックテスト結果などを見ることも多いですし、このブログでもしばしばhold-out法でのバックテストをしています。得られた結果の不確実性を理解して、評価できるよう今後もこのトピックの研究を追っていきたいと思います。</p>
+<p><img src="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3257497" alt="López de Prado(2018)" />では、オーバーフィッティングを防ぐ汎用的な手段として以下が挙げられています。</p>
+<ol style="list-style-type: decimal">
+<li><p>Develop models for entire asset classes or investment universes, rather than for specific securities. Investors diversify, hence they do not make mistake X only on security Y. If you find mistake X only on security Y, no matter how apparently profitable, it is likely a false discovery.
+(拙訳：特定の有価証券ではなく、アセットクラス全体またはユニバース全体のモデルを開発すること。投資家はリスクを分散させているので、彼らはある証券Yだけに対してミスXをすることはありません。あなたが証券YだけにミスXを見つけた場合は、それがどんなに明らかに有益であっても、誤発見である可能性が高い。)</p></li>
+<li><p>Apply bagging as a means to both prevent overfitting and reduce the variance of the forecasting error. If bagging deteriorates the performance of a strategy, it was likely overfit to a small number of observations or outliers.
+(拙訳：オーバーフィットを防ぎ、予測誤差の分散を減らすための手段として、バギングを適用すること。バギングが戦略のパフォーマンスを悪化させる場合、それは少数の観測値または外れ値にオーバーフィットした可能性が高い。)</p></li>
+<li><p><strong>Do not backtest until all your research is complete.</strong>
+(拙訳：<strong>すべてのリサーチが完了するまでバックテストをしないこと。</strong>)</p></li>
+<li><p>Record every backtest conducted on a dataset so that the probability of backtest overfitting may be estimated on the final selected result (see <img src="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2326253" alt="Bailey, Borwein, López de Prado and Zhu(2017)" />), and the Sharpe ratio may be properly deflated by the number of trials carried out (![Bailey and López de Prado(2014.b)[<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2465675" class="uri">https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2465675</a>]).
+(拙訳：研究者が最終的に選択したバックテスト結果がオーバーフィットしている確率を推定できるように、単一の(同じ)データセットで実施されたバックテストをすべて記録すること（Bailey, Borwein, López de Prado and Zhu [2017a]）、また、実施された試行数によってシャープレシオを適切にデフレーションできるようにすること（Bailey and López de Prado [2014b]）。)</p></li>
+<li><p>Simulate scenarios rather than history. A standard backtest is a historical simulation, which can be easily overfit. History is just the random path that was realized, and it could have been entirely different. Your strategy should be profitable under a wide range of scenarios, not just the anecdotal historical path. It is harder to overfit the outcome of thousands of “what if” scenarios.
+(拙訳：ヒストリカルではなくシナリオをシミュレーションすること。標準的なバックテストはヒストリカルシミュレーションであり、オーバーフィットしやすい。歴史(これまでの実績)はランダムなパスの実現値に過ぎず、全く違ったものになっていた可能性があります。あなたの戦略は、逸話的なヒストリカルパスではなく、様々なシナリオの下で利益を得ることができるものであるべきです。何千もの「もしも」のシナリオ結果をオーバーフィットさせるのは(ヒストリカルシミュレーションで過学習するよりも)より難しいことです。)</p></li>
+<li><p>Do not research under the influence of a backtest. If the backtest fails to identify a profitable strategy,
+start from scratch. Resist the temptation of reusing those results.
+(拙訳：バックテストのフィードバックを受けてリサーチしないこと。バックテストが有益な戦略を見つけ出すことに失敗した場合は、ゼロからリサーチを再始動してください。それらの結果を再利用する誘惑に抗ってください。)</p></li>
+</ol>
+<p>3と6は本日の論文と関係のある文脈だと思います。この分野は他にも研究の蓄積があるので、業務でバックテストを行うという人は運用手法の勉強もいいですが、そもそものお作法としてバックテストの正しい運用方法について学ぶことをお勧めします。<br />
+さて、いつもとは違う観点で、少しメタ的なトピックに取り組んでみました。自分自身仕事柄バックテスト結果などを見ることも多いですし、このブログでもしばしばhold-out法でのバックテストをしています。得られた結果の不確実性を理解して、評価できるよう今後もこのトピックの研究を追っていきたいと思います。</p>
 </div>
