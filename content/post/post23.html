@@ -76,12 +76,12 @@ SR(q) &amp;=&amp; \frac{E[r_{t}(q)]}{\sqrt{Var(r_{t}(q))}}\\
 \]</span>
 必然的な結果として、<span class="math inline">\(SR\)</span>の計算はかなりの推定誤差が伴う可能性が高くなります。では、本節の本題、<span class="math inline">\(\hat{SR}\)</span>の漸近分布を導出してみましょう。まず、<span class="math inline">\(\hat{\mu}\)</span>と<span class="math inline">\(\hat{\sigma}^2\)</span>の漸近分布はi.i.d.と<span class="math inline">\(\mu, \sigma\)</span>が有限な値をとることから中心極限定理を適用することにより、</p>
 <p><span class="math display">\[
-\hat{\mu}\sim^{a}\mathcal{N}(\mu,\frac{\sigma^2}{T}), \\
-\hat{\sigma}^2\sim^a\mathcal{N}(\sigma^2,\frac{2\sigma^4}{T})
+\sqrt{T}\hat{\mu}\sim^{a}\mathcal{N}(\mu,\sigma^2), \\
+\sqrt{T}\hat{\sigma}^2\sim^a\mathcal{N}(\sigma^2,2\sigma^4)
 \]</span>
 となります。シャープレシオはこの<span class="math inline">\(\hat{\mu}\)</span>と<span class="math inline">\(\hat{\sigma}^2\)</span>から計算される確率変数であるので、この関数を<span class="math inline">\(g(\hat{{\boldsymbol \theta}})\)</span>と表しましょう。ここで、<span class="math inline">\(\hat{{\boldsymbol \theta}}=(\hat{\mu},\hat{\sigma}^2)&#39;\)</span>です。今、i.i.d.であるので<span class="math inline">\(\hat{{\boldsymbol \theta}}\)</span>は互いに独立となり、上記の議論から漸近同時分布は</p>
 <p><span class="math display">\[
-\hat{{\boldsymbol \theta}} \sim^a \mathcal{N}({\boldsymbol \theta},\frac{1}{T}{\boldsymbol V_{\boldsymbol \theta}})
+\sqrt{T}\hat{{\boldsymbol \theta}} \sim^a \mathcal{N}({\boldsymbol \theta},{\boldsymbol V_{\boldsymbol \theta}})
 \]</span>
 と書けます。ここで、<span class="math inline">\({\boldsymbol V_{\boldsymbol \theta}}\)</span>は</p>
 <p><span class="math display">\[
@@ -94,7 +94,7 @@ SR(q) &amp;=&amp; \frac{E[r_{t}(q)]}{\sqrt{Var(r_{t}(q))}}\\
 \]</span>
 です。シャープレシオの推定値は今<span class="math inline">\(g(\hat{{\boldsymbol \theta}})\)</span>と<span class="math inline">\(\hat{{\boldsymbol \theta}}\)</span>だけの関数になっていますのでデルタ法より、</p>
 <p><span class="math display">\[
-\hat{SR} = g(\hat{{\boldsymbol \theta}}) \sim^a \mathcal{N}(g({\boldsymbol \theta}),\frac{1}{T}\boldsymbol V_g)
+\hat{SR} = g(\hat{{\boldsymbol \theta}}) \sim^a \mathcal{N}(g({\boldsymbol \theta}),\boldsymbol V_g)
 \]</span>
 と漸近的に正規分布に従います。ここで、<span class="math inline">\(\boldsymbol V_g\)</span>は</p>
 <p><span class="math display">\[

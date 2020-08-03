@@ -2693,3 +2693,52 @@ li.pingback:first-child {
     width: 500px !important;
   }
 }
+
+.box26 {
+    position: relative;
+    margin: 2em 0;
+    padding: 0.5em 1em;
+    border: solid 3px #95ccff;
+    border-radius: 8px;
+}
+.box26 .box-title {
+    position: absolute;
+    display: inline-block;
+    top: -13px;
+    left: 10px;
+    padding: 0 9px;
+    line-height: 1;
+    font-size: 19px;
+    background: #FFF;
+    color: #95ccff;
+    font-weight: bold;
+}
+.box26 p {
+    margin: 0; 
+    padding: 0;
+}
+
+details{
+  font-size: 16px;
+}
+
+.box1{
+  margin: 1em 0;
+  padding: 1em;
+  position: relative;
+  border: 1px solid #555;
+}
+.box1-title{
+  position: absolute;
+  top: -0.8em;
+  left: 20px;
+  font-weight: bold;
+  font-size: 1.2em;
+  padding: 0 0.5em;
+  background: #fff;
+  border: 1px solid #555
+}
+.box1 p{
+  margin: 0;
+  padding: 0;
+}

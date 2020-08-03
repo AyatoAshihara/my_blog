@@ -84,13 +84,13 @@ $$
 必然的な結果として、$SR$の計算はかなりの推定誤差が伴う可能性が高くなります。では、本節の本題、$\hat{SR}$の漸近分布を導出してみましょう。まず、$\hat{\mu}$と$\hat{\sigma}^2$の漸近分布はi.i.d.と$\mu, \sigma$が有限な値をとることから中心極限定理を適用することにより、
 
 $$
-\hat{\mu}\sim^{a}\mathcal{N}(\mu,\frac{\sigma^2}{T}), \\
-\hat{\sigma}^2\sim^a\mathcal{N}(\sigma^2,\frac{2\sigma^4}{T})
+\sqrt{T}\hat{\mu}\sim^{a}\mathcal{N}(\mu,\sigma^2), \\
+\sqrt{T}\hat{\sigma}^2\sim^a\mathcal{N}(\sigma^2,2\sigma^4)
 $$
 となります。シャープレシオはこの$\hat{\mu}$と$\hat{\sigma}^2$から計算される確率変数であるので、この関数を$g(\hat{{\boldsymbol \theta}})$と表しましょう。ここで、$\hat{{\boldsymbol \theta}}=(\hat{\mu},\hat{\sigma}^2)'$です。今、i.i.d.であるので$\hat{{\boldsymbol \theta}}$は互いに独立となり、上記の議論から漸近同時分布は
 
 $$
-\hat{{\boldsymbol \theta}} \sim^a \mathcal{N}({\boldsymbol \theta},\frac{1}{T}{\boldsymbol V_{\boldsymbol \theta}})
+\sqrt{T}\hat{{\boldsymbol \theta}} \sim^a \mathcal{N}({\boldsymbol \theta},{\boldsymbol V_{\boldsymbol \theta}})
 $$
 と書けます。ここで、${\boldsymbol V_{\boldsymbol \theta}}$は
 
@@ -105,7 +105,7 @@ $$
 です。シャープレシオの推定値は今$g(\hat{{\boldsymbol \theta}})$と$\hat{{\boldsymbol \theta}}$だけの関数になっていますのでデルタ法より、
 
 $$
-\hat{SR} = g(\hat{{\boldsymbol \theta}}) \sim^a \mathcal{N}(g({\boldsymbol \theta}),\frac{1}{T}\boldsymbol V_g)
+\hat{SR} = g(\hat{{\boldsymbol \theta}}) \sim^a \mathcal{N}(g({\boldsymbol \theta}),\boldsymbol V_g)
 $$
 と漸近的に正規分布に従います。ここで、$\boldsymbol V_g$は
 
@@ -271,7 +271,6 @@ simSR <- function(T1){
 #}
 #purrr::accumulate(SR,max)
 ```
-
 
 仮にバックテスト年数が3年以内しかできない場合は試行(錯誤)回数$N$はほぼ1回に抑えないといけないことになります。3年以内の場合は一発で当ててねという厳しめの制約です。注意しないといけないのは、MinBTLの範囲内でバックテストを行っていたとしてもオーバーフィットすることは考えられるということです。つまり、MinBTLは必要条件であって十分条件でないというわけです。
 
