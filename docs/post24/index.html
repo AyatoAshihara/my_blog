@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/xcode.min.css" rel="stylesheet">
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<script type="application/ld+json">
+    {
+        "@context" : "http://schema.org",
+        "@type" : "BlogPosting",
+        "mainEntityOfPage": {
+             "@type": "WebPage",
+             "@id": "\/my_blog\/"
+        },
+        "articleSection" : "",
+        "name" : "そのバックテスト本当に再現性ありますか？(その2)",
+        "headline" : "そのバックテスト本当に再現性ありますか？(その2)",
+        "description" : "\r\n\x3cscript src=\x22\/my_blog\/rmarkdown-libs\/header-attrs\/header-attrs.js\x22\x3e\x3c\/script\x3e\r\n\r\n\r\n\x3cp\x3e前回に引き続き、バックテストの再現性についてのpostです。今回はオーバーフィットしにくい具体的なバックテスト手法について紹介したいと思います。\x3c\/p\x3e\r\n",
+        "inLanguage" : "en",
+        "author" : "AyatoAshihara",
+        "creator" : "AyatoAshihara",
+        "publisher": "AyatoAshihara",
+        "accountablePerson" : "AyatoAshihara",
+        "copyrightHolder" : "AyatoAshihara",
+        "copyrightYear" : "2020",
+        "datePublished": "2020-07-12 00:00:00 \x2b0000 UTC",
+        "dateModified" : "2020-07-12 00:00:00 \x2b0000 UTC",
+        "url" : "\/my_blog\/post24\/",
+        "wordCount" : "682",
+        "image" : "/my_blog/https://www.usefulhp.com/business/image/sagyoutyuu-2.gif"",
+        "keywords" : [ ""R"",""金融"",""前処理"",""機械学習"","Blog" ]   
+    }
+    </script>
+
+
+ <title>そのバックテスト本当に再現性ありますか？(その2) </title>
+
+
+<meta name="description" content="マクロ経済、機械学習系の記事を投稿しています。" />
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="all,follow">
+<meta name="googlebot" content="index,follow,snippet,archive">
+<link rel="stylesheet" id="ct-tracks-google-fonts-css" href="//fonts.googleapis.com/css?family=Raleway%3A400%2C700&amp;subset=latin%2Clatin-ext&amp;ver=4.7.2" type="text/css" media="all">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+<link href="/my_blog/css/style.css?v=1597759365" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+
+<link href="/my_blog/css/custom.css?v=1597759365" rel="stylesheet" type='text/css' media='all'>
+<link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-140804055-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+
+<body class="post-template-default single single-post single-format-standard ct-body singular singular-post not-front standard">
+
+  <div id="overflow-container" class="overflow-container">
+    <a class="skip-content" href="#main">Skip to content</a>
+    <header id="site-header" class="site-header" role="banner">
+      <div class='top-navigation'>
+        <div class='container'>
+
+  <div id="menu-secondary" class="menu-container menu-secondary" role="navigation">
+    <button id="toggle-secondary-navigation" class="toggle-secondary-navigation"><i class="fas fa-plus"></i></button>
+
+    <div class="menu">
+
+      <ul id="menu-secondary-items" class="menu-secondary-items">
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E4%BB%95%E4%BA%8B%E9%96%A2%E9%80%A3">仕事関連</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E5%8D%98%E7%99%BA">単発</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E6%97%A5%E6%AC%A1gdp">日次gdp</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E7%AB%B6%E9%A6%AC">競馬</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E7%B5%B1%E8%A8%88">統計</a>
+        </li>
+        
+
+      </ul>
+
+    </div>
+
+  </div>
+
+
+  <ul class="social-media-icons">
+
+
+    
+    <li>
+      <a href="https://www.facebook.com/ASSIY" data-animate-hover="pulse" class="facebook" target="_blank">
+        <i class="fab fa-facebook-square" title="facebook"></i>
+        <span class="screen-reader-text">facebook</span>
+      </a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+    <li>
+      <a href="mailto:assiy119@yahoo.co.jp" data-animate-hover="pulse" class="email">
+        <i class="fas fa-envelope" title="email"></i>
+        <span class="screen-reader-text">email</span>
+      </a>
+    </li>
+    
+
+    
+
+    
+
+
+    
+    <li>
+      <a href="https://github.com/AyatoAshihara/my_blog" data-animate-hover="pulse" class="github" target="_blank">
+        <i class="fab fa-github" title="github"></i>
+        <span class="screen-reader-text">github</span>
+      </a>
+    </li>
+    
+
+
+    
+
+    
+    <li>
+      <a href="/my_blog/index.xml" data-animate-hover="pulse" class="rss" target="_blank">
+        <i class="fas fa-rss" title="rss"></i>
+        <span class="screen-reader-text">rss</span>
+      </a>
+    </li>
+    
+
+
+  </ul></div>
+
+      </div>
+
+      <div class="container">
+        
+
+
+<div id="title-info" class="title-info">
+  <div id='site-title' class='site-title'>
+    
+    <a href="/my_blog"> 東京の資産運用会社で働く社会人が研究に没頭するブログ </a>
+    </div>
+  </div>
+  <button id="toggle-navigation" class="toggle-navigation">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div id="menu-primary-tracks" class="menu-primary-tracks"></div>
+  <div id="menu-primary" class="menu-container menu-primary" role="navigation">
+    
+    <p class="site-description">院卒3年目の社会人が夜な夜な更新中。本ブログの内容は筆者が所属する組織の公式見解とは全く関係ありません。</p>
+    
+
+    <div class="menu">
+      <ul id="menu-primary-items" class="menu-primary-items">
+        
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/">Home</a>
+          
+        </li>
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/about/">About</a>
+          
+        </li>
+        
+        <li id="menu-item" class='menu-item menu-item-type-post_type menu-item-object-page '>
+          <a href="/my_blog/contact/">Get in touch</a>
+          
+        </li>
+        
+      </ul>
+    </div>
+
+  </div>
+
+      </div>
+    </header>
+
+    <div id="main" class="main" role="main">
+
+      
+  
+  
+    
+  
+  
+  <div id="loop-container" class="loop-container">
+    
+    <div class="post type-post status-publish format-standard has-post-thumbnail hentry category-design tag-design tag-standard-2 tag-tagalicious tag-travel entry full-without-featured odd excerpt-1">
+
+      <div class='featured-image lazy lazy-bg-image'  data-background="https://www.usefulhp.com/business/image/sagyoutyuu-2.gif">
+      </div>
+      
+        <div class="entry-meta">
+          <span class="date">12 July</span>	<span> / </span>
+
+          <span class="author">
+            <a href="/my_blog/" title="Posts by " rel="author"></a>
+          </span>
+
+
+          
+          <span class="category">
+            <span> / </span>
+
+            <a href="/categories/%E4%BB%95%E4%BA%8B%E9%96%A2%E9%80%A3">仕事関連</a>
+          </span>
+          
+          <span class="category">
+            <span> / </span>
+
+            <a href="/categories/%E5%8D%98%E7%99%BA">単発</a>
+          </span>
+          
+
+
+        </div>
+        <div class='entry-header'>
+          <h1 class='entry-title'> そのバックテスト本当に再現性ありますか？(その2)</h1>
+        </div>
+        <div class="entry-container">
+          <div class="entry-content">
+            <article>
+              <div id="実はかなり難しい金融でのバックテスト" class="section level4">
+<h4>1. 実はかなり難しい金融でのバックテスト</h4>
+<p>前回、同じデータセットを使ってバックテストを何度も行うと、シャープレシオの真値が0にも拘わらず、シャープレシオの推定値がたまたま2付近に近づくことがありますよ、という話をしました。また、そういった事象を起こりにくくするためには、試行(錯誤)の回数を増加させるにつれてバックテスト期間を延ばす必要があります、という話もしました。</p>
+<p>これだけでもバックテストって難しいんですが、よくあるバックテストの誤りとして、<a href="https://ssrn.com/abstract=3257497">こちらでは</a>以下7点が挙げられています。</p>
+<ol style="list-style-type: decimal">
+<li>Survivorship bias(生存者バイアス)
+<ul>
+<li>Using as investment universe the current one, hence ignoring that some companies went bankrupt and securities were delisted along the way.(拙訳：現在のユニバースを投資戦略のユニバースとして使用しているが故に、倒産した企業がいたことや途中で上場廃止になった証券があったことを無視しています。)</li>
+</ul></li>
+<li>Look-ahead bias(先行バイアス)
+<ul>
+<li>Using information that was not public at the moment the simulated decision would have been made. Be certain about the timestamp for each data point. Take into account release dates, distribution delays, and backfill
+corrections.(拙訳：シミュレーションでの意思決定が行われたその時点では公開されていなかった情報を利用すること。各データポイントのタイムスタンプを確認してください。情報公開日、配布の遅延、差し戻しの修正を考慮に入れる必要があります。)</li>
+</ul></li>
+<li>Storytelling(ストーリーテリング)
+<ul>
+<li>Making up a story ex-post to justify some random pattern.(拙訳：事後的な記事の話をでっち上げて、ランダムなパターンを正当化している。)</li>
+</ul></li>
+<li>Data mining and data snooping(データマイニングとデータスヌーピング)
+<ul>
+<li>Training the model on the testing set.(拙訳：テスト用データセットでモデルを学習すること。)</li>
+</ul></li>
+<li>Transaction costs(取引コスト)
+<ul>
+<li>Simulating transaction costs is hard because the only way to be certain about that cost would have been to interact with the trading book (i.e., to do the actual trade).(拙訳：取引コストをシミュレーションするのは難しいです。なぜなら、そのコストについて確信を持つ唯一の方法は、トレーディングブックと対話することだからです（つまり、実際の取引を行うこと）。)</li>
+</ul></li>
+<li>Outliers(外れ値)
+<ul>
+<li>Basing a strategy on a few extreme outcomes that may never happen again
+as observed in the past.(拙訳：過去に観察された二度と起こらないかもしれないいくつかの極端な結果に戦略を基づかせること。)</li>
+</ul></li>
+<li>Shorting(空売り)
+<ul>
+<li>Taking a short position on cash products requires finding a lender. The cost of lending and the amount available is generally unknown, and depends on relations, inventory, relative demand, etc.(拙訳：キャッシング商品のショートポジションを取るには、貸し手を探す必要があります。貸出のコストや利用可能な金額は一般的には不明で、関係性、在庫、相対的な需要などに依存します。)</li>
+</ul></li>
+</ol>
+<p>さらに、前回書いたように、非の打ち所がないバックテストを行ったとしても試行錯誤数が多ければ、たまたまシャープレシオが1を超えましたという戦略は1つは出てくることが期待されるわけですからより厄介です。同資料では、再現性のあるバックテストを行うために以下6点が汎用的な手段として挙げられていました。これは前回記事の最後に記載しましたが、再掲します。</p>
+<ol style="list-style-type: decimal">
+<li><p>Develop models for entire asset classes or investment universes, rather than for specific securities. Investors diversify, hence they do not make mistake X only on security Y. If you find mistake X only on security Y, no matter how apparently profitable, it is likely a false discovery.
+(拙訳：特定の有価証券ではなく、アセットクラス全体またはユニバース全体のモデルを開発すること。投資家はリスクを分散させているので、彼らはある証券Yだけに対してミスXをすることはありません。あなたが証券YだけにミスXを見つけた場合は、それがどんなに明らかに有益であっても、誤発見である可能性が高い。)</p></li>
+<li><p>Apply bagging as a means to both prevent overfitting and reduce the variance of the forecasting error. If bagging deteriorates the performance of a strategy, it was likely overfit to a small number of observations or outliers.
+(拙訳：オーバーフィットを防ぎ、予測誤差の分散を減らすための手段として、バギングを適用すること。バギングが戦略のパフォーマンスを悪化させる場合、それは少数の観測値または外れ値にオーバーフィットした可能性が高い。)</p></li>
+<li><p><strong>Do not backtest until all your research is complete.</strong>
+(拙訳：<strong>すべてのリサーチが完了するまでバックテストをしないこと。</strong>)</p></li>
+<li><p>Record every backtest conducted on a dataset so that the probability of backtest overfitting may be estimated on the final selected result (see <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2326253">Bailey, Borwein, López de Prado and Zhu(2017)</a>), and the Sharpe ratio may be properly deflated by the number of trials carried out (<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2465675">Bailey and López de Prado(2014.b)</a>).
+(拙訳：研究者が最終的に選択したバックテスト結果がオーバーフィットしている確率を推定できるように、単一の(同じ)データセットで実施されたバックテストをすべて記録すること（Bailey, Borwein, López de Prado and Zhu [2017]）、また、実施された試行数によってシャープレシオを適切にデフレーションできるようにすること（Bailey and López de Prado [2014]）。)</p></li>
+<li><p>Simulate scenarios rather than history. A standard backtest is a historical simulation, which can be easily overfit. History is just the random path that was realized, and it could have been entirely different. Your strategy should be profitable under a wide range of scenarios, not just the anecdotal historical path. It is harder to overfit the outcome of thousands of “what if” scenarios.
+(拙訳：ヒストリカルではなくシナリオをシミュレーションすること。標準的なバックテストはヒストリカルシミュレーションであり、オーバーフィットしやすい。歴史(これまでの実績)はランダムなパスの実現値に過ぎず、全く違ったものになっていた可能性があります。あなたの戦略は、逸話的なヒストリカルパスではなく、様々なシナリオの下で利益を得ることができるものであるべきです。何千もの「もしも」のシナリオ結果をオーバーフィットさせるのは(ヒストリカルシミュレーションで過学習するよりも)より難しいことです。)</p></li>
+<li><p>Do not research under the influence of a backtest. If the backtest fails to identify a profitable strategy,
+start from scratch. Resist the temptation of reusing those results.
+(拙訳：バックテストのフィードバックを受けてリサーチしないこと。バックテストが有益な戦略を見つけ出すことに失敗した場合は、ゼロからリサーチを再始動してください。それらの結果を再利用する誘惑に抗ってください。)</p></li>
+</ol>
+<p>いろいろ制約が多すぎて、「<strong>じゃあ具体的にどうやってバックテストすればええねん！！</strong>」って怒りたくなっちゃいますよね。今回は、著者であるMarcos López de Pradoがお勧めするバックテスト手法である
+「<strong>Combinatorial Purged Cross-Validation</strong>」についてレビューしたいと思います。この人、AQR Capital Managementの機械学習部門のトップかつ、 Lawrence Berkeley National Laboratoryのリサーチフェロー &amp; 金融経済学博士 &amp; 数理経済学博士らしいです。バケモンですね。</p>
+</div>
+<div id="バックテスト手法のいろいろ" class="section level4">
+<h4>2. バックテスト手法のいろいろ</h4>
+<p>一言でバックテスト手法と言っても、やり方はいくつかあります。本節は以下の3つの手法について簡単にレビューし、次節でシミュレーションを行います。</p>
+<ol style="list-style-type: decimal">
+<li>Walk Forward</li>
+<li>Cross-Validation</li>
+<li>Combinatorial Purged Cross-Validation</li>
+</ol>
+<div id="walk-forward" class="section level5">
+<h5>2.1 Walk Forward</h5>
+<p>Wakl Forward(WF)は以下の図のようにテストデータのうち学習データとテストデータの期間をそれぞれ決めておいて、一番最初のデータから学習 &amp; テストを逐次的に繰り返していく手法です(hold-out法を逐次的にしたやつ)。</p>
+<div class="figure">
+<img src="https://diy-tradesystem.com/wp-content/uploads/2017/11/walkforward.png" alt="" />
+<p class="caption">図1 Walk Forward</p>
+</div>
+<p>WFは、過去に戦略がどのようなパフォーマンスを発揮していたかをヒストリカルにシミュレーションしたものです。各戦略における投資判断は、その判断に以前に確定しているデータに基づいています。</p>
+<ul>
+<li>利点
+<ul>
+<li>ストレートフォワードにシミュレーションするのでWFは解釈が明快。</li>
+<li>パージが適切に実装されている限り、末尾のデータを使用することがテストセットがOut-of-Sampleであること（Leakageがない）を保証している。</li>
+</ul></li>
+<li>欠点
+<ul>
+<li>単一のシナリオがテストされているので、オーバーフィットしやすい(Bailey et al. [2014])。</li>
+<li>WFは、データ点の特異な(再現性のない)挙動によって結果が偏る可能性があるので、必ずしも将来のパフォーマンスを代表するものではない。実際に、WFをオーバーフィットしやすく、観測の順序を変えると一貫性のない結果が得られるという事実事態がオーバーフィッティングしている証拠である。</li>
+<li>学習初期段階の投資判断は、サンプル全体のごく一部で行われる。ウォームアップ期間が設定されていても、その情報の大部分は投資判断のごく一部でしか利用されない。</li>
+</ul></li>
+</ul>
+<p>まとめると、WFは単純で解釈が簡単だし、Leakageが発生しにくい。けど、実際のヒストリカルパス(系列の実現値)のみで学習するので、オーバフィットもしやすい。といった感じでしょうか。</p>
+</div>
+<div id="cross-validation" class="section level5">
+<h5>2.2 Cross-Validation</h5>
+<p>機械学習界隈でめちゃめちゃ有名なやつ。Cross-Validation(CV)とは、サンプルデータを分割し、その一部をまず解析して、残る部分でその解析のテストを行い、解析自身の妥当性の検証・確認に当てる手法を指します。下図がわかりやすいです。サンプルデータを赤、青、緑に分割しています。</p>
+<div class="figure">
+<img src="https://mathwords.net/wp-content/uploads/2017/04/kousakakunin2.-300x192.png" alt="" />
+<p class="caption">図2 Cross-Validation</p>
+</div>
+<p>CVでバックテストを行う目的は、WFのように過去データに対して正確な性能を導き出すことではなく、多くのアウトオブサンプルのシナリオから将来の性能を推測することにあります。WFが問題として抱えるオーバーフィッティングのしやすさに対処していることになります。</p>
+<ul>
+<li>利点
+<ul>
+<li>テストは過去の系列データの結果だけなく、未来(後方)方向をテストデータに持つ結果や逆に過去(前方)データをテストデータに持つものなど、単一のデータセットから未知のアウトサンプルを新たに創造できます。データ系列を逆にして全く異なる結果になる=過学習なので、WFよりマシな方法と言えるかも知れません。</li>
+<li>すべての投資判断は、同じ大きさのデータセットで行われる。これにより、意思決定に使われる情報量が同じという点で、バックテスト結果が比較可能になる。</li>
+<li>すべての観測データがテストデータとして使用される。ウォームアップサブセットがないので、可能な限り長いアウトオブサンプルシミュレーションができる。</li>
+</ul></li>
+<li>欠点
+<ul>
+<li>WFと同様に、単一のバックテストパスがシミュレートされる（ただし、過去のものではない）。観測ごとに生成される予測は1つであり、1つしかない。</li>
+<li>CVには明確な結果解釈ができない(過去の実現値でないので)。バックテスト結果は、投資戦略がどのように過去に実行されたかをシミュレートするのではなく、それが様々なストレスシナリオの下でどのように投資判断を行う可能性があるかをシミュレートする(それ自体が有用な結果であるが)。</li>
+<li>訓練データとテストデータを必ずしも時系列で繋がっていないため、Leakageが発生する可能性がある。訓練データにテストデータの情報が漏れないように細心の注意を払う必要がある。</li>
+</ul></li>
+</ul>
+</div>
+<div id="combinatorial-purged-cross-validation" class="section level5">
+<h5>2.3 Combinatorial Purged Cross-Validation</h5>
+<p>Combinatorial Purged Cross-Validation(CPCV)は、WF法とCV法の主な欠点、すなわち、これらのスキームがシングルパスをテストすることに対処した手法になります。<br />
+まず、<span class="math inline">\(T\)</span>個の観測値を入れ替え(シャッフル)なしで<span class="math inline">\(N\)</span>個のグループに分割します。グループ<span class="math inline">\(n = 1, ..., N-1\)</span> はサイズ<span class="math inline">\(T/N\)</span> 、<span class="math inline">\(N\)</span>個目のグループはサイズ<span class="math inline">\(T-[T/N](N-1)\)</span>となります。ここで、<span class="math inline">\([.]\)</span>は整数関数です。<span class="math inline">\(k\)</span>個のグループをテストデータに回すとすると、可能な訓練/テストデータ分割数は、<span class="math inline">\(N\)</span>個から<span class="math inline">\(N-k\)</span>個の訓練データを取得する組み合わせであるので、</p>
+<p><span class="math display">\[
+\left(
+    \begin{array}{c}
+      N \\
+      N-k \\
+    \end{array}
+  \right) = \frac{\prod_{i=0}^{k-1}(N-i)}{k!}
+\]</span></p>
+<p>となります。各組み合わせには<span class="math inline">\(k\)</span>個のテスト用グループが含まれるので、テスト用グループの総数は<span class="math inline">\(k\prod_{i=0}^{k-1}(N-i)/k!\)</span>です。これらのテスト用グループはすべての<span class="math inline">\(N\)</span>個のグループに一様に分布しています（各グループは同じ数だけ訓練セット、テストセットとして使用されます）。こうすることで、<span class="math inline">\(N\)</span>個のグループの<span class="math inline">\(k\)</span>サイズのテストセットから，合計数<span class="math inline">\(\varphi[N,k]\)</span>のパスをバックテストすることができます。</p>
+<p><span class="math display">\[
+\varphi[N,k] = \frac{k}{N}\left(
+    \begin{array}{c}
+      N \\
+      N-k \\
+    \end{array}
+  \right) = \frac{\prod_{i=1}^{k-1}(N-i)}{(k-1)!}
+\]</span></p>
+<p>例を考えた方がわかりやすいと思います。今、<span class="math inline">\(N=6, k=2\)</span>としましょう。ここから、可能な訓練/テストデータ分割数は15個となり、15系列のデータを使用することができます。下図では、それぞれの系列が<span class="math inline">\(S1,...,S15\)</span>と表されています。</p>
+<div class="figure">
+<img src="/my_blog/post/post24_files/CPCV1.PNG" alt="" />
+<p class="caption">図3 CPCV概念図</p>
+</div>
+<p>上図では、縦軸に分割された6つのグループ、横軸にこれらのグループから4つの訓練データ(と2つのテストデータ)をそれぞれ取得して作成したバックテスト用の全15系列が記載されています。また、各マスに記入されているバツ×はその系列<span class="math inline">\(Si(i=1,...,15)\)</span>においてそのグループ<span class="math inline">\(Gi(i=1,...,6)\)</span>がテストデータであることを意味しています(空欄は訓練データを意味)。各グループは<span class="math inline">\(\varphi[6,2]=5\)</span>回テストデータとして使用されます。よって、このスキームでは5つのバックテストパスを計算することができます。</p>
+<p>全てのグループは5回テストデータとして使用され、その1つ1つをそれぞれのバックテストパスに割り当てます。下図では、先ほど×が入力されていたマスに数字が入力されています。それぞれの番号はそれぞれのグループが何番目のバックテストパスに割り当てられたかを示しており、例えば、パス1では15系列のグループ1<span class="math inline">\(G1\)</span>のうち<span class="math inline">\((G1,S1)\)</span>が使用され、<span class="math inline">\((G2,S2),(G3,S2),(G4,S3),(G5,S4),(G6,S5)\)</span>と続いています。</p>
+<div class="figure">
+<img src="/my_blog/post/post24_files/CPCV2.PNG" alt="" />
+<p class="caption">図4 バックテストパスの複数生成</p>
+</div>
+<p>パス2も同様に<span class="math inline">\((G1,S2),(G2,S6),(G3,S6),(G4,S7),(G5,S8),(G6,S9)\)</span>といった形です。パス3,4,5もこのような形で生成することが可能です(ちなみにこれらの選び方はランダムで良いようです)。<br />
+この例では、5つのパスしか生成していませんがサンプルパスが十分長ければCPCVでは何千ものパスを生成することができます。パスの数<span class="math inline">\(\varphi[N,k]\)</span>は<span class="math inline">\(N\rightarrow T,k\rightarrow N/2\)</span>になるにつれて長くなります。<br />
+<strong>CPCVの主な利点は、単一の（オーバーフィットしそうな）シャープレシオの推定値とは対照的に、シャープレシオの分布を導出できることです。</strong>WFはもちろん、CVでも複数のバックテストパスは生成することができませんでした。肝は<span class="math inline">\(k\)</span>を2以上にすることです。<span class="math inline">\(k=1\)</span>だとCV=CPCVです。</p>
+</div>
+</div>
+<div id="バックテストのシミュレーション" class="section level4">
+<h4>3. バックテストのシミュレーション</h4>
+<p>2節で見た手法のバックテストシミュレーションをしてみましょう。</p>
+<p>まず、最小分散ポートフォリオ(空売制約有)を関数として定義しておきます。こちらは以前の記事で使用した物を流用しています。</p>
+<p>同じ関数をそれぞれのバックテスト資料に適用して、比較してみようという算段です。</p>
+<div id="walk-forward-シミュレーション" class="section level5">
+<h5>3.1 Walk Forward シミュレーション</h5>
+<p>では、まずwalk Forward シミュレーションです。</p>
+</div>
+<div id="cross-validation-1" class="section level5">
+<h5>3.2 Cross Validation</h5>
+<pre class="r"><code>WF &lt;- function(x,k,p){
+#------------------------------
+# Description 
+#  x - data
+#  k - sample size of each train set(optimization window)
+#  p - sample size of each test set(test window)
+#------------------------------
+
+  Time &lt;- seq(1,NROW(x),k+p)
+  Time &lt;- Time[Time&lt;=(NROW(x)-k-p)]
+  doit &lt;- function(i){
+    data &lt;- list(test=x[(i+k+1):(i+k+p),],train=x[i:(i+p-1),])
+    return(data)
+  }
+  res &lt;- lapply(Time, function(i) try(doit(i)))
+  return(res)  
+}
+
+res &lt;- WF(hist.returns,30,30)
+result &lt;- purrr::map(res,function(x){backtest(x,FUN=&quot;nlgmv&quot;)})</code></pre>
+</div>
+<div id="combinatorial-purged-cross-validation-1" class="section level5">
+<h5>3.3 Combinatorial Purged Cross-Validation</h5>
+<pre class="r"><code>CPCV &lt;- function(x,G,k){
+#------------------------------
+# Description 
+#  x - data
+#  G - number of Groups
+#  k - number of test Groups on each set
+#------------------------------
+  
+  Time &lt;- round(rep(NROW(x)%/%G,length=G))
+  Time[G] &lt;- Time[G] + NROW(x)%%G
+  x$index &lt;- rep(c(1:G), times=Time)
+  S &lt;- t(combn(G,k))
+  doit &lt;- function(i){
+    data &lt;- list(test=x[x$index %in% S[i,],-NCOL(x)],train=x[!(x$index %in% S[i,]),-NCOL(data)])
+    return(data)
+  }
+  res &lt;- lapply(1:NROW(S), function(i) try(doit(i)))
+  return(res)
+}
+
+res &lt;- CPCV(hist.returns,30,2)
+result &lt;- purrr::map(res,function(x){backtest(x,FUN=&quot;nlgmv&quot;)})</code></pre>
+</div>
+</div>
+
+            </article>
+          </div>
+          
+      <div class='entry-meta-bottom'>
+        
+
+  <div class="entry-categories"><p><span>Categories</span>
+    
+    <a href="/my_blog/categories/%E4%BB%95%E4%BA%8B%E9%96%A2%E9%80%A3" title="View all posts in 仕事関連">仕事関連</a>
+    <a href="/my_blog/categories/%E5%8D%98%E7%99%BA" title="View all posts in 単発">単発</a>
+  </p>
+</div>
+
+
+
+<div class="entry-tags"><p><span>Tags</span>
+  
+  <a href="/my_blog/tags/r" title="View all posts tagged R">R</a>
+  
+  <a href="/my_blog/tags/%E9%87%91%E8%9E%8D" title="View all posts tagged 金融">金融</a>
+  
+  <a href="/my_blog/tags/%E5%89%8D%E5%87%A6%E7%90%86" title="View all posts tagged 前処理">前処理</a>
+  
+  <a href="/my_blog/tags/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92" title="View all posts tagged 機械学習">機械学習</a>
+  
+
+</p></div>	</div>
+
+	
+<div class="author-meta">
+
+  <div class="author">
+    	
+      <img alt='Ayato Ashihara' src="https://www.gravatar.com/avatar/0334adec0ab8bf709927e209f83de319?s=100&d=identicon" class='avatar avatar-72 photo' height='72' width='72'>
+    
+    <span>
+      Written by:<a href="https://ayatoashihara.github.io/my_blog/about/" title="Posts by Ayato Ashihara" rel="author">Ayato Ashihara</a> </span>
+    </div>
+    <div class="bio">
+      
+      
+      <p></p>
+      
+      
+	
+
+<a class="facebook" target="_blank"
+href="https://www.facebook.com/ASSIY">
+<i class="fab fa-facebook-f"
+title="facebook icon"></i>
+</a>
+
+
+
+
+
+
+
+
+
+<a class="email" target="_blank"
+href="mailto:assiy119@yahoo.co.jp">
+<i class="fas fa-envelope"
+title="email icon"></i>
+</a>
+
+
+
+
+
+
+
+<a class="github" target="_blank"
+href="https://github.com/AyatoAshihara/my_blog">
+<i class="fab fa-github"
+title="github icon"></i>
+</a>
+
+
+
+
+
+
+
+</div>
+</div>
+
+</div>
+</div>
+
+<section id="comments" class="comments">
+  
+
+  
+
+
+
+
+</section>
+</div>
+
+ 
+
+
+
+    </div>
+
+    <footer id="site-footer" class="site-footer" role="contentinfo">
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\\(","\\)"]] } });
+</script>
+<script async
+src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/r.min.js"></script>
+
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+
+	<h1>
+    
+    <a href=""> 東京の資産運用会社で働く社会人が研究に没頭するブログ </a>
+    
+	</h1>
+
+			
+			<p class="site-description">院卒3年目の社会人が夜な夜な更新中。本ブログの内容は筆者が所属する組織の公式見解とは全く関係ありません。</p>
+			
+
+		<div id="menu-footer" class="menu-container menu-footer" role="navigation">
+		<div class="menu">
+
+      <ul id="menu-footer-items" class="menu-footer-items">
+        
+</ul>
+
+</div>	</div>
+
+<ul class="social-media-icons">
+
+        
+				<li>
+					<a class="facebook" target="_blank"
+					   href="https://www.facebook.com/ASSIY" >
+						<i class="fab fa-facebook-f" title="facebook"></i>
+						<span class="screen-reader-text">facebook</span>
+					</a>
+				</li>
+        
+
+        
+
+
+        
+
+        
+
+        
+        <li>
+        <a href="mailto:assiy119@yahoo.co.jp"  class="email">
+            <i class="fas fa-envelope" title="email"></i>
+            <span class="screen-reader-text">email</span>
+        </a>
+        </li>
+        
+
+        
+
+        
+
+
+        
+        <li>
+        <a href="https://github.com/AyatoAshihara/my_blog"  class="github" target="_blank">
+            <i class="fab fa-github" title="github"></i>
+            <span class="screen-reader-text">github</span>
+        </a>
+        </li>
+        
+
+
+        
+
+        
+        <li>
+        <a href="/my_blog/index.xml" data-animate-hover="pulse" class="rss" target="_blank">
+            <i class="fas fa-rss" title="rss"></i>
+            <span class="screen-reader-text">rss</span>
+        </a>
+        </li>
+        
+
+				</ul>	<div class="design-credit">
+		
+		<p>&copy; 2018 Göran Svensson</p>
+		
+		<p>Nederburg Hugo Theme by <a href="https://appernetic.io">Appernetic</a>.</p>
+		
+		<p>A port of Tracks by Compete Themes.</p>
+		
+	</div>
+</footer>
+
+  </div>
+  <script src="/my_blog/js/jquery.min.js"></script>
+<script src="/my_blog/js/jquerymigrate.js"></script>
+<script src="/my_blog/js/production.min.js?v=1597759365"></script>
+
+</body>
+</html>

@@ -26,7 +26,6 @@ editor_options:
 <!--more-->
 
 ```{r,include=FALSE}
-
 library(reticulate)
 conda_path <- "C:\\Users\\aashi\\Anaconda3\\envs\\umanalytics"
 use_condaenv(conda_path)
@@ -38,17 +37,15 @@ knitr::opts_chunk$set(message = FALSE)
 ```
 
 ```{python,include=FALSE}
-
 import os
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = 'C:/Users/aashi/Anaconda3/envs/umanalytics/Library/plugins/platforms'
-
 ```
 
 ```{python,include=FALSE}
 import sqlite3
 import pandas as pd
 
-conn = sqlite3.connect(r'C:\Users\aashi\競馬統計解析\horse_data.db')
+conn = sqlite3.connect(r'C:\Users\aashi\umanalytics\horse_data.db')
 sql = r'SELECT * FROM race_result'
 df = pd.read_sql(con=conn,sql=sql)
 ```

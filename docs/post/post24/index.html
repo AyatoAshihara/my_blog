@@ -26,7 +26,7 @@
         "datePublished": "2020-07-12 00:00:00 \x2b0000 UTC",
         "dateModified" : "2020-07-12 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post24\/",
-        "wordCount" : "569",
+        "wordCount" : "682",
         "image" : "/my_blog/https://www.usefulhp.com/business/image/sagyoutyuu-2.gif"",
         "keywords" : [ ""R"",""金融"",""前処理"",""機械学習"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1596458954" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1597045332" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1596458954" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1597045332" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -329,7 +329,7 @@ start from scratch. Resist the temptation of reusing those results.
 <p>Wakl Forward(WF)は以下の図のようにテストデータのうち学習データとテストデータの期間をそれぞれ決めておいて、一番最初のデータから学習 &amp; テストを逐次的に繰り返していく手法です(hold-out法を逐次的にしたやつ)。</p>
 <div class="figure">
 <img src="https://diy-tradesystem.com/wp-content/uploads/2017/11/walkforward.png" alt="" />
-<p class="caption">Walk Forward</p>
+<p class="caption">図1 Walk Forward</p>
 </div>
 <p>WFは、過去に戦略がどのようなパフォーマンスを発揮していたかをヒストリカルにシミュレーションしたものです。各戦略における投資判断は、その判断に以前に確定しているデータに基づいています。</p>
 <ul>
@@ -352,7 +352,7 @@ start from scratch. Resist the temptation of reusing those results.
 <p>機械学習界隈でめちゃめちゃ有名なやつ。Cross-Validation(CV)とは、サンプルデータを分割し、その一部をまず解析して、残る部分でその解析のテストを行い、解析自身の妥当性の検証・確認に当てる手法を指します。下図がわかりやすいです。サンプルデータを赤、青、緑に分割しています。</p>
 <div class="figure">
 <img src="https://mathwords.net/wp-content/uploads/2017/04/kousakakunin2.-300x192.png" alt="" />
-<p class="caption">Cross-Validation</p>
+<p class="caption">図2 Cross-Validation</p>
 </div>
 <p>CVでバックテストを行う目的は、WFのように過去データに対して正確な性能を導き出すことではなく、多くのアウトオブサンプルのシナリオから将来の性能を推測することにあります。WFが問題として抱えるオーバーフィッティングのしやすさに対処していることになります。</p>
 <ul>
@@ -394,13 +394,13 @@ start from scratch. Resist the temptation of reusing those results.
 <p>例を考えた方がわかりやすいと思います。今、<span class="math inline">\(N=6, k=2\)</span>としましょう。ここから、可能な訓練/テストデータ分割数は15個となり、15系列のデータを使用することができます。下図では、それぞれの系列が<span class="math inline">\(S1,...,S15\)</span>と表されています。</p>
 <div class="figure">
 <img src="/my_blog/post/post24_files/CPCV1.PNG" alt="" />
-<p class="caption">CPCV概念図</p>
+<p class="caption">図3 CPCV概念図</p>
 </div>
 <p>上図では、縦軸に分割された6つのグループ、横軸にこれらのグループから4つの訓練データ(と2つのテストデータ)をそれぞれ取得して作成したバックテスト用の全15系列が記載されています。また、各マスに記入されているバツ×はその系列<span class="math inline">\(Si(i=1,...,15)\)</span>においてそのグループ<span class="math inline">\(Gi(i=1,...,6)\)</span>がテストデータであることを意味しています(空欄は訓練データを意味)。各グループは<span class="math inline">\(\varphi[6,2]=5\)</span>回テストデータとして使用されます。よって、このスキームでは5つのバックテストパスを計算することができます。</p>
 <p>全てのグループは5回テストデータとして使用され、その1つ1つをそれぞれのバックテストパスに割り当てます。下図では、先ほど×が入力されていたマスに数字が入力されています。それぞれの番号はそれぞれのグループが何番目のバックテストパスに割り当てられたかを示しており、例えば、パス1では15系列のグループ1<span class="math inline">\(G1\)</span>のうち<span class="math inline">\((G1,S1)\)</span>が使用され、<span class="math inline">\((G2,S2),(G3,S2),(G4,S3),(G5,S4),(G6,S5)\)</span>と続いています。</p>
 <div class="figure">
 <img src="/my_blog/post/post24_files/CPCV2.PNG" alt="" />
-<p class="caption">バックテストパスの複数生成</p>
+<p class="caption">図4 バックテストパスの複数生成</p>
 </div>
 <p>パス2も同様に<span class="math inline">\((G1,S2),(G2,S6),(G3,S6),(G4,S7),(G5,S8),(G6,S9)\)</span>といった形です。パス3,4,5もこのような形で生成することが可能です(ちなみにこれらの選び方はランダムで良いようです)。<br />
 この例では、5つのパスしか生成していませんがサンプルパスが十分長ければCPCVでは何千ものパスを生成することができます。パスの数<span class="math inline">\(\varphi[N,k]\)</span>は<span class="math inline">\(N\rightarrow T,k\rightarrow N/2\)</span>になるにつれて長くなります。<br />
@@ -410,19 +410,60 @@ start from scratch. Resist the temptation of reusing those results.
 <div id="バックテストのシミュレーション" class="section level4">
 <h4>3. バックテストのシミュレーション</h4>
 <p>2節で見た手法のバックテストシミュレーションをしてみましょう。</p>
+<p>まず、最小分散ポートフォリオ(空売制約有)を関数として定義しておきます。こちらは以前の記事で使用した物を流用しています。</p>
+<p>同じ関数をそれぞれのバックテスト資料に適用して、比較してみようという算段です。</p>
+<div id="walk-forward-シミュレーション" class="section level5">
+<h5>3.1 Walk Forward シミュレーション</h5>
+<p>では、まずwalk Forward シミュレーションです。</p>
+</div>
+<div id="cross-validation-1" class="section level5">
+<h5>3.2 Cross Validation</h5>
+<pre class="r"><code>WF &lt;- function(x,k,p){
+#------------------------------
+# Description 
+#  x - data
+#  k - sample size of each train set(optimization window)
+#  p - sample size of each test set(test window)
+#------------------------------
+
+  Time &lt;- seq(1,NROW(x),k+p)
+  Time &lt;- Time[Time&lt;=(NROW(x)-k-p)]
+  doit &lt;- function(i){
+    data &lt;- list(test=x[(i+k+1):(i+k+p),],train=x[i:(i+p-1),])
+    return(data)
+  }
+  res &lt;- lapply(Time, function(i) try(doit(i)))
+  return(res)  
+}
+
+res &lt;- WF(hist.returns,30,30)
+result &lt;- purrr::map(res,function(x){backtest(x,FUN=&quot;nlgmv&quot;)})</code></pre>
+</div>
+<div id="combinatorial-purged-cross-validation-1" class="section level5">
+<h5>3.3 Combinatorial Purged Cross-Validation</h5>
 <pre class="r"><code>CPCV &lt;- function(x,G,k){
+#------------------------------
+# Description 
+#  x - data
+#  G - number of Groups
+#  k - number of test Groups on each set
+#------------------------------
+  
   Time &lt;- round(rep(NROW(x)%/%G,length=G))
   Time[G] &lt;- Time[G] + NROW(x)%%G
   x$index &lt;- rep(c(1:G), times=Time)
   S &lt;- t(combn(G,k))
-  dataset &lt;- list()
-  for(i in 1:NROW(S)){
-    x[x$index %in% S[i,],-NCOL(x)]
-    x[!(x$index %in% S[i,]),-NCOL(x)]
-    
+  doit &lt;- function(i){
+    data &lt;- list(test=x[x$index %in% S[i,],-NCOL(x)],train=x[!(x$index %in% S[i,]),-NCOL(data)])
+    return(data)
   }
-  
-}</code></pre>
+  res &lt;- lapply(1:NROW(S), function(i) try(doit(i)))
+  return(res)
+}
+
+res &lt;- CPCV(hist.returns,6,2)
+result &lt;- purrr::map(res,function(x){backtest(x,FUN=&quot;nlgmv&quot;)})</code></pre>
+</div>
 </div>
 
             </article>
@@ -635,7 +676,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1596458954"></script>
+<script src="/my_blog/js/production.min.js?v=1597045332"></script>
 
 </body>
 </html>

@@ -83,7 +83,7 @@ start from scratch. Resist the temptation of reusing those results.
 
 Wakl Forward(WF)は以下の図のようにテストデータのうち学習データとテストデータの期間をそれぞれ決めておいて、一番最初のデータから学習 & テストを逐次的に繰り返していく手法です(hold-out法を逐次的にしたやつ)。
 
-![Walk Forward](https://diy-tradesystem.com/wp-content/uploads/2017/11/walkforward.png)
+![図1 Walk Forward](https://diy-tradesystem.com/wp-content/uploads/2017/11/walkforward.png)
 
 WFは、過去に戦略がどのようなパフォーマンスを発揮していたかをヒストリカルにシミュレーションしたものです。各戦略における投資判断は、その判断に以前に確定しているデータに基づいています。
 
@@ -102,7 +102,7 @@ WFは、過去に戦略がどのようなパフォーマンスを発揮してい
 
 機械学習界隈でめちゃめちゃ有名なやつ。Cross-Validation(CV)とは、サンプルデータを分割し、その一部をまず解析して、残る部分でその解析のテストを行い、解析自身の妥当性の検証・確認に当てる手法を指します。下図がわかりやすいです。サンプルデータを赤、青、緑に分割しています。
 
-![Cross-Validation](https://mathwords.net/wp-content/uploads/2017/04/kousakakunin2.-300x192.png)
+![図2 Cross-Validation](https://mathwords.net/wp-content/uploads/2017/04/kousakakunin2.-300x192.png)
 
 CVでバックテストを行う目的は、WFのように過去データに対して正確な性能を導き出すことではなく、多くのアウトオブサンプルのシナリオから将来の性能を推測することにあります。WFが問題として抱えるオーバーフィッティングのしやすさに対処していることになります。
 
@@ -143,13 +143,13 @@ $$
 
 例を考えた方がわかりやすいと思います。今、$N=6, k=2$としましょう。ここから、可能な訓練/テストデータ分割数は15個となり、15系列のデータを使用することができます。下図では、それぞれの系列が$S1,...,S15$と表されています。
 
-![CPCV概念図](/my_blog/post/post24_files/CPCV1.PNG)
+![図3 CPCV概念図](/my_blog/post/post24_files/CPCV1.PNG)
 
 上図では、縦軸に分割された6つのグループ、横軸にこれらのグループから4つの訓練データ(と2つのテストデータ)をそれぞれ取得して作成したバックテスト用の全15系列が記載されています。また、各マスに記入されているバツ×はその系列$Si(i=1,...,15)$においてそのグループ$Gi(i=1,...,6)$がテストデータであることを意味しています(空欄は訓練データを意味)。各グループは$\varphi[6,2]=5$回テストデータとして使用されます。よって、このスキームでは5つのバックテストパスを計算することができます。  
 
 全てのグループは5回テストデータとして使用され、その1つ1つをそれぞれのバックテストパスに割り当てます。下図では、先ほど×が入力されていたマスに数字が入力されています。それぞれの番号はそれぞれのグループが何番目のバックテストパスに割り当てられたかを示しており、例えば、パス1では15系列のグループ1$G1$のうち$(G1,S1)$が使用され、$(G2,S2),(G3,S2),(G4,S3),(G5,S4),(G6,S5)$と続いています。
 
-![バックテストパスの複数生成](/my_blog/post/post24_files/CPCV2.PNG)
+![図4 バックテストパスの複数生成](/my_blog/post/post24_files/CPCV2.PNG)
 
 パス2も同様に$(G1,S2),(G2,S6),(G3,S6),(G4,S7),(G5,S8),(G6,S9)$といった形です。パス3,4,5もこのような形で生成することが可能です(ちなみにこれらの選び方はランダムで良いようです)。  
 この例では、5つのパスしか生成していませんがサンプルパスが十分長ければCPCVでは何千ものパスを生成することができます。パスの数$\varphi[N,k]$は$N\rightarrow T,k\rightarrow N/2$になるにつれて長くなります。  
@@ -210,6 +210,8 @@ ia$risk = sqrt(annual.factor) * ia$risk
 rm(SPY,QQQ,EEM,IWM,EFA,TLT,IYR,GLD)
 ```
 
+まず、最小分散ポートフォリオ(空売制約有)を関数として定義しておきます。こちらは以前の記事で使用した物を流用しています。
+
 ```{r,include=FALSE}
 nlgmv <- function(r_dat,r_cov){
   qp.out <- quadprog::solve.QP(Dmat=r_cov,dvec=rep(0,NCOL(r_dat)),Amat=cbind(rep(1,NCOL(r_dat)),diag(NCOL(r_dat))),
@@ -223,23 +225,77 @@ nlgmv <- function(r_dat,r_cov){
   names(result) <- c("weight","return","portfolio risk")
   return(result)
 }
+
+backtest <- function(data,FUN){
+  FUN <- match.fun(FUN)
+  r_cov <- cov(data$train)
+  weight <- FUN(data$train,r_cov)$weight
+  return(apply(weight*data$test,1,sum))
+}
+
+SharpRatio <- function(r,mu){
+  return(mean(r-mu)/sd(r-mu))
+} 
+
+```
+
+同じ関数をそれぞれのバックテスト資料に適用して、比較してみようという算段です。
+
+##### 3.1 Walk Forward シミュレーション
+
+では、まずwalk Forward シミュレーションです。
+
+##### 3.2 Cross Validation
+
+```{r}
+WF <- function(x,k,p){
+#------------------------------
+# Description 
+#  x - data
+#  k - sample size of each train set(optimization window)
+#  p - sample size of each test set(test window)
+#------------------------------
+
+  Time <- seq(1,NROW(x),k+p)
+  Time <- Time[Time<=(NROW(x)-k-p)]
+  doit <- function(i){
+    data <- list(test=x[(i+k+1):(i+k+p),],train=x[i:(i+p-1),])
+    return(data)
+  }
+  res <- lapply(Time, function(i) try(doit(i)))
+  return(res)  
+}
+
+res <- WF(hist.returns,30,30)
+result <- purrr::map(res,function(x){backtest(x,FUN="nlgmv")})
 ```
 
 
+##### 3.3 Combinatorial Purged Cross-Validation 
+
 ```{r}
 CPCV <- function(x,G,k){
+#------------------------------
+# Description 
+#  x - data
+#  G - number of Groups
+#  k - number of test Groups on each set
+#------------------------------
+  
   Time <- round(rep(NROW(x)%/%G,length=G))
   Time[G] <- Time[G] + NROW(x)%%G
   x$index <- rep(c(1:G), times=Time)
   S <- t(combn(G,k))
-  dataset <- list()
-  for(i in 1:NROW(S)){
-    x[x$index %in% S[i,],-NCOL(x)]
-    x[!(x$index %in% S[i,]),-NCOL(x)]
-    
+  doit <- function(i){
+    data <- list(test=x[x$index %in% S[i,],-NCOL(x)],train=x[!(x$index %in% S[i,]),-NCOL(data)])
+    return(data)
   }
-  
+  res <- lapply(1:NROW(S), function(i) try(doit(i)))
+  return(res)
 }
+
+res <- CPCV(hist.returns,30,2)
+result <- purrr::map(res,function(x){backtest(x,FUN="nlgmv")})
 
 ```
 

@@ -26,7 +26,7 @@
         "datePublished": "2020-02-29 00:00:00 \x2b0000 UTC",
         "dateModified" : "2020-02-29 00:00:00 \x2b0000 UTC",
         "url" : "\/my_blog\/post\/post20\/",
-        "wordCount" : "748",
+        "wordCount" : "758",
         "image" : "/my_blog/https://www.photock.jp/photo/middle/photo0000-4277.jpg"",
         "keywords" : [ ""Python"",""機械学習"",""前処理"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1596458954" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1597759365" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1596458954" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1597759365" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -410,10 +410,12 @@ auc = auc(fpr, tpr)
 
 # ROC曲線をプロット
 plt.plot(fpr, tpr, label=&#39;ROC curve (area = %.2f)&#39;%auc)</code></pre>
-<pre><code>## [&lt;matplotlib.lines.Line2D object at 0x00000000C65E4888&gt;]</code></pre>
-<pre class="python"><code>plt.legend()
-plt.title(&#39;ROC curve&#39;)
-plt.xlabel(&#39;False Positive Rate&#39;)</code></pre>
+<pre><code>## [&lt;matplotlib.lines.Line2D object at 0x00000000C1579688&gt;]</code></pre>
+<pre class="python"><code>plt.legend()</code></pre>
+<pre><code>## &lt;matplotlib.legend.Legend object at 0x00000000C156F1C8&gt;</code></pre>
+<pre class="python"><code>plt.title(&#39;ROC curve&#39;)</code></pre>
+<pre><code>## Text(0.5, 1.0, &#39;ROC curve&#39;)</code></pre>
+<pre class="python"><code>plt.xlabel(&#39;False Positive Rate&#39;)</code></pre>
 <pre><code>## Text(0.5, 0, &#39;False Positive Rate&#39;)</code></pre>
 <pre class="python"><code>plt.ylabel(&#39;True Positive Rate&#39;)</code></pre>
 <pre><code>## Text(0, 0.5, &#39;True Positive Rate&#39;)</code></pre>
@@ -424,20 +426,20 @@ plt.show()</code></pre>
 
 # Confusion Matrixを生成
 ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred)).plot()</code></pre>
-<pre><code>## &lt;sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay object at 0x00000000C6546488&gt;</code></pre>
+<pre><code>## &lt;sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay object at 0x00000000C14D3148&gt;</code></pre>
 <pre class="python"><code>plt.show()</code></pre>
 <p><img src="/my_blog/post/post20_files/figure-html/unnamed-chunk-16-2.png" width="672" /></p>
 <pre class="python"><code>plt.close()
 
 accuracy_score(y_test, y_pred)</code></pre>
-<pre><code>## 0.9298849525200876</code></pre>
+<pre><code>## 0.9297479912344777</code></pre>
 <pre class="python"><code>precision_score(y_test, y_pred)</code></pre>
-<pre><code>## 0.9123434704830053</code></pre>
+<pre><code>## 0.9050505050505051</code></pre>
 <p>accuracy_score（予測精度）が90%を超え、precision_Score（適合率、陽=1着と予想したデータの正解率）もいい感じです。</p>
 <pre class="python"><code>recall_score(y_test, y_pred)</code></pre>
-<pre><code>## 0.016358212785065916</code></pre>
+<pre><code>## 0.014369567309234372</code></pre>
 <pre class="python"><code>f1_score(y_test, y_pred)</code></pre>
-<pre><code>## 0.03214015628938745</code></pre>
+<pre><code>## 0.028289972215205864</code></pre>
 <p>一方、recall_score(再現性、陽=1着のサンプルのうち実際に正解した割合)が低く偽陰性が高いことが確認できます。その結果、F1値も低くなっていますね。競馬予測モデルの場合、偽陰性が高いことは偽陽性が高いことよりはましなのですが、回収率を上げるためには偽陰性を下げることを頑張らなければいけません。これは今後の課題ですね。次節ではshapley値を使って要因分解をしたいと思います。。</p>
 </div>
 <div id="shapでの結果解釈" class="section level4">
@@ -679,7 +681,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1596458954"></script>
+<script src="/my_blog/js/production.min.js?v=1597759365"></script>
 
 </body>
 </html>
