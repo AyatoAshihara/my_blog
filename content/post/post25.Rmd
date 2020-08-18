@@ -244,7 +244,7 @@ plt.close()
 前回同様、どのように失敗したのかshap値を使って検証してみましょう。この画像を例として使います。
 
 ```{python}
-plt.imshow(X_test[1])
+plt.imshow(X_test[4])
 plt.show()
 plt.close()
 ```
@@ -255,8 +255,8 @@ background = X_resampled[np.random.choice(X_resampled.shape[0],100,replace=False
 
 e = shap.GradientExplainer(model,background)
 
-shap_values = e.shap_values(X_test[[1]])
-shap.image_plot(shap_values[1],X_test[[1]])
+shap_values = e.shap_values(X_test[[4]])
+shap.image_plot(shap_values[1],X_test[[4]])
 ```
 
 前足から顔にかけてを評価しているようです。意外に臀部を評価している様子はありません。
