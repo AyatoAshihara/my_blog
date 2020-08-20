@@ -321,7 +321,7 @@ score = accuracy_score(y_test, y_pred)
 print('Test accuracy:', score)
 ```
 
-70%越えの正答率でまあまあ悪くないかなと思いましたが、ConfusionMatrixを出してみたところどうやらうまくいっていないことがわかりました。
+まったく良くない結果です。ConfusionMatrixを出してみたところどうやらうまくいっていないことがわかりました。
 
 ```{python}
 ConfusionMatrixDisplay(confusion_matrix(np.argmax(y_test,axis=1), np.argmax(y_pred,axis=1))).plot()

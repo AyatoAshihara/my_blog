@@ -267,10 +267,10 @@ y_pred = np_utils.to_categorical(np.argmax(y_proba_calib,axis=1), dense_size)
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, accuracy_score
 score = accuracy_score(y_test, y_pred)
 print(&#39;Test accuracy:&#39;, score)</code></pre>
-<pre><code>## Test accuracy: 0.23728813559322035</code></pre>
-<p>70%越えの正答率でまあまあ悪くないかなと思いましたが、ConfusionMatrixを出してみたところどうやらうまくいっていないことがわかりました。</p>
+<pre><code>## Test accuracy: 0.3559322033898305</code></pre>
+<p>まったく良くない結果です。ConfusionMatrixを出してみたところどうやらうまくいっていないことがわかりました。</p>
 <pre class="python"><code>ConfusionMatrixDisplay(confusion_matrix(np.argmax(y_test,axis=1), np.argmax(y_pred,axis=1))).plot()</code></pre>
-<pre><code>## &lt;sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay object at 0x000000004832BF88&gt;</code></pre>
+<pre><code>## &lt;sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay object at 0x0000000047E7C588&gt;</code></pre>
 <pre class="python"><code>plt.show()</code></pre>
 <p><img src="/my_blog/post/post22_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <pre class="python"><code>plt.close()</code></pre>
