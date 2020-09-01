@@ -6,7 +6,7 @@
     <description>Recent content on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 12 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 25 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/my_blog/index.xml" rel="self" type="application/rss+xml" />
     
@@ -35,6 +35,15 @@
 
 
 </description>
+    </item>
+    
+    <item>
+      <title>衛星画像サービス「Tellus」使ってみた！</title>
+      <link>/my_blog/post26/</link>
+      <pubDate>Tue, 25 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post26/</guid>
+      <description></description>
     </item>
     
     <item>
@@ -332,7 +341,10 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
       <pubDate>Sat, 27 Apr 2019 21:05:33 +0530</pubDate>
       
       <guid>/my_blog/about/</guid>
-      <description>奈良県出身の院卒3年目の26歳。関西学院大学大学院総合政策研究科修了。専攻はマクロ経済（主にDynamic Stochastic General Equilibruim model）、時系列解析やテキストマイニングにも手を出していました。現在は某資産運用会社にて運用企画業務に従事。広瀬すずより有村架純よりお姉ちゃんのほうがタイプ。</description>
+      <description>奈良県出身の院卒3年目の26歳。関西学院大学大学院総合政策研究科修了。専攻はマクロ経済（主にDynamic Stochastic General Equilibruim model）、時系列解析やテキストマイニングにも手を出していました。現在は某資産運用会社にて運用企画グループに所属。広瀬すずより有村架純よりお姉ちゃんのほうがタイプ。
+【業績 / Research articles】
+1. Is fiscal expansion more effective in a financial crisis?(2018), Applied Economics Letters Vol.25, 2018-Issue.2, Pages 111-114 (with K. Kameda)
+2. (紀要論文/Departmental Bulletin Paper)Does Financial Risk Explain Japan’s Great Stagnation?(2018), Kwansei Gakuin policy studies review Vol.25, Pages 15-32</description>
     </item>
     
     <item>

@@ -1,0 +1,21 @@
+---
+title: 衛星画像サービス「Tellus」使ってみた！
+author: AyatoAshihara
+date: '2020-08-25'
+slug: post26
+categories:
+  - 日次GDP
+  - 仕事関連
+tags:
+  - Python
+  - 前処理
+  - 機械学習
+  - 衛星画像
+editor_options:
+  chunk_output_type: console
+---
+
+```{python}
+
+```
+

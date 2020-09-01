@@ -6,7 +6,7 @@
     <description>Recent content in Python on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 12 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 25 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/my_blog/tags/python/index.xml" rel="self" type="application/rss+xml" />
     
@@ -35,6 +35,15 @@
 
 
 </description>
+    </item>
+    
+    <item>
+      <title>衛星画像サービス「Tellus」使ってみた！</title>
+      <link>/my_blog/post26/</link>
+      <pubDate>Tue, 25 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post26/</guid>
+      <description></description>
     </item>
     
     <item>
