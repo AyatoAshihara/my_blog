@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="/my_blog/css/style.css?v=1599749843" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/style.css?v=1601093385" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="/my_blog/css/custom.css?v=1599749843" rel="stylesheet" type='text/css' media='all'>
+<link href="/my_blog/css/custom.css?v=1601093385" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -85,6 +85,10 @@ if (!doNotTrack) {
         
         <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
           <a href="/my_blog/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0">プログラミング</a>
+        </li>
+        
+        <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
+          <a href="/my_blog/categories/%E3%83%9E%E3%82%AF%E3%83%AD%E7%B5%8C%E6%B8%88%E5%AD%A6">マクロ経済学</a>
         </li>
         
         <li id="menu-item" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item">
@@ -293,20 +297,10 @@ d\log S(t) = \mu(t)dt + \sigma(t)dW(t) \tag{1}
 <span class="math display">\[
 d\log S(t) = \mu(t)dt + \sigma(t)dW(t) + Y(t)dJ(t) \tag{2}
 \]</span>
-に従うと仮定します。ここで、<span class="math inline">\(J(t)\)</span>は<span class="math inline">\(W(t)\)</span>とは独立したカウント過程です。[^1]<span class="math inline">\(Y(t)\)</span>はジャンプのサイズを表現しており、予測可能な過程であるとします。<br />
-[^1]:非負、整数、非減少の値を持つ確率過程のこと。
-次に、<span class="math inline">\(S(t)\)</span>の対数リターンを考えます。それはつまり<span class="math inline">\(\log S(t_i)/S(t_{i-1})\)</span>ですが、これは正規分布<span class="math inline">\(N(0,\sigma(t_i))\)</span>に従います。[^2]ここで、<span class="math inline">\(t_{i-1}\)</span>から<span class="math inline">\(t_{i}\)</span>にJumpがあった際の<span class="math inline">\(t_i\)</span>時点の統計量<span class="math inline">\(\mathcal{L(i)}\)</span>を以下で定義します。
-[^2]:平均はドリフト項の形状により必ずしも0にはなりませんが、今ドリフト項は十分小さい値を想定しているのでこの書き方にさせてください。
-<span class="math display">\[
-\mathcal{L(i)} \equiv \frac{|\log S(t_i)/S(t_{i-1})|}{\hat{\sigma}_{t_i}} \tag{3}
-\]</span>
-対数リターンの絶対値を単純に標準化したものですが、標準偏差の推定量には以下で定義される“Realized Bipower Variation”を使用しています。
-<span class="math display">\[
-\hat{\sigma}_{t_i} = \frac{1}{K-2}\sum_{j=i-K+2}^{i-2}|\log S(t_j)/\log S(t_{j-1})||\log S(t_{j-1})/\log S(t_{j-2})| \tag{4}
-\]</span>
-<span class="math inline">\(K\)</span>はWindowに含まれるサンプルサイズの数です。仮に5min刻みリターンを用い、2020/9/10 10:00にJumpが発生した場合、<span class="math inline">\(K=270\)</span>としている場合は前日2020/9/9 11:30から2020/9/11 09:55までのサンプルを用いて計算することになります。やっていることは、リターンの絶対値をかけたものを足し合わせるということですが、これでJumpが生じた次の瞬間(つまり<span class="math inline">\(t_{i+1}\)</span>とか）の推定値がJumpに影響されにくいようです。ちなみに<span class="math inline">\(K=270\)</span>は5min刻みリターンを推奨値と別の文献で紹介されています。</p>
+に従うと仮定します。ここで、<span class="math inline">\(J(t)\)</span>は<span class="math inline">\(W(t)\)</span>とは独立したカウント過程です。<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><span class="math inline">\(Y(t)\)</span>はジャンプのサイズを表現しており、予測可能な過程であるとします。</p>
+<p>次に、<span class="math inline">\(S(t)\)</span>の対数リターンを考えます。それはつまり<span class="math inline">\(\log S(t_i)/S(t_{i-1})\)</span>ですが、これは正規分布<span class="math inline">\(N(0,\sigma(t_i))\)</span>に従います。<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>ここで、<span class="math inline">\(t_{i-1}\)</span>から<span class="math inline">\(t_{i}\)</span>にJumpがあった際の<span class="math inline">\(t_i\)</span>時点の統計量<span class="math inline">\(\mathcal{L(i)}\)</span>を以下で定義します。</p>
 <p>こうして計算されたJump統計量<span class="math inline">\(\mathcal{L(i)}\)</span>をどのように統計的検定に用いてJumpを検出するかに話を移しましょう。これは確率変数である<span class="math inline">\(\mathcal{L(i)}\)</span>の最大値(こちらも確率変数)を考え、その分布から大きく逸脱した値を取った場合(95%点とか)、そのリターンをJumpとします。<br />
-期間<span class="math inline">\([t_{i-1},t_{i}]\)</span>にJumpがないとした場合、この期間の長さ<span class="math inline">\(\Delta\)</span>を<span class="math inline">\(0\)</span>に近づけると、つまり<span class="math inline">\(\Delta\rightarrow0\)</span>とすると、標準正規変数の絶対値の標本最大値は、ガンベル分布に収束します。皆さん大好き極値統計ですね。よって、Jumpは以下の条件が満たされた際に帰無仮説が棄却され、検出することができます。
+期間<span class="math inline">\([t_{i-1},t_{i}]\)</span>にJumpがないとした場合、この期間の長さ<span class="math inline">\(\Delta=t_{i}-t_{i-1}\)</span>を<span class="math inline">\(0\)</span>に近づけると、つまり<span class="math inline">\(\Delta\rightarrow0\)</span>とすると、標準正規変数の絶対値の標本最大値は、ガンベル分布に収束します。皆さん大好き極値統計ですね。よって、Jumpは以下の条件が満たされた際に帰無仮説が棄却され、検出することができます。
 <span class="math display">\[
 \mathcal{L(i)} &gt; G^{-1}(1-\alpha)S_{n} + C_{n} \tag{5}
 \]</span>
@@ -315,7 +309,7 @@ d\log S(t) = \mu(t)dt + \sigma(t)dW(t) + Y(t)dJ(t) \tag{2}
 S_{n} = \frac{1}{c(2\log n)^{0.5}} \\
 C_{n} = \frac{(2\log n)^{0.5}}{c}-\frac{\log \pi+\log(\log n)}{2c(2\log n)^{0.5}}
 \]</span>
-です(導出はしません)。ここで、<span class="math inline">\(c=(2\pi)^{0.5}\)</span>で、<span class="math inline">\(n\)</span>は推定に使用する総サンプルサイズです。
+です(導出はしませんが、1式と2式を使って証明できます)。ここで、<span class="math inline">\(c=(2/\pi)^{0.5}\)</span>で、<span class="math inline">\(n\)</span>は推定に使用する総サンプルサイズです。
 最終的に、<span class="math inline">\(Jump_{t_i}\)</span>は
 <span class="math display">\[
 Jump_{t_i} = \log\frac{S(t_i)}{S(t_{i-1})}×I(\mathcal{L(i)} - G^{-1}(1-\alpha)S_{n} + C_{n})\tag{6}
@@ -330,19 +324,19 @@ Jump_{t_i} = \log\frac{S(t_i)}{S(t_{i-1})}×I(\mathcal{L(i)} - G^{-1}(1-\alpha)S
 # Tick dataの読み込み
 strPath &lt;- r&quot;(C:\Users\hogehoge\JPYUSD_Tick_2011.csv)&quot;
 JPYUSD &lt;- readr::read_csv(strPath)</code></pre>
-<p>関係ないんですが、最近Rを4.0.2へ上げました。4.0以上ではPythonでできた文字列のエスケイプができるとうことで今までのストレスが解消されてかなりうれしいです。<br />
+<p>関係ないんですが、最近Rを4.0.2へ上げました。4.0以上ではPythonでできた文字列のEscapeができるとうことで今までのストレスが解消されてかなりうれしいです。<br />
 データは以下のような感じで、日付の他にBid値、Ask値と取引量が格納されています。なお、ここでは2011年のTickを使用しています。東日本大震災の時のドル円を対象とするためです。</p>
 <pre class="r"><code>summary(JPYUSD)</code></pre>
-<pre><code>##     DateTime                        Bid             Ask            Volume      
-##  Min.   :2011-01-02 22:00:25   Min.   :75.57   Min.   :75.58   Min.   : 1.000  
-##  1st Qu.:2011-03-30 16:42:21   1st Qu.:77.41   1st Qu.:77.42   1st Qu.: 2.000  
-##  Median :2011-06-15 18:02:21   Median :80.39   Median :80.41   Median : 2.000  
-##  Mean   :2011-06-22 15:44:47   Mean   :79.90   Mean   :79.91   Mean   : 2.549  
-##  3rd Qu.:2011-09-12 00:04:33   3rd Qu.:81.92   3rd Qu.:81.94   3rd Qu.: 3.000  
-##  Max.   :2011-12-30 21:59:59   Max.   :85.52   Max.   :85.54   Max.   :90.000</code></pre>
-<p>ちなみに、DateTimeはUTC基準で日本時間だと2011/1/3 07:00:00から2011-12-31 06:59::59(米国時間2011-12-30 16:59:59)までを含んでいます。サンプルサイズは約1200万件です。</p>
+<pre><code>##     DateTime                        Bid             Ask            Volume     
+##  Min.   :2011-01-03 07:00:00   Min.   :75.57   Min.   :75.58   Min.   : 1.00  
+##  1st Qu.:2011-03-30 15:09:23   1st Qu.:77.43   1st Qu.:77.44   1st Qu.: 2.00  
+##  Median :2011-06-15 14:00:09   Median :80.40   Median :80.42   Median : 2.00  
+##  Mean   :2011-06-22 05:43:11   Mean   :79.91   Mean   :79.92   Mean   : 2.55  
+##  3rd Qu.:2011-09-09 13:54:51   3rd Qu.:81.93   3rd Qu.:81.94   3rd Qu.: 3.00  
+##  Max.   :2011-12-30 06:59:59   Max.   :85.52   Max.   :85.54   Max.   :90.00</code></pre>
+<p>ちなみに、DateTimeはUTC基準で日本時間だと2011/1/3 07:00:00から2011-12-30 06:59::59(米国時間2011-12-30 16:59:59)までを含んでいます。サンプルサイズは約1200万件です。</p>
 <pre class="r"><code>NROW(JPYUSD)</code></pre>
-<pre><code>## [1] 11982601</code></pre>
+<pre><code>## [1] 11946621</code></pre>
 </div>
 <div id="前処理" class="section level4">
 <h4>2. 前処理</h4>
@@ -451,7 +445,7 @@ DataFrame Rolling_r_cpp(
 <p>Rcpp::sourceCppでコンパイルしたら、以下のようにRの関数として実行します。</p>
 <pre class="r"><code>system.time(results &lt;- Rolling_r_cpp(JPYUSD,from))</code></pre>
 <pre><code>##    ユーザ   システム       経過  
-##       0.06       0.00       0.07</code></pre>
+##       0.02       0.00       0.03</code></pre>
 <p>はい。1200万件のデータの処理に1秒かかりません。便利ー。</p>
 <pre class="r"><code>summary(results)</code></pre>
 <pre><code>##       from                           r         
@@ -461,8 +455,8 @@ DataFrame Rolling_r_cpp(
 ##  Mean   :2011-07-03 09:57:30   Mean   : 0.000  
 ##  3rd Qu.:2011-10-02 03:56:15   3rd Qu.: 0.015  
 ##  Max.   :2011-12-31 21:55:00   Max.   : 2.880  
-##                                NA&#39;s   :29689</code></pre>
-<p>問題なく、リターンが計算されています。では、Realized Bipower Variationの計算に移りましょう。5min刻みの場合はWindowの長さが270が推奨でしたが、そこも引数として柔軟を持たせた作りにします。また、NAの処理についても丁寧に行います。</p>
+##                                NA&#39;s   :29977</code></pre>
+<p>問題なく、リターンが計算されています。では、Realized Bipower Variationの計算に移りましょう。5min刻みの場合はWindowの長さは270が推奨でしたが、そこも引数として柔軟を持たせた作りにします。また、NAの処理についても丁寧に行います。</p>
 <pre class="cpp"><code>#include &lt;Rcpp.h&gt;
 #include &lt;cmath&gt;
 
@@ -561,7 +555,7 @@ DataFrame Rolling_rbv_cpp(
 <p>では、これもコンパイルし、Rで実行します。</p>
 <pre class="r"><code>system.time(results &lt;- results %&gt;% Rolling_rbv_cpp(na_remove = FALSE))</code></pre>
 <pre><code>##    ユーザ   システム       経過  
-##       0.72       0.24       0.95</code></pre>
+##       0.25       0.08       0.33</code></pre>
 <p>こちらも一瞬ですね。</p>
 </div>
 <div id="jump統計量の計算" class="section level4">
@@ -578,7 +572,7 @@ results &lt;- results %&gt;% dplyr::mutate(J=ifelse(rbv&gt;0,abs(r)/rbv,NA))</co
 ##  Mean   :2011-07-03 09:57:30   Mean   : 0.000   Mean   :0.03    Mean   : 0.93  
 ##  3rd Qu.:2011-10-02 03:56:15   3rd Qu.: 0.015   3rd Qu.:0.03    3rd Qu.: 1.23  
 ##  Max.   :2011-12-31 21:55:00   Max.   : 2.880   Max.   :0.16    Max.   :58.60  
-##                                NA&#39;s   :29689    NA&#39;s   :43812   NA&#39;s   :43868</code></pre>
+##                                NA&#39;s   :29977    NA&#39;s   :44367   NA&#39;s   :44423</code></pre>
 <p>では、Jump検定に移りましょう。まず、必要な関数を定義しておきます。</p>
 <pre class="r"><code># Jump検定を計算するための定数&amp;関数を準備
 c &lt;- (2/pi)^0.5
@@ -600,12 +594,12 @@ summary(results)</code></pre>
 ##  Mean   :2011-07-03 09:57:30   Mean   : 0.000   Mean   :0.03    Mean   : 0.93  
 ##  3rd Qu.:2011-10-02 03:56:15   3rd Qu.: 0.015   3rd Qu.:0.03    3rd Qu.: 1.23  
 ##  Max.   :2011-12-31 21:55:00   Max.   : 2.880   Max.   :0.16    Max.   :58.60  
-##                                NA&#39;s   :29689    NA&#39;s   :43812   NA&#39;s   :43868  
+##                                NA&#39;s   :29977    NA&#39;s   :44367   NA&#39;s   :44423  
 ##     Jump        
 ##  Mode :logical  
-##  FALSE:60417    
-##  TRUE :259      
-##  NA&#39;s :43868    
+##  FALSE:59864    
+##  TRUE :257      
+##  NA&#39;s :44423    
 ##                 
 ##                 
 ## </code></pre>
@@ -624,12 +618,27 @@ results %&gt;%
 <pre><code>## Warning: Removed 36 row(s) containing missing values (geom_path).
 
 ## Warning: Removed 36 row(s) containing missing values (geom_path).</code></pre>
-<p><img src="/my_blog/post/post27_files/figure-html/unnamed-chunk-16-1.png" width="672" />
-ここまで執筆するのに結構時間使っていて、今23:37なんで深い考察は控えますが、震災が発生したのが14:46:18ですから市場は震災直後即座に円安に反応したことが分かります。その後なぜか円高方向へ進み19:00にはピークになっています。安全資産の円とか言われますが、この時ばかりは不確実性の高まりからして安全じゃないだろと思いますが。。。</p>
+<p><img src="/my_blog/post/post27_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>ここまで執筆するのに結構時間使っていて、今23:37なんで深い考察は控えますが、震災が発生したのが14:46:18ですから市場は震災直後即座に円安に反応したことが分かります。その後なぜか円高方向へ進み19:00にはピークになっています。安全資産の円とか言われますが、この時ばかりは不確実性の高まりからして安全じゃないだろと思いますが。。。</p>
 </div>
 <div id="まとめ" class="section level4">
 <h4>5. まとめ</h4>
 <p>Rcppを使ったR分析の効率化について紹介しました。C++は愚直にコードを書いてもRより格段に処理が早いのでコーディングミスしにくい印象です。学術的な実装をやるときは内容が複雑になるのでこれはありがたいです。また、コンパイルエラーが起こってもRStudioを使っていればどこでコンパイルエラーが起こっているか手がかりをくれますのでその点でもストレスはないのでお勧めです。</p>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>非負、整数、非減少の値を持つ確率過程のこと。<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>平均はドリフト項の形状により必ずしも0にはなりませんが、今ドリフト項は十分小さい値を想定しているのでこの書き方にさせてください。論文ではより厳密に定義しています。
+<span class="math display">\[
+\mathcal{L(i)} \equiv \frac{|\log S(t_i)/S(t_{i-1})|}{\hat{\sigma}_{t_i}} \tag{3}
+\]</span>
+対数リターンの絶対値を単純に標準化したものですが、標準偏差の推定量には以下で定義される“Realized Bipower Variation”を使用しています。
+<span class="math display">\[
+\hat{\sigma}_{t_i} = \frac{1}{K-2}\sum_{j=i-K+2}^{i-2}|\log S(t_j)/\log S(t_{j-1})||\log S(t_{j-1})/\log S(t_{j-2})| \tag{4}
+\]</span>
+<span class="math inline">\(K\)</span>はWindowに含まれるサンプルサイズの数です。仮に5min刻みリターンを用い、2020/9/10 10:00にJumpが発生した場合、<span class="math inline">\(K=270\)</span>としている場合は前日2020/9/9 11:30から2020/9/11 09:55までのサンプルを用いて計算することになります。やっていることは、リターンの絶対値をかけたものを足し合わせるということですが、これでJumpが生じた次の瞬間(つまり<span class="math inline">\(t_{i+1}\)</span>とか）の推定値がJumpに影響されにくいようです。ちなみに<span class="math inline">\(K=270\)</span>は5min刻みリターンの場合の推奨値と別の文献で紹介されています。<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
 </div>
 
             </article>
@@ -856,7 +865,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="/my_blog/js/jquery.min.js"></script>
 <script src="/my_blog/js/jquerymigrate.js"></script>
-<script src="/my_blog/js/production.min.js?v=1599749843"></script>
+<script src="/my_blog/js/production.min.js?v=1601093385"></script>
 
 </body>
 </html>

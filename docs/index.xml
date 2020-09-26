@@ -6,7 +6,7 @@
     <description>Recent content on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 10 Sep 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 26 Sep 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/my_blog/index.xml" rel="self" type="application/rss+xml" />
     
@@ -30,6 +30,32 @@
       <pubDate>Sat, 29 Feb 2020 00:00:00 +0000</pubDate>
       
       <guid>/my_blog/post/post20/</guid>
+      <description>
+&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+</description>
+    </item>
+    
+    <item>
+      <title>Dash/Plotlyでインタラクティブなグラフを作成する</title>
+      <link>/my_blog/post/post29/</link>
+      <pubDate>Sat, 26 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post/post29/</guid>
+      <description>
+&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+</description>
+    </item>
+    
+    <item>
+      <title>RStanと外部C&#43;&#43;関数を連携させる。- DSGEモデルのディープパラメータ推定を事例に</title>
+      <link>/my_blog/post28/</link>
+      <pubDate>Sun, 20 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/my_blog/post28/</guid>
       <description>
 &lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
@@ -355,6 +381,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
       
       <guid>/my_blog/about/</guid>
       <description>奈良県出身の院卒3年目の26歳。関西学院大学大学院総合政策研究科修了。専攻はマクロ経済（主にDynamic Stochastic General Equilibruim model）、時系列解析やテキストマイニングにも手を出していました。現在は某資産運用会社にて運用企画グループに所属。広瀬すずより有村架純よりお姉ちゃんのほうがタイプ。
+【プログラミング言語】 R, Python, C++, MySQL, HTML, Octave(Matlab), VBA
 【業績 / Research articles】
 1. Is fiscal expansion more effective in a financial crisis?(2018), Applied Economics Letters Vol.25, 2018-Issue.2, Pages 111-114 (with K. Kameda)
 2. (紀要論文/Departmental Bulletin Paper)Does Financial Risk Explain Japan’s Great Stagnation?(2018), Kwansei Gakuin policy studies review Vol.25, Pages 15-32</description>

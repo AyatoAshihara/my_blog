@@ -75,8 +75,8 @@ $$
 library(magrittr)
 
 # Tick dataの読み込み
-strPath <- r"(C:\Users\aashi\Documents\QuantDataManager\export\2020.9.5USDJPY-TICK-NoSession.csv)"
-JPYUSD <- readr::read_csv(strPath)
+strPath <- r"(C:\Users\aashi\Documents\QuantDataManager\export\2020.9.13USDJPY-TICK-NoSession.csv)"
+JPYUSD <- readr::read_csv(strPath) %>% dplyr::filter(DateTime>=as.POSIXct("2011-01-03 07:00:00",tz="UTC"),DateTime<=as.POSIXct("2011-12-30 07:00:00",tz="UTC"))
 ```
 ```{r,eval=FALSE}
 library(magrittr)
@@ -90,7 +90,7 @@ JPYUSD <- readr::read_csv(strPath)
 ```{r}
 summary(JPYUSD)
 ```
-ちなみに、DateTimeはUTC基準で日本時間だと2011/1/3 07:00:00から2011-12-31 06:59::59(米国時間2011-12-30 16:59:59)までを含んでいます。サンプルサイズは約1200万件です。
+ちなみに、DateTimeはUTC基準で日本時間だと2011/1/3 07:00:00から2011-12-30 06:59::59(米国時間2011-12-30 16:59:59)までを含んでいます。サンプルサイズは約1200万件です。
 ```{r}
 NROW(JPYUSD)
 ```
