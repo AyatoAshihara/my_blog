@@ -15,7 +15,7 @@
         "articleSection" : "post",
         "name" : "【仕事関連】Asset Allocation ModelをRで組んでみた。",
         "headline" : "【仕事関連】Asset Allocation ModelをRで組んでみた。",
-        "description" : "\r\n\x3cstyle type=\x22text\/css\x22\x3e\r\na.sourceLine { display: inline-block; line-height: 1.25; }\r\na.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }\r\na.sourceLine:empty { height: 1.2em; }\r\n.sourceCode { overflow: visible; }\r\ncode.sourceCode { white-space: pre; position: relative; }\r\ndiv.sourceCode { margin: 1em 0; }\r\npre.sourceCode { margin: 0; }\r\n@media screen {\r\ndiv.sourceCode { overflow: auto; }\r\n}\r\n@media print {\r\ncode.sourceCode { white-space: pre-wrap; }\r\na.sourceLine { text-indent: -1em; padding-left: 1em; }\r\n}\r\npre.numberSource a.sourceLine\r\n  { position: relative; left: -4em; }\r\npre.numberSource a.sourceLine::before\r\n  { content: attr(title);\r\n    position: relative; left: -1em; text-align: right; vertical-align: baseline;\r\n    border: none; pointer-events: all; display: inline-block;\r\n    -webkit-touch-callout: none; -webkit-user-select: none;\r\n    -khtml-user-select: none; -moz-user-select: none;\r\n    -ms-user-select: none; user-select: none;\r\n    padding: 0 4px; width: 4em;\r\n    color: #aaaaaa;\r\n  }\r\npre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }\r\ndiv.sourceCode\r\n  { background-color: #f8f8f8; }\r\n@media screen {\r\na.sourceLine::before { text-decoration: underline; }\r\n}\r\ncode span.al { color: #ef2929; } \/* Alert *\/\r\ncode span.an { color: #8f5902; font-weight: bold; font-style: italic; } \/* Annotation *\/\r\ncode span.at { color: #c4a000; } \/* Attribute *\/\r\ncode span.bn { color: #0000cf; } \/* BaseN *\/\r\ncode span.cf { color: #204a87; font-weight: bold; } \/* ControlFlow *\/\r\ncode span.ch { color: #4e9a06; } \/* Char *\/\r\ncode span.cn { color: #000000; } \/* Constant *\/\r\ncode span.co { color: #8f5902; font-style: italic; } \/* Comment *\/\r\ncode span.cv { color: #8f5902; font-weight: bold; font-style: italic; } \/* CommentVar *\/\r\ncode span.do { color: #8f5902; font-weight: bold; font-style: italic; } \/* Documentation *\/\r\ncode span.dt { color: #204a87; } \/* DataType *\/\r\ncode span.dv { color: #0000cf; } \/* DecVal *\/\r\ncode span.er { color: #a40000; font-weight: bold; } \/* Error *\/\r\ncode span.ex { } \/* Extension *\/\r\ncode span.fl { color: #0000cf; } \/* Float *\/\r\ncode span.fu { color: #000000; } \/* Function *\/\r\ncode span.im { } \/* Import *\/\r\ncode span.in { color: #8f5902; font-weight: bold; font-style: italic; } \/* Information *\/\r\ncode span.kw { color: #204a87; font-weight: bold; } \/* Keyword *\/\r\ncode span.op { color: #ce5c00; font-weight: bold; } \/* Operator *\/\r\ncode span.ot { color: #8f5902; } \/* Other *\/\r\ncode span.pp { color: #8f5902; font-style: italic; } \/* Preprocessor *\/\r\ncode span.sc { color: #000000; } \/* SpecialChar *\/\r\ncode span.ss { color: #4e9a06; } \/* SpecialString *\/\r\ncode span.st { color: #4e9a06; } \/* String *\/\r\ncode span.va { color: #000000; } \/* Variable *\/\r\ncode span.vs { color: #4e9a06; } \/* VerbatimString *\/\r\ncode span.wa { color: #8f5902; font-weight: bold; font-style: italic; } \/* Warning *\/\r\n\x3c\/style\x3e\r\n\r\n\r\n\x3cp\x3e今回はいつもと違って金融関連の記事を書きました。というのも社内でワークショップがあり、アセットアロケーションモデルを構築する必要が生じたからです。休日は国会図書館に籠り、先行研究を漁った結果、分散共分散行列をGARCHやARMAで推定し、最小分散ポートフォリオの性能向上を目指している論文がいくつか存在することがわかりました。今回はこれをRで実践し、推定方法によってパフォーマンスがどれほど変化するのかを実証してみたいと思います。\x3c\/p\x3e\r\n",
+        "description" : "\r\n\u003cstyle type=\u0022text\/css\u0022\u003e\r\na.sourceLine { display: inline-block; line-height: 1.25; }\r\na.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }\r\na.sourceLine:empty { height: 1.2em; }\r\n.sourceCode { overflow: visible; }\r\ncode.sourceCode { white-space: pre; position: relative; }\r\ndiv.sourceCode { margin: 1em 0; }\r\npre.sourceCode { margin: 0; }\r\n@media screen {\r\ndiv.sourceCode { overflow: auto; }\r\n}\r\n@media print {\r\ncode.sourceCode { white-space: pre-wrap; }\r\na.sourceLine { text-indent: -1em; padding-left: 1em; }\r\n}\r\npre.numberSource a.sourceLine\r\n  { position: relative; left: -4em; }\r\npre.numberSource a.sourceLine::before\r\n  { content: attr(title);\r\n    position: relative; left: -1em; text-align: right; vertical-align: baseline;\r\n    border: none; pointer-events: all; display: inline-block;\r\n    -webkit-touch-callout: none; -webkit-user-select: none;\r\n    -khtml-user-select: none; -moz-user-select: none;\r\n    -ms-user-select: none; user-select: none;\r\n    padding: 0 4px; width: 4em;\r\n    color: #aaaaaa;\r\n  }\r\npre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }\r\ndiv.sourceCode\r\n  { background-color: #f8f8f8; }\r\n@media screen {\r\na.sourceLine::before { text-decoration: underline; }\r\n}\r\ncode span.al { color: #ef2929; } \/* Alert *\/\r\ncode span.an { color: #8f5902; font-weight: bold; font-style: italic; } \/* Annotation *\/\r\ncode span.at { color: #c4a000; } \/* Attribute *\/\r\ncode span.bn { color: #0000cf; } \/* BaseN *\/\r\ncode span.cf { color: #204a87; font-weight: bold; } \/* ControlFlow *\/\r\ncode span.ch { color: #4e9a06; } \/* Char *\/\r\ncode span.cn { color: #000000; } \/* Constant *\/\r\ncode span.co { color: #8f5902; font-style: italic; } \/* Comment *\/\r\ncode span.cv { color: #8f5902; font-weight: bold; font-style: italic; } \/* CommentVar *\/\r\ncode span.do { color: #8f5902; font-weight: bold; font-style: italic; } \/* Documentation *\/\r\ncode span.dt { color: #204a87; } \/* DataType *\/\r\ncode span.dv { color: #0000cf; } \/* DecVal *\/\r\ncode span.er { color: #a40000; font-weight: bold; } \/* Error *\/\r\ncode span.ex { } \/* Extension *\/\r\ncode span.fl { color: #0000cf; } \/* Float *\/\r\ncode span.fu { color: #000000; } \/* Function *\/\r\ncode span.im { } \/* Import *\/\r\ncode span.in { color: #8f5902; font-weight: bold; font-style: italic; } \/* Information *\/\r\ncode span.kw { color: #204a87; font-weight: bold; } \/* Keyword *\/\r\ncode span.op { color: #ce5c00; font-weight: bold; } \/* Operator *\/\r\ncode span.ot { color: #8f5902; } \/* Other *\/\r\ncode span.pp { color: #8f5902; font-style: italic; } \/* Preprocessor *\/\r\ncode span.sc { color: #000000; } \/* SpecialChar *\/\r\ncode span.ss { color: #4e9a06; } \/* SpecialString *\/\r\ncode span.st { color: #4e9a06; } \/* String *\/\r\ncode span.va { color: #000000; } \/* Variable *\/\r\ncode span.vs { color: #4e9a06; } \/* VerbatimString *\/\r\ncode span.wa { color: #8f5902; font-weight: bold; font-style: italic; } \/* Warning *\/\r\n\u003c\/style\u003e\r\n\r\n\r\n\u003cp\u003e今回はいつもと違って金融関連の記事を書きました。というのも社内でワークショップがあり、アセットアロケーションモデルを構築する必要が生じたからです。休日は国会図書館に籠り、先行研究を漁った結果、分散共分散行列をGARCHやARMAで推定し、最小分散ポートフォリオの性能向上を目指している論文がいくつか存在することがわかりました。今回はこれをRで実践し、推定方法によってパフォーマンスがどれほど変化するのかを実証してみたいと思います。\u003c\/p\u003e\r\n",
         "inLanguage" : "en",
         "author" : "AyatoAshihara",
         "creator" : "AyatoAshihara",
@@ -23,8 +23,8 @@
         "accountablePerson" : "AyatoAshihara",
         "copyrightHolder" : "AyatoAshihara",
         "copyrightYear" : "2019",
-        "datePublished": "2019-02-17 00:00:00 \x2b0000 UTC",
-        "dateModified" : "2019-02-17 00:00:00 \x2b0000 UTC",
+        "datePublished": "2019-02-17 00:00:00 \u002b0000 UTC",
+        "dateModified" : "2019-02-17 00:00:00 \u002b0000 UTC",
         "url" : "https:\/\/ayatoashihara.github.io\/my_blog\/post\/post2\/",
         "wordCount" : "934",
         "image" : "https://ayatoashihara.github.io/my_blog/img/portfolio/post2.png"",
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="https://ayatoashihara.github.io/my_blog/css/style.css?v=1603203634" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="https://ayatoashihara.github.io/my_blog/css/style.css?v=1603208085" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="https://ayatoashihara.github.io/my_blog/css/custom.css?v=1603203634" rel="stylesheet" type='text/css' media='all'>
+<link href="https://ayatoashihara.github.io/my_blog/css/custom.css?v=1603208085" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="https://ayatoashihara.github.io/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="https://ayatoashihara.github.io/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -845,7 +845,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
 
 				</ul>	<div class="design-credit">
 		
-		<p>&copy; 2018 Göran Svensson</p>
+		<p>© 2018 Göran Svensson</p>
 		
 		<p>Nederburg Hugo Theme by <a href="https://appernetic.io">Appernetic</a>.</p>
 		
@@ -857,7 +857,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="https://ayatoashihara.github.io/my_blog/js/jquery.min.js"></script>
 <script src="https://ayatoashihara.github.io/my_blog/js/jquerymigrate.js"></script>
-<script src="https://ayatoashihara.github.io/my_blog/js/production.min.js?v=1603203634"></script>
+<script src="https://ayatoashihara.github.io/my_blog/js/production.min.js?v=1603208085"></script>
 
 </body>
 </html>
