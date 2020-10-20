@@ -2,13 +2,13 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Get in touch on 東京の資産運用会社で働く社会人が研究に没頭するブログ</title>
-    <link>/my_blog/contact/</link>
+    <link>https://ayatoashihara.github.io/my_blog/contact/</link>
     <description>Recent content in Get in touch on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 28 Apr 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/my_blog/contact/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://ayatoashihara.github.io/my_blog/contact/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>

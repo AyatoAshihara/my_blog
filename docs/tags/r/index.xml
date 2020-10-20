@@ -2,23 +2,23 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>R on 東京の資産運用会社で働く社会人が研究に没頭するブログ</title>
-    <link>/my_blog/tags/r/</link>
+    <link>https://ayatoashihara.github.io/my_blog/tags/r/</link>
     <description>Recent content in R on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 20 Sep 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/my_blog/tags/r/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://ayatoashihara.github.io/my_blog/tags/r/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>RStanと外部C&#43;&#43;関数を連携させる。- DSGEモデルのディープパラメータ推定を事例に</title>
-      <link>/my_blog/post28/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post28/</link>
       <pubDate>Sun, 20 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post28/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post28/</guid>
       <description>
-&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://ayatoashihara.github.io/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 </description>
@@ -26,12 +26,12 @@
     
     <item>
       <title>Rcppでデータハンドリングを高速に行う(Tickデータの処理を事例に)</title>
-      <link>/my_blog/post/post27/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post27/</link>
       <pubDate>Thu, 10 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post27/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post27/</guid>
       <description>
-&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://ayatoashihara.github.io/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 </description>
@@ -39,12 +39,12 @@
     
     <item>
       <title>そのバックテスト本当に再現性ありますか？(その2)</title>
-      <link>/my_blog/post24/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post24/</link>
       <pubDate>Sun, 12 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post24/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post24/</guid>
       <description>
-&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://ayatoashihara.github.io/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;前回に引き続き、バックテストの再現性についてのpostです。今回はオーバーフィットしにくい具体的なバックテスト手法について紹介したいと思います。&lt;/p&gt;
@@ -53,12 +53,12 @@
     
     <item>
       <title>WindowsにNEologd辞書をインストールして、RMeCabを実行する方法</title>
-      <link>/my_blog/post/post21/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post21/</link>
       <pubDate>Sun, 19 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post21/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post21/</guid>
       <description>
-&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://ayatoashihara.github.io/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 </description>
@@ -66,10 +66,10 @@
     
     <item>
       <title>【単発】10年物長期金利をフィッティングしてみる</title>
-      <link>/my_blog/post/post16/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post16/</link>
       <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post16/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post16/</guid>
       <description>
 
 
@@ -78,10 +78,10 @@
     
     <item>
       <title>【日次GDP】Google Earth Engine APIで衛星画像データを取得し、景況感をナウキャスティングしてみる</title>
-      <link>/my_blog/post/post14/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post14/</link>
       <pubDate>Tue, 16 Jul 2019 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post14/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post14/</guid>
       <description>
 
 
@@ -90,10 +90,10 @@
     
     <item>
       <title>【競馬】rvestでyahoo競馬にある過去のレース結果をスクレイピングしてみた（2回目）。</title>
-      <link>/my_blog/post/post13/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post13/</link>
       <pubDate>Sat, 13 Jul 2019 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post13/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post13/</guid>
       <description>
 &lt;style type=&#34;text/css&#34;&gt;
 a.sourceLine { display: inline-block; line-height: 1.25; }
@@ -164,10 +164,10 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
     
     <item>
       <title>【仕事関連】イールドカーブのモデル化について</title>
-      <link>/my_blog/post/post11/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post11/</link>
       <pubDate>Sat, 06 Jul 2019 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post11/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post11/</guid>
       <description>
 
 
@@ -177,10 +177,10 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
     
     <item>
       <title>【日次GDP】GPLVMでマルチファクターモデルを構築してみた</title>
-      <link>/my_blog/post/post9/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post9/</link>
       <pubDate>Sun, 26 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post9/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post9/</guid>
       <description>
 &lt;style type=&#34;text/css&#34;&gt;
 a.sourceLine { display: inline-block; line-height: 1.25; }
@@ -252,10 +252,10 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
     
     <item>
       <title>カルマンフィルタの実装（R）</title>
-      <link>/my_blog/post/post3/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post3/</link>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post3/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post3/</guid>
       <description>
 &lt;style type=&#34;text/css&#34;&gt;
 a.sourceLine { display: inline-block; line-height: 1.25; }
@@ -327,10 +327,10 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
     
     <item>
       <title>【日次GDP】Gianonne et. al. (2008)のマルチファクターモデルで四半期GDPを予想してみた</title>
-      <link>/my_blog/post/post6/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post6/</link>
       <pubDate>Mon, 16 Jul 2018 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post6/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post6/</guid>
       <description>
 &lt;style type=&#34;text/css&#34;&gt;
 a.sourceLine { display: inline-block; line-height: 1.25; }
@@ -402,10 +402,10 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
     
     <item>
       <title>【日次GDP】日次GDP推計に使用する経済統計を統計ダッシュボードから集めてみた。</title>
-      <link>/my_blog/post/post7/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post7/</link>
       <pubDate>Sat, 14 Jul 2018 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post7/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post7/</guid>
       <description>
 &lt;style type=&#34;text/css&#34;&gt;
 a.sourceLine { display: inline-block; line-height: 1.25; }
@@ -477,10 +477,10 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
     
     <item>
       <title>【競馬統計解析】rvestでyahoo競馬にある過去のレース結果をクローリングしてみた。</title>
-      <link>/my_blog/post/post10/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post10/</link>
       <pubDate>Sat, 19 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post10/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post10/</guid>
       <description>
 
 

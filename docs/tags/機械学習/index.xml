@@ -2,23 +2,23 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>機械学習 on 東京の資産運用会社で働く社会人が研究に没頭するブログ</title>
-    <link>/my_blog/tags/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92/</link>
+    <link>https://ayatoashihara.github.io/my_blog/tags/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92/</link>
     <description>Recent content in 機械学習 on 東京の資産運用会社で働く社会人が研究に没頭するブログ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 25 Aug 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/my_blog/tags/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://ayatoashihara.github.io/my_blog/tags/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>PytorchのPre-trainedモデルで馬体写真の背景を自動トリミングする</title>
-      <link>/my_blog/post/post25/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post25/</link>
       <pubDate>Wed, 12 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post25/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post25/</guid>
       <description>
-&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://ayatoashihara.github.io/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 </description>
@@ -26,12 +26,12 @@
     
     <item>
       <title>LightGBMを使用して競馬結果を予想してみる</title>
-      <link>/my_blog/post/post20/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post20/</link>
       <pubDate>Sat, 29 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post20/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post20/</guid>
       <description>
-&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://ayatoashihara.github.io/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 </description>
@@ -39,21 +39,21 @@
     
     <item>
       <title>衛星画像サービス「Tellus」使ってみた！</title>
-      <link>/my_blog/post26/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post26/</link>
       <pubDate>Tue, 25 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post26/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post26/</guid>
       <description></description>
     </item>
     
     <item>
       <title>そのバックテスト本当に再現性ありますか？(その2)</title>
-      <link>/my_blog/post24/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post24/</link>
       <pubDate>Sun, 12 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post24/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post24/</guid>
       <description>
-&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://ayatoashihara.github.io/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;前回に引き続き、バックテストの再現性についてのpostです。今回はオーバーフィットしにくい具体的なバックテスト手法について紹介したいと思います。&lt;/p&gt;
@@ -62,12 +62,12 @@
     
     <item>
       <title>そのバックテスト本当に再現性ありますか？</title>
-      <link>/my_blog/post/post23/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post23/</link>
       <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post23/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post23/</guid>
       <description>
-&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://ayatoashihara.github.io/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;金融であればクオンツの方は新規運用戦略の立案をする際に、バックテストを行ってパフォーマンスの確認をすることがあると思います。今回は、バックテストのオーバーフィッティングがアウトオブサンプル・パフォーマンスに及ぼす影響について調べたので備忘録をかねてまとめてみました。&lt;/p&gt;
@@ -76,12 +76,12 @@
     
     <item>
       <title>CNNを使って馬体写真から順位予想してみた</title>
-      <link>/my_blog/post/post22/</link>
+      <link>https://ayatoashihara.github.io/my_blog/post/post22/</link>
       <pubDate>Sun, 05 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>/my_blog/post/post22/</guid>
+      <guid>https://ayatoashihara.github.io/my_blog/post/post22/</guid>
       <description>
-&lt;script src=&#34;/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://ayatoashihara.github.io/my_blog/my_blog/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 </description>

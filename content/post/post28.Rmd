@@ -1,0 +1,89 @@
+---
+title: PECOTAを応用して競馬予想モデルを構築する
+author: AyatoAshihara
+date: '2020-10-03'
+slug: post28
+categories:
+  - 競馬
+  - プログラミング
+  - 統計
+tags:
+  - R
+  - SQL
+  - Webスクレイピング
+  - 機械学習
+  - 前処理
+---
+
+<!--more-->
+
+おはこんばんにちは。前回競馬関連で馬体画像からの順位予想を行い、見事撃沈しました。。。使用した馬体写真はG1のものだけでしたが、それ以外のものも使用すると結果が変わったかもしれません。net.keibaでは様々なレースのパドック写真や実際のレース映像を取得することができそうだったのですが、月額会員になる必要があるということで検討中です。
+
+さて、今回は馬体写真からは一旦離れて、セイバーメトリクスのPECOTAを応用した順位予想モデルを作りたいと思います。
+
+### 1. PECOTAを応用した競馬順位予想モデル
+
+PECOTAとは、2003年にリリースされたアメリカメジャーリーグ選手の成績予想モデルです。映画も公開されたほどMLBでは野球の統計的解析が盛んにおこなわれており、「送りバントが無駄である」とか「強打者2番理論」などこれまでの常識に捕らわれない戦略が次々と打ち出されました。そんなセイバーメトリクス手法の1つであるPECOTAの考え方は非常にシンプルです。「ある選手の今後の成績を似ている過去の選手の実績から予想する」というものです。これは統計学者のネイト・シルバーによって開発されました。彼はのちに2008年の大統領選挙(オバマの時です)の勝者を49/50州的中させました。PECOTAの具体的な手法は公開されていませんので、今回はネット情報をかき集めた妄想PECOTAの応用版となります。分析工程は以下のような形です。
+
+1.  分析データベースから過去のレース情報を取得し、特徴量を作成(必要であれば次元圧縮)
+2.  最近傍探索アルゴリズムにより似ているレース×競争馬の組を検索する
+3.  検索に当てはまったN頭のサンプルから順位を予想する
+
+特徴量の作成と最近傍アルゴリズムの選択が重要そうです。今回は日曜日の第54回スプリンターズステークス(G1)の順位予想を行います。現時点での出馬表は以下のようになっています。
+
+```{r,include=FALSE}
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+library(reticulate)
+conda_path <- "C:\\Users\\aashi\\Anaconda3\\envs\\umanalytics"
+use_condaenv(conda_path)
+```
+
+```{r}
+library(rvest)
+library(magrittr)
+library(dplyr)
+library(stringr)
+race_html <- read_html(r"(https://keiba.yahoo.co.jp/race/denma/2006040911/)")
+race_table <- do.call("data.frame",race_html %>% html_nodes(css = "#wrap > table.denmaLs.mgnBL") %>% html_table())
+race_table
+```
+
+単純にウェブサイトから取ってくるだけでは、データとして使えませんね。頑張って前処理します。
+
+```{r}
+race_table$horse_name <- as.character(str_extract_all(race_table$馬名性齢.毛色.調教師名,"[ア-ンー]+"))
+race_table$sex <- as.character(str_extract_all(race_table$馬名性齢.毛色.調教師名,"[牡|牝|せん]"))
+race_table$age <- as.character(str_extract_all(race_table$馬名性齢.毛色.調教師名,"\\d+"))
+race_table$colour <- as.character(str_extract_all(race_table$馬名性齢.毛色.調教師名,"[ぁ-ん一-龠]+毛"))
+race_table$trainer <- as.character(str_extract_all(race_table$馬名性齢.毛色.調教師名," [ぁ-ん一-龠]+ [ぁ-ん一-龠]+"))
+race_table$jockey <- as.character(str_extract_all(race_table$騎手名斤量,"[ぁ-ん一-龠]+\\s[ぁ-ん一-龠]+|[:upper:].[ァ-ヶー]+"))
+race_table$jockey_weight=as.numeric(str_extract_all(race_table$騎手名斤量,"\\d{2}\\.\\d"))
+race_table$father <- str_extract(race_table$父馬名母馬名.母父馬名.,"[ァ-ヴ][ァ-ヴー・]+\\n|[a-zA-Z ]+\\n") %>% str_remove("\n")
+race_table$mother <- str_extract(race_table$父馬名母馬名.母父馬名.,"\\n[ァ-ヴ][ァ-ヴー・]+|\\n[a-zA-Z ]+") %>% str_remove("\n")
+race_table$prize <- as.numeric(str_extract(race_table$全成績重賞成績総賞金,"\\d+億\\d+万|\\d+万") %>% str_remove("億") %>% str_remove("万"))
+race_tlble <- race_table %>% select(枠番,馬番,horse_name,sex,age,colour,trainer,jockey,jockey_weight,father,mother,prize)
+race_table
+```
+
+成績以降の部分は識別不可能でしたので、過去のレース結果から引っ張ってきたいと思います。オッズ情報は使用しません。
+
+### 2.特徴量エンジニアリング
+
+[過去記事](https://ayatoashihara.github.io/my_blog/post/post13/)で作成したデータベースに直近までのレース結果を追加しました。まず、レース結果を抽出したいと思います。
+
+```{r}
+library(DBI)
+con <- dbConnect(RSQLite::SQLite(), dbname = r"(C:\Users\aashi\umanalytics\horse_data.db)")
+race_data <- dbGetQuery(con,"SELECT * FROM race_result WHERE replace(race_result.race_distance,'m','')*1 <= 1600 AND race_result.type LIKE '芝' AND race_result.race_condition LIKE '良' AND (race_result.race_weather LIKE '曇り' OR race_result.race_weather LIKE '晴れ') AND race_result.horse_age*1>2 AND race_course LIKE '中山'")
+```
+
+```{python}
+import pandas as pd
+import sqlite3
+
+dbname = r"C:\Users\aashi\umanalytics\horse_data.db"
+con = sqlite3.connect(dbname)
+df = pd.read_sql("SELECT * FROM race_result WHERE replace(race_result.race_distance,'m','')*1 <= 1600 AND race_result.type LIKE '芝' AND race_result.race_condition LIKE '良' AND (race_result.race_weather LIKE '曇り' OR race_result.race_weather LIKE '晴れ') AND race_result.horse_age*1>2 AND race_course LIKE '中山'",con)
+print(df.head())
+```
