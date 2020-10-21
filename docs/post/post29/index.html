@@ -26,7 +26,7 @@
         "datePublished": "2020-10-19 00:00:00 \u002b0000 UTC",
         "dateModified" : "2020-10-19 00:00:00 \u002b0000 UTC",
         "url" : "https:\/\/ayatoashihara.github.io\/my_blog\/post\/post29\/",
-        "wordCount" : "253",
+        "wordCount" : "254",
         "image" : "https://ayatoashihara.github.io/my_blog/C:\\Users\\aashi\\Desktop\\my_blog\\static\\img\\portfolio\\OECD.jpg"",
         "keywords" : [ ""Python"",""ガウス過程"",""前処理"",""Webスクレイピング"","Blog" ]   
     }
@@ -47,9 +47,9 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link href="https://ayatoashihara.github.io/my_blog/css/style.css?v=1603286203" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
+<link href="https://ayatoashihara.github.io/my_blog/css/style.css?v=1603287150" rel="stylesheet" id="theme-stylesheet" type='text/css' media='all'>
 
-<link href="https://ayatoashihara.github.io/my_blog/css/custom.css?v=1603286203" rel="stylesheet" type='text/css' media='all'>
+<link href="https://ayatoashihara.github.io/my_blog/css/custom.css?v=1603287150" rel="stylesheet" type='text/css' media='all'>
 <link rel="shortcut icon" href="https://ayatoashihara.github.io/my_blog/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="https://ayatoashihara.github.io/my_blog/img/favicon.ico" type="image/x-icon">
 
@@ -399,7 +399,9 @@ import pandas as pd
 result = result[result[&#39;FREQUENCY&#39;]==&#39;M&#39;]
 result[&#39;TIME_PERIOD&#39;] = pd.to_datetime(result[&#39;TIME_PERIOD&#39;],format=&#39;%Y-%m&#39;)
 sns.relplot(data=result[lambda df: (df.VAR==&#39;201&#39;) &amp; (pd.to_numeric(df.EDI) &gt; 202004)],x=&#39;TIME_PERIOD&#39;,y=&#39;value&#39;,hue=&#39;LOCATION&#39;,kind=&#39;line&#39;,col=&#39;EDI&#39;)</code></pre>
-<pre><code>## &lt;seaborn.axisgrid.FacetGrid object at 0x00000000316301C8&gt;</code></pre>
+<pre><code>## &lt;seaborn.axisgrid.FacetGrid object at 0x0000000031650448&gt;</code></pre>
+<pre class="python"><code>plt.show()</code></pre>
+<p><img src="/my_blog/post/post29_files/figure-html/unnamed-chunk-6-1.png" width="2035" /></p>
 <p>コロナの経済的な被害が大きくなるにつれて折れ線グラフが落ち込んでいく様子が見て取れる一方、微妙にですが過去値についても速報値→確報値へと修正が行われています。また、国によって統計データの公表にラグがあることも分かります。ベルギーは最も公表が遅いようです。時間があるときに、このデータを使った簡単な予測モデルの分析を追記したいと思います。</p>
 <p>別件ですが、Python 3 エンジニア認定データ分析試験に合格しました。合格率70%だけあって、かなり簡単でしたがPythonを基礎から見返すいい機会になりました。今やっている業務ではデータ分析はおろかPythonやRを使う機会すらないので、転職も含めた可能性を考えています。とりあえず、以下の資格を今年度中に取得する予定で、金融にこだわらずにスキルを活かせるポストを探していこうと思います。ダイエットと同じで宣言して自分を追い込まないと。。。</p>
 <ol style="list-style-type: decimal">
@@ -634,7 +636,7 @@ src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </div>
   <script src="https://ayatoashihara.github.io/my_blog/js/jquery.min.js"></script>
 <script src="https://ayatoashihara.github.io/my_blog/js/jquerymigrate.js"></script>
-<script src="https://ayatoashihara.github.io/my_blog/js/production.min.js?v=1603286203"></script>
+<script src="https://ayatoashihara.github.io/my_blog/js/production.min.js?v=1603287150"></script>
 
 </body>
 </html>
